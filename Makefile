@@ -1,11 +1,11 @@
 CXXFLAGS=-I$(INCDIR) -std=c++17 -O2
 LDFLAGS=-lfmt -lglfw
+INCDIR=src/common
 SRCDIR=src
 OBJDIR=obj
 BINDIR=bin
 TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/02-cube
-INCDIR=src/common
 
 all: $(TARGETS)
 
