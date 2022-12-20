@@ -1,4 +1,4 @@
-# opengl-learn
+# opengl-playground
 
 ## Install libraries (FMT, GLFW3, GLM)
 
