@@ -1,7 +1,9 @@
 #include "glad.h"
+#include <filesystem>
 #include <fmt/core.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
+#include "utils.h"
 
 // Global variables
 static GLuint program{};
@@ -135,7 +137,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "01-triangle", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "02-cube", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -149,7 +151,10 @@ int main()
     hand_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = compile_shaders({
+        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.vert"),
+        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.frag"),
+    });
     glUseProgram(program);
 
     // Define the vertices of our triangle

@@ -10,9 +10,9 @@ TARGETS=$(BINDIR)/01-triangle \
 all: $(TARGETS)
 
 # Link object files to produce executables
-$(BINDIR)/01-triangle: $(OBJDIR)/01-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/glad.o
+$(BINDIR)/01-triangle: $(OBJDIR)/01-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
-$(BINDIR)/02-cube: $(OBJDIR)/02-cube.o $(OBJDIR)/shader.o $(OBJDIR)/glad.o
+$(BINDIR)/02-cube: $(OBJDIR)/02-cube.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
@@ -23,6 +23,8 @@ $(OBJDIR)/02-cube.o: $(SRCDIR)/02-cube/cube.cpp
 
 # Compile common files
 $(OBJDIR)/shader.o: $(SRCDIR)/common/shader.cpp $(SRCDIR)/common/shader.h
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/utils.o: $(SRCDIR)/common/utils.cpp $(SRCDIR)/common/utils.h
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/glad.o: $(SRCDIR)/common/glad.c $(SRCDIR)/common/glad.h $(SRCDIR)/common/khrplatform.h
 	g++ -c $< -o $@ $(CXXFLAGS)
