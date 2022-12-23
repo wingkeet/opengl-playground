@@ -72,39 +72,6 @@ static GLuint create_shader(std::string_view filename)
     return shader;
 }
 
-GLuint compile_shaders()
-{
-    // Create and compile shaders
-    const GLuint vertex_shader = create_shader("shader/basic.vert");
-    const GLuint fragment_shader = create_shader("shader/basic.frag");
-
-    // Create program, attach shaders to it, and link it
-    const GLuint program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
-
-    // Check for link errors
-    GLint success{-1};
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (success != GL_TRUE) {
-        GLchar log[512]{};
-        glGetProgramInfoLog(program, sizeof(log), nullptr, log);
-        fmt::print(stderr, "ERROR: Failed to link program object {}\n{}\n", program, log);
-    }
-
-    // Delete the shaders as the program has them now
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-
-    success = -1;
-    glValidateProgram(program);
-    glGetProgramiv(program, GL_VALIDATE_STATUS, &success);
-    fmt::print("Program object {} validation status: {}\n", program, success);
-
-    return program;
-}
-
 GLuint compile_shaders(std::initializer_list<std::filesystem::path> paths)
 {
     // Create program, attach shaders to it, and link it

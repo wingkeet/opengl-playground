@@ -5,7 +5,6 @@
 #include <initializer_list>
 #include "glad.h"
 
-extern GLuint compile_shaders();
 extern GLuint compile_shaders(std::initializer_list<std::filesystem::path> paths);
 
 #endif // SHADER_H_INCLUDED

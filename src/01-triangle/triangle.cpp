@@ -23,6 +23,14 @@ static bool hit_test(
     return (xd + yd) < (5 * 5); // check is done in squared space to avoid square root
 }
 
+static GLuint compile_shaders()
+{
+    return compile_shaders({
+        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.vert"),
+        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.frag"),
+    });
+}
+
 static void set_callbacks(GLFWwindow* window)
 {
     glfwSetFramebufferSizeCallback(
@@ -151,10 +159,7 @@ int main()
     hand_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
     set_callbacks(window);
 
-    program = compile_shaders({
-        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.vert"),
-        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.frag"),
-    });
+    program = compile_shaders();
     glUseProgram(program);
 
     // Define the vertices of our triangle
