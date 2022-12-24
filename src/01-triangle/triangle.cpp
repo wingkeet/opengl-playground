@@ -46,6 +46,7 @@ static void set_callbacks(GLFWwindow* window)
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
             }
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
+                // Press F5 to reload shaders
                 glDeleteProgram(program);
                 program = compile_shaders();
                 glUseProgram(program);
