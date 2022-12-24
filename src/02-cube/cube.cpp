@@ -9,6 +9,14 @@
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
 
+static GLuint compile_shaders()
+{
+    return compile_shaders({
+        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.vert").c_str(),
+        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
+    });
+}
+
 static bool hit_test(
     GLFWwindow* window,
     double xcursor, double ycursor,
@@ -21,14 +29,6 @@ static bool hit_test(
     const double xd = (xcursor - xw) * (xcursor - xw);
     const double yd = (ycursor - yw) * (ycursor - yw);
     return (xd + yd) < (5 * 5); // check is done in squared space to avoid square root
-}
-
-static GLuint compile_shaders()
-{
-    return compile_shaders({
-        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.vert"),
-        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.frag"),
-    });
 }
 
 static void set_callbacks(GLFWwindow* window)

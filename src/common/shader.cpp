@@ -1,30 +1,9 @@
 #include "glad.h"
-#include <cassert>
-#include <filesystem>
 #include <fmt/core.h>
-#include <fstream>
 #include <initializer_list>
-#include <sstream>
 #include <vector>
 #include "shader.h"
-
-static bool ends_with(std::string_view str, std::string_view suffix)
-{
-    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
-}
-
-static bool starts_with(std::string_view str, std::string_view prefix)
-{
-    return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
-}
-
-static std::string read_shader_file(std::string_view filename)
-{
-    std::ifstream file{filename.data()};
-    std::stringstream ss;
-    ss << file.rdbuf();
-    return ss.str();
-}
+#include "utils.h"
 
 static GLenum shader_type(std::string_view filename)
 {
@@ -55,7 +34,7 @@ static GLuint create_shader(std::string_view filename)
 {
     const GLenum type = shader_type(filename);
     const GLuint shader = glCreateShader(type);
-    const std::string str = read_shader_file(filename);
+    const std::string str = read_file(filename);
     const GLchar *source = str.c_str();
     glShaderSource(shader, 1, &source, nullptr);
     glCompileShader(shader);
@@ -72,13 +51,13 @@ static GLuint create_shader(std::string_view filename)
     return shader;
 }
 
-GLuint compile_shaders(std::initializer_list<std::filesystem::path> paths)
+GLuint compile_shaders(std::initializer_list<std::string_view> filenames)
 {
     // Create program, attach shaders to it, and link it
     const GLuint program = glCreateProgram();
     std::vector<GLuint> shaders;
-    for (auto p : paths) {
-        const GLuint shader = create_shader(p.c_str());
+    for (auto filename : filenames) {
+        const GLuint shader = create_shader(filename);
         glAttachShader(program, shader);
         shaders.push_back(shader);
     }
