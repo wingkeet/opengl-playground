@@ -167,7 +167,7 @@ int main()
     // Define the vertices of our triangle
     // Note that the winding order is counter-clockwise
     const GLfloat vertices[]{
-        // positions        color
+        // position         color
         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
          0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
          0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
