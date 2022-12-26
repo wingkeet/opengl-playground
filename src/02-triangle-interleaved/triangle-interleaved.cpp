@@ -147,7 +147,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "02-cube", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "02-triangle-interleaved", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -166,41 +166,32 @@ int main()
 
     // Define the vertices of our triangle
     // Note that the winding order is counter-clockwise
-    const GLfloat positions[]{
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f,
-    };
-    const GLfloat colors[]{
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
+    const GLfloat vertices[]{
+        // positions        color
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
     };
 
     GLuint vao{};
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    // Create and populate the positions buffer.
+    // Create and populate interleaved buffer.
     // Vertex attribute arrays are disabled by default, so we call
     // glEnableVertexAttribArray() to enable them.
-    GLuint positions_vbo{};
-    glGenBuffers(1, &positions_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, positions_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(0);
+    GLuint vbo{};
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // Create and populate the colors buffer
-    GLuint colors_vbo{};
-    glGenBuffers(1, &colors_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*6, nullptr);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*6, (GLvoid*)(sizeof(GLfloat)*3));
     glEnableVertexAttribArray(1);
 
     // Uncomment this call to draw in wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
@@ -211,8 +202,7 @@ int main()
 
     // Shutting down from here onwards
     glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &positions_vbo);
-    glDeleteBuffers(1, &colors_vbo);
+    glDeleteBuffers(1, &vbo);
     glDeleteProgram(program);
 
     glfwDestroyWindow(window);

@@ -5,20 +5,20 @@ SRCDIR=src
 OBJDIR=obj
 BINDIR=bin
 TARGETS=$(BINDIR)/01-triangle \
-        $(BINDIR)/02-cube
+        $(BINDIR)/02-triangle-interleaved
 
 all: $(TARGETS)
 
 # Link object files to produce executables
 $(BINDIR)/01-triangle: $(OBJDIR)/01-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
-$(BINDIR)/02-cube: $(OBJDIR)/02-cube.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+$(BINDIR)/02-triangle-interleaved: $(OBJDIR)/02-triangle-interleaved.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
-$(OBJDIR)/02-cube.o: $(SRCDIR)/02-cube/cube.cpp
+$(OBJDIR)/02-triangle-interleaved.o: $(SRCDIR)/02-triangle-interleaved/triangle-interleaved.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
