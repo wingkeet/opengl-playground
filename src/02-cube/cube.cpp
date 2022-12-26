@@ -11,9 +11,10 @@ static GLFWcursor* hand_cursor{};
 
 static GLuint compile_shaders()
 {
+    namespace fs = std::filesystem;
     return compile_shaders({
-        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.vert").c_str(),
-        std::filesystem::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "basic.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
 
