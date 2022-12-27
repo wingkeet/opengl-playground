@@ -51,7 +51,7 @@ static GLuint create_shader(std::string_view filename)
     return shader;
 }
 
-GLuint compile_shaders(std::initializer_list<std::string_view> filenames)
+GLuint compile_shaders(const std::initializer_list<std::string_view>& filenames)
 {
     // Create program, attach shaders to it, and link it
     const GLuint program = glCreateProgram();
