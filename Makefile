@@ -5,7 +5,8 @@ SRCDIR=src
 OBJDIR=obj
 BINDIR=bin
 TARGETS=$(BINDIR)/01-triangle \
-        $(BINDIR)/02-triangle-interleaved
+        $(BINDIR)/02-triangle-interleaved \
+        $(BINDIR)/03-triangle-dsa
 
 all: $(TARGETS)
 
@@ -14,11 +15,15 @@ $(BINDIR)/01-triangle: $(OBJDIR)/01-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/util
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/02-triangle-interleaved: $(OBJDIR)/02-triangle-interleaved.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/03-triangle-dsa: $(OBJDIR)/03-triangle-dsa.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/02-triangle-interleaved.o: $(SRCDIR)/02-triangle-interleaved/triangle-interleaved.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/03-triangle-dsa.o: $(SRCDIR)/03-triangle-dsa/triangle-dsa.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
