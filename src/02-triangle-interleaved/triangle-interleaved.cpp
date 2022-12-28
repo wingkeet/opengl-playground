@@ -89,18 +89,22 @@ static void set_callbacks(GLFWwindow* window)
 static void print_info()
 {
     fmt::print("GLFW version: {}\n", glfwGetVersionString());
-    fmt::print("OpenGL vendor: {}\n", glGetString(GL_VENDOR));
-    fmt::print("OpenGL renderer: {}\n", glGetString(GL_RENDERER));
-    fmt::print("OpenGL version: {}\n", glGetString(GL_VERSION));
-    fmt::print("GLSL version: {}\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    fmt::print("GL_VENDOR: {}\n", glGetString(GL_VENDOR));
+    fmt::print("GL_RENDERER: {}\n", glGetString(GL_RENDERER));
+    fmt::print("GL_VERSION: {}\n", glGetString(GL_VERSION));
+    fmt::print("GL_SHADING_LANGUAGE_VERSION: {}\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    GLint max_attributes{};
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_attributes);
-    fmt::print("Max vertex attributes: {}\n", max_attributes);
+    GLint max_vertex_attribs{};
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vertex_attribs);
+    fmt::print("GL_MAX_VERTEX_ATTRIBS: {}\n", max_vertex_attribs);
 
-    GLint max_uniforms{};
-    glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &max_uniforms);
-    fmt::print("Max uniform locations: {}\n", max_uniforms);
+    GLint max_vertex_attrib_bindings{};
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIB_BINDINGS, &max_vertex_attrib_bindings);
+    fmt::print("GL_MAX_VERTEX_ATTRIB_BINDINGS: {}\n", max_vertex_attrib_bindings);
+
+    GLint max_uniform_locations{};
+    glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &max_uniform_locations);
+    fmt::print("GL_MAX_UNIFORM_LOCATIONS: {}\n", max_uniform_locations);
 
     if (glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
         fmt::print("Gamepad: {}\n", glfwGetGamepadName(GLFW_JOYSTICK_1));
