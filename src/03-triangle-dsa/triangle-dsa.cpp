@@ -179,8 +179,6 @@ int main()
 
     // Create and populate interleaved buffer using DSA
     // (Direct State Access) API in OpenGL 4.5.
-    // Vertex attribute arrays are disabled by default, so we call
-    // glEnableVertexArrayAttrib() to enable them.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
     glNamedBufferStorage(vbo, sizeof(vertices), vertices, 0);
@@ -189,17 +187,23 @@ int main()
     GLuint vao{};
     glCreateVertexArrays(1, &vao);
 
-    // Position attribute
-    glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(GLfloat)*6);
-    glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(vao, 0, 0);
-    glEnableVertexArrayAttrib(vao, 0);
+    // Bind the buffer containing the interleaved vertex data to this VAO's
+    // buffer binding point (must be less than GL_MAX_VERTEX_ATTRIB_BINDINGS).
+    constexpr GLuint binding_index{0}; // index of vertex buffer binding point
+    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*6);
 
-    // Color attribute
-    glVertexArrayVertexBuffer(vao, 1, vbo, sizeof(GLfloat)*3, sizeof(GLfloat)*6);
-    glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(vao, 1, 1);
+    // Enable all vertex attribute locations
+    glEnableVertexArrayAttrib(vao, 0);
     glEnableVertexArrayAttrib(vao, 1);
+
+    // Specify the data format for each vertex attribute location
+    glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3);
+
+    // Tell OpenGL to read the data for vertex attribute locations 0 and 1
+    // from the buffer, which is attached to buffer binding point 0.
+    glVertexArrayAttribBinding(vao, 0, binding_index);
+    glVertexArrayAttribBinding(vao, 1, binding_index);
 
     // This shows that we do not have to bind the VAO before
     // calling the above functions.
