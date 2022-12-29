@@ -201,7 +201,7 @@ int main()
     glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3);
 
     // Tell OpenGL to read the data for vertex attribute locations 0 and 1
-    // from the buffer, which is attached to buffer binding point 0.
+    // from the buffer, which is attached to vertex buffer binding point 0.
     glVertexArrayAttribBinding(vao, 0, binding_index);
     glVertexArrayAttribBinding(vao, 1, binding_index);
 
