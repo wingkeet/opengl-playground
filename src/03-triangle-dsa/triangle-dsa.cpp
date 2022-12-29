@@ -192,7 +192,7 @@ int main()
     constexpr GLuint binding_index{0}; // index of vertex buffer binding point
     glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*6);
 
-    // Enable all vertex attribute locations
+    // Enable vertex attribute locations 0 and 1
     glEnableVertexArrayAttrib(vao, 0);
     glEnableVertexArrayAttrib(vao, 1);
 
