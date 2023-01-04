@@ -3,8 +3,8 @@
 #include <fmt/core.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "shader.h"
 #include "utils.h"
 
@@ -13,6 +13,11 @@ static GLuint program{};
 static GLFWcursor* hand_cursor{};
 static float translate_x{}, translate_y{};
 static float scale{1.0f};
+
+static std::string window_title()
+{
+    return fmt::format("04-triangle-transform (x {:3.2f})", scale);
+}
 
 static GLuint compile_shaders()
 {
@@ -117,6 +122,7 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
+    fmt::print("Use left stick to translate, right stick to scale.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -131,8 +137,7 @@ static void process_gamepad(GLFWwindow* window)
         translate_x = state.axes[GLFW_GAMEPAD_AXIS_LEFT_X];
         translate_y = -state.axes[GLFW_GAMEPAD_AXIS_LEFT_Y];
         scale = -state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y] * 0.8f + 1.0f;
-        const auto title = fmt::format("04-triangle-transform (× {:3.2f})", scale);
-        glfwSetWindowTitle(window, title.c_str());
+        glfwSetWindowTitle(window, window_title().c_str());
     }
 }
 
@@ -144,7 +149,8 @@ static void render(GLFWwindow* window, double currentTime)
     // Build model-view matrix
     const auto identity_matrix = glm::mat4(1.0f);
     const auto scale_matrix = glm::scale(identity_matrix, glm::vec3(scale, scale, 0.0f));
-    const auto translate_matrix = glm::translate(identity_matrix, glm::vec3(translate_x, translate_y, 0.0f));
+    const auto translate_matrix = glm::translate(
+        identity_matrix, glm::vec3(translate_x, translate_y, 0.0f));
     const auto model_matrix = translate_matrix * scale_matrix;
     const auto view_matrix = glm::translate(identity_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
     const auto mv_matrix = view_matrix * model_matrix;
@@ -173,7 +179,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "04-triangle-transform", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, window_title().c_str(), nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -249,6 +255,6 @@ int main()
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    fmt::print("Bye\n");
+    fmt::print("Bye.\n");
     return 0;
 }
