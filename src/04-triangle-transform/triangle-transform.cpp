@@ -11,7 +11,7 @@
 // Global variables
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
-static float translate_x{}, translate_y{};
+static float translate_x{0.0f}, translate_y{0.0f};
 static float scale{1.0f};
 
 static std::string window_title()
