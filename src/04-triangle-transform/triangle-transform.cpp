@@ -11,12 +11,13 @@
 // Global variables
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
+static float scale{0.2f};
 static float translate_x{0.0f}, translate_y{0.0f};
-static float scale{1.0f};
 
 static std::string window_title()
 {
-    return fmt::format("04-triangle-transform (x {:3.2f})", scale);
+    return fmt::format("04-triangle-transform (s={:3.2f}) (tx={:3.2f},ty={:3.2f})",
+        scale, translate_x, translate_y);
 }
 
 static GLuint compile_shaders()
@@ -122,7 +123,7 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
-    fmt::print("Use left stick to translate, right stick to scale.\n");
+    fmt::print("Use left trigger to scale, right stick to translate.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -134,9 +135,9 @@ static void process_gamepad(GLFWwindow* window)
             glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
 
-        translate_x = state.axes[GLFW_GAMEPAD_AXIS_LEFT_X];
-        translate_y = -state.axes[GLFW_GAMEPAD_AXIS_LEFT_Y];
-        scale = -state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y] * 0.8f + 1.0f;
+        scale = state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] + 1.2f;
+        translate_x = state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X];
+        translate_y = -state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y];
         glfwSetWindowTitle(window, window_title().c_str());
     }
 }
