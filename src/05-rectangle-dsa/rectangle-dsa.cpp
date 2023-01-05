@@ -130,8 +130,7 @@ static void render(GLFWwindow* window, double currentTime)
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Draw our first triangle
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
+    // Draw our first rectangle
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
