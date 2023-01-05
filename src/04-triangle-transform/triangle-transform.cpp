@@ -16,7 +16,8 @@ static float translate_x{0.0f}, translate_y{0.0f};
 
 static std::string window_title()
 {
-    return fmt::format("04-triangle-transform (s={:3.2f}) (tx={:3.2f},ty={:3.2f})",
+    return fmt::format(
+        "04-triangle-transform (s={:3.2f}) (tx={:3.2f},ty={:3.2f})",
         scale, translate_x, translate_y);
 }
 
@@ -149,11 +150,13 @@ static void render(GLFWwindow* window, double currentTime)
 
     // Build model-view matrix
     const auto identity_matrix = glm::mat4(1.0f);
-    const auto scale_matrix = glm::scale(identity_matrix, glm::vec3(scale, scale, 0.0f));
+    const auto scale_matrix = glm::scale(
+        identity_matrix, glm::vec3(scale, scale, 0.0f));
     const auto translate_matrix = glm::translate(
         identity_matrix, glm::vec3(translate_x, translate_y, 0.0f));
     const auto model_matrix = translate_matrix * scale_matrix;
-    const auto view_matrix = glm::translate(identity_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
+    const auto view_matrix = glm::translate(
+        identity_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
     const auto mv_matrix = view_matrix * model_matrix;
 
     // Copy model-view matrix to uniform variable
