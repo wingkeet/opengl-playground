@@ -177,8 +177,8 @@ int main()
          0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
     };
 
-    // Create and populate interleaved buffer using DSA
-    // (Direct State Access) API in OpenGL 4.5.
+    // Create and populate interleaved vertex buffer
+    // using DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
     glNamedBufferStorage(vbo, sizeof(vertices), vertices, 0);
@@ -187,9 +187,8 @@ int main()
     GLuint vao{};
     glCreateVertexArrays(1, &vao);
 
-    // Bind the buffer containing the interleaved vertex data to this VAO's
-    // buffer binding point (must be less than GL_MAX_VERTEX_ATTRIB_BINDINGS).
-    constexpr GLuint binding_index{0}; // index of vertex buffer binding point
+    // Bind the vertex buffer to the VAO's vertex buffer binding point
+    constexpr GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
     glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*6);
 
     // Enable vertex attribute locations 0 and 1

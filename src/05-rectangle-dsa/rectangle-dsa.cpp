@@ -182,8 +182,8 @@ int main()
         3, 1, 2,
     };
 
-    // Create and populate interleaved buffer using DSA
-    // (Direct State Access) API in OpenGL 4.5.
+    // Create and populate interleaved vertex buffer
+    // using DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
     glNamedBufferStorage(vbo, sizeof(vertices), vertices, 0);
@@ -233,6 +233,7 @@ int main()
 
     // Shutting down from here onwards
     glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &ebo);
     glDeleteBuffers(1, &vbo);
     glDeleteProgram(program);
 
