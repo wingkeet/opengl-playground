@@ -168,18 +168,18 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Define the vertices of our triangle
-    // Note that the winding order is counter-clockwise
+    // Define the vertices of our rectangle
     const GLfloat vertices[]{
         // position         color
-        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-        -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
+         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // top right
+        -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, // top left
     };
+    // Note that the winding order is counter-clockwise
     const GLuint indices[]{
         0, 1, 2,
-        3, 1, 2,
+        2, 3, 0,
     };
 
     // Create and populate interleaved vertex buffer
