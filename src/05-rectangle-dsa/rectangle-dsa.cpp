@@ -168,7 +168,8 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Define the vertices of our rectangle
+    // Define the vertices of our rectangle.
+    // Note that the winding order is counter-clockwise.
     const GLfloat vertices[]{
         // position         color
         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
@@ -176,14 +177,13 @@ int main()
          0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // top right
         -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, // top left
     };
-    // Note that the winding order is counter-clockwise
     const GLuint indices[]{
         0, 1, 2,
         2, 3, 0,
     };
 
-    // Create and populate interleaved vertex buffer
-    // using DSA (Direct State Access) API in OpenGL 4.5.
+    // Create and populate interleaved vertex buffer using
+    // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
     glNamedBufferStorage(vbo, sizeof(vertices), vertices, 0);
