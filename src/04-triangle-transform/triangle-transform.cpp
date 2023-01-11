@@ -11,14 +11,15 @@
 // Global variables
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
-static float scale{0.2f};
+static float scale{1.0f};
+static float rotate_x{0.0f};
 static float translate_x{0.0f}, translate_y{0.0f};
 
 static std::string window_title()
 {
     return fmt::format(
-        "04-triangle-transform (s={:3.2f}) (tx={:3.2f},ty={:3.2f})",
-        scale, translate_x, translate_y);
+        "04-triangle-transform (s={:3.2f}) (rx={:1.0f}) (tx={:3.2f},ty={:3.2f})",
+        scale, rotate_x, translate_x, translate_y);
 }
 
 static GLuint compile_shaders()
@@ -124,7 +125,7 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
-    fmt::print("Use left trigger to scale, right stick to translate.\n");
+    fmt::print("Use left trigger to scale, left stick to rotate, and right stick to translate.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -136,7 +137,8 @@ static void process_gamepad(GLFWwindow* window)
             glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
 
-        scale = state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] + 1.2f;
+        scale = state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] + 2.0f;
+        rotate_x = state.axes[GLFW_GAMEPAD_AXIS_LEFT_Y] * 70.0f;
         translate_x = state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X];
         translate_y = -state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y];
         glfwSetWindowTitle(window, window_title().c_str());
@@ -152,9 +154,11 @@ static void render(GLFWwindow* window, double currentTime)
     const auto identity_matrix = glm::mat4(1.0f);
     const auto scale_matrix = glm::scale(
         identity_matrix, glm::vec3(scale, scale, 0.0f));
+    const auto rotate_matrix = glm::rotate(
+        identity_matrix, glm::radians(rotate_x), glm::vec3(1.0f, 0.0f, 0.0f));
     const auto translate_matrix = glm::translate(
         identity_matrix, glm::vec3(translate_x, translate_y, 0.0f));
-    const auto model_matrix = translate_matrix * scale_matrix;
+    const auto model_matrix = translate_matrix * rotate_matrix * scale_matrix;
     const auto view_matrix = glm::translate(
         identity_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
     const auto mv_matrix = view_matrix * model_matrix;
