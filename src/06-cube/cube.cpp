@@ -14,7 +14,7 @@ static float eye_y{};
 
 static std::string window_title()
 {
-    return fmt::format("06-cube (eye={:3.2f})", eye_y);
+    return fmt::format("06-cube (eye={:2.1f})", eye_y);
 }
 
 static GLuint compile_shaders()
@@ -64,7 +64,7 @@ static void set_callbacks(GLFWwindow* window)
     glfwSetScrollCallback(
         window,
         [](GLFWwindow* window, double xoffset, double yoffset) {
-            eye_y += yoffset * 0.2;
+            eye_y += yoffset * 0.5;
             eye_y = glm::clamp(eye_y, -3.0f, 3.0f);
             glfwSetWindowTitle(window, window_title().c_str());
         }
