@@ -104,11 +104,18 @@ static void process_gamepad(GLFWwindow* window)
 
 static void render(GLFWwindow* window, double currentTime)
 {
-    // Build model-view matrix
+    // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
-    const auto model_matrix = glm::rotate(
-        identity_matrix, glm::radians(30.0f), glm::vec3{1.0f, 0.0f, 0.0f});
-    const auto view_matrix = glm::translate(identity_matrix, glm::vec3{0.0f, 0.0f, -8.0f});
+    const auto model_matrix = glm::rotate(identity_matrix,
+        static_cast<float>(currentTime), glm::vec3{0.0f, 1.0f, 0.0f});
+
+    // Build view matrix
+    const glm::vec3 eye{0.0f, 2.0f, 5.0f};
+    const glm::vec3 center{0.0f, 0.0f, 0.0f};
+    const glm::vec3 up{0.0f, 1.0f, 0.0f};
+    const auto view_matrix = glm::lookAt(eye, center, up);
+
+    // Build model-view matrix
     const auto mv_matrix = view_matrix * model_matrix;
 
     // Build projection matrix
