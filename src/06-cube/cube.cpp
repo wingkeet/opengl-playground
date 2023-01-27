@@ -131,16 +131,16 @@ static void process_gamepad(GLFWwindow* window)
 static void render(GLFWwindow* window, double currentTime)
 {
     // Build model-view matrix
-    const auto identity_matrix = glm::mat4(1.0f);
+    constexpr auto identity_matrix = glm::mat4{1.0f};
     const auto model_matrix = glm::rotate(
-        identity_matrix, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    const auto view_matrix = glm::translate(identity_matrix, glm::vec3(0.0f, 0.0f, -8.0f));
+        identity_matrix, glm::radians(30.0f), glm::vec3{1.0f, 0.0f, 0.0f});
+    const auto view_matrix = glm::translate(identity_matrix, glm::vec3{0.0f, 0.0f, -8.0f});
     const auto mv_matrix = view_matrix * model_matrix;
 
     // Build projection matrix
+    constexpr float fovy = glm::radians(60.0f);
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
-    const float fovy = glm::radians(60.0f);
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
     const auto proj_matrix = glm::perspective(fovy, aspect, 0.1f, 1000.0f);
 
