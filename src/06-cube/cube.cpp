@@ -10,6 +10,12 @@
 
 // Global variables
 static GLuint program{};
+static float eye_y{};
+
+static std::string window_title()
+{
+    return fmt::format("06-cube (eye={:3.2f})", eye_y);
+}
 
 static GLuint compile_shaders()
 {
@@ -55,6 +61,14 @@ static void set_callbacks(GLFWwindow* window)
             }
         }
     );
+    glfwSetScrollCallback(
+        window,
+        [](GLFWwindow* window, double xoffset, double yoffset) {
+            eye_y += yoffset * 0.2;
+            eye_y = glm::clamp(eye_y, -3.0f, 3.0f);
+            glfwSetWindowTitle(window, window_title().c_str());
+        }
+    );
     glfwSetWindowFocusCallback(
         window,
         [](GLFWwindow* window, int focused) {
@@ -89,6 +103,8 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
+
+    fmt::print("Use mouse wheel to move the camera up and down.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -110,7 +126,7 @@ static void render(GLFWwindow* window, double currentTime)
         static_cast<float>(currentTime), glm::vec3{0.0f, 1.0f, 0.0f});
 
     // Build view matrix
-    const glm::vec3 eye{0.0f, 2.0f, 5.0f};
+    const glm::vec3 eye{0.0f, eye_y, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
     const auto view_matrix = glm::lookAt(eye, center, up);
@@ -156,7 +172,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "06-cube", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, window_title().c_str(), nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
