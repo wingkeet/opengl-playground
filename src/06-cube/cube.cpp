@@ -10,11 +10,11 @@
 
 // Global variables
 static GLuint program{};
-static float eye_y{};
+static float camera_y{2.0f};
 
 static std::string window_title()
 {
-    return fmt::format("06-cube (eye={:2.1f})", eye_y);
+    return fmt::format("06-cube (camera={:2.1f})", camera_y);
 }
 
 static GLuint compile_shaders()
@@ -64,8 +64,8 @@ static void set_callbacks(GLFWwindow* window)
     glfwSetScrollCallback(
         window,
         [](GLFWwindow* window, double xoffset, double yoffset) {
-            eye_y += yoffset * 0.5;
-            eye_y = glm::clamp(eye_y, -3.0f, 3.0f);
+            camera_y += yoffset * 0.5;
+            camera_y = glm::clamp(camera_y, -3.0f, 3.0f);
             glfwSetWindowTitle(window, window_title().c_str());
         }
     );
@@ -118,18 +118,18 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double currentTime)
+static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
     const auto model_matrix = glm::rotate(identity_matrix,
-        static_cast<float>(currentTime), glm::vec3{0.0f, 1.0f, 0.0f});
+        static_cast<float>(current_time), glm::vec3{0.0f, 1.0f, 0.0f});
 
     // Build view matrix
-    const glm::vec3 eye{0.0f, eye_y, 5.0f};
+    const glm::vec3 camera{0.0f, camera_y, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    const auto view_matrix = glm::lookAt(eye, center, up);
+    const auto view_matrix = glm::lookAt(camera, center, up);
 
     // Build model-view matrix
     const auto mv_matrix = view_matrix * model_matrix;
