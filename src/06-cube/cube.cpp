@@ -261,7 +261,7 @@ int main()
     glVertexArrayElementBuffer(vao, ebo);
 
     // Bind the vertex buffer to the VAO's vertex buffer binding point
-    constexpr GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
+    const GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
     glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*6);
 
     // Enable vertex attribute locations 0 and 1
@@ -300,6 +300,6 @@ int main()
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    fmt::print("Bye\n");
+    fmt::print("Bye.\n");
     return 0;
 }

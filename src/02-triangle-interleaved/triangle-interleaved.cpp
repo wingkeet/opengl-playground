@@ -212,6 +212,6 @@ int main()
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    fmt::print("Bye\n");
+    fmt::print("Bye.\n");
     return 0;
 }
