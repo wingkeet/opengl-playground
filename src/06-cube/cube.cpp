@@ -11,7 +11,7 @@
 
 // Global variables
 static GLuint program{};
-static float camera_y{0.0f};
+static float camera_y{2.0f};
 
 static std::string window_title()
 {
