@@ -1,4 +1,5 @@
 #include "glad.h"
+#include <cmath>
 #include <filesystem>
 #include <fmt/core.h>
 #include <GLFW/glfw3.h>
@@ -10,7 +11,7 @@
 
 // Global variables
 static GLuint program{};
-static float camera_y{2.0f};
+static float camera_y{0.0f};
 
 static std::string window_title()
 {
@@ -122,8 +123,9 @@ static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
+    const float timef = static_cast<float>(current_time);
     const auto model_matrix = glm::rotate(identity_matrix,
-        static_cast<float>(current_time), glm::vec3{0.0f, 1.0f, 0.0f});
+        std::sin(timef) * 2.0f, glm::vec3{0.0f, 1.0f, 0.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, camera_y, 5.0f};
