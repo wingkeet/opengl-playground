@@ -147,11 +147,9 @@ static void render(GLFWwindow* window, double current_time)
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
-    const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
-    glClearBufferfv(GL_COLOR, 0, background);
-
     // Draw our first cube
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
