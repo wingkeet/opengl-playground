@@ -12,34 +12,34 @@ out vec3 varying_color;
 // Returns a rotation matrix around the X axis
 mat4 rotate_x(float radians)
 {
-    mat4 xrot = mat4(
+    mat4 rx = mat4(
         1.0, 0.0, 0.0, 0.0,
         0.0, cos(radians), -sin(radians), 0.0,
         0.0, sin(radians), cos(radians), 0.0,
         0.0, 0.0, 0.0, 1.0);
-    return xrot;
+    return rx;
 }
 
 // Returns a rotation matrix around the Y axis
 mat4 rotate_y(float radians)
 {
-    mat4 yrot = mat4(
+    mat4 ry = mat4(
         cos(radians), 0.0, sin(radians), 0.0,
         0.0, 1.0, 0.0, 0.0,
         -sin(radians), 0.0, cos(radians), 0.0,
         0.0, 0.0, 0.0, 1.0);
-    return yrot;
+    return ry;
 }
 
 // Returns a rotation matrix around the Z axis
 mat4 rotate_z(float radians)
 {
-    mat4 zrot = mat4(
+    mat4 rz = mat4(
         cos(radians), -sin(radians), 0.0, 0.0,
         sin(radians), cos(radians), 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0);
-    return zrot;
+    return rz;
 }
 
 // Returns a translation matrix
