@@ -18,7 +18,7 @@ static float translate_x{0.0f}, translate_y{0.0f};
 static std::string window_title()
 {
     return fmt::format(
-        "04-triangle-transform (s={:3.2f}) (rx={:1.0f}) (tx={:3.2f},ty={:3.2f})",
+        "04-triangle-transforms (s={:3.2f}) (rx={:1.0f}) (tx={:3.2f},ty={:3.2f})",
         scale, rotate_x, translate_x, translate_y);
 }
 
