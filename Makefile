@@ -7,7 +7,7 @@ BINDIR=bin
 TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/02-triangle-interleaved \
         $(BINDIR)/03-triangle-dsa \
-        $(BINDIR)/04-triangle-transform \
+        $(BINDIR)/04-triangle-transforms \
         $(BINDIR)/05-rectangle-dsa \
         $(BINDIR)/06-cube \
         $(BINDIR)/07-tumbling-cube \
@@ -22,7 +22,7 @@ $(BINDIR)/02-triangle-interleaved: $(OBJDIR)/02-triangle-interleaved.o $(OBJDIR)
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/03-triangle-dsa: $(OBJDIR)/03-triangle-dsa.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
-$(BINDIR)/04-triangle-transform: $(OBJDIR)/04-triangle-transform.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+$(BINDIR)/04-triangle-transforms: $(OBJDIR)/04-triangle-transforms.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/05-rectangle-dsa: $(OBJDIR)/05-rectangle-dsa.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
@@ -40,7 +40,7 @@ $(OBJDIR)/02-triangle-interleaved.o: $(SRCDIR)/02-triangle-interleaved/triangle-
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/03-triangle-dsa.o: $(SRCDIR)/03-triangle-dsa/triangle-dsa.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
-$(OBJDIR)/04-triangle-transform.o: $(SRCDIR)/04-triangle-transform/triangle-transform.cpp
+$(OBJDIR)/04-triangle-transforms.o: $(SRCDIR)/04-triangle-transforms/triangle-transforms.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/05-rectangle-dsa.o: $(SRCDIR)/05-rectangle-dsa/rectangle-dsa.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
