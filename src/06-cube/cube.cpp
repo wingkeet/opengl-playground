@@ -124,24 +124,24 @@ static void render(GLFWwindow* window, double current_time)
     // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
     const float timef = static_cast<float>(current_time);
-    const auto model_matrix = glm::rotate(identity_matrix,
+    const glm::mat4 model_matrix = glm::rotate(identity_matrix,
         std::sin(timef) * 2.0f, glm::vec3{0.0f, 1.0f, 0.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, camera_y, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    const auto view_matrix = glm::lookAt(camera, center, up);
+    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
 
     // Build model-view matrix
-    const auto mv_matrix = view_matrix * model_matrix;
+    const glm::mat4 mv_matrix = view_matrix * model_matrix;
 
     // Build projection matrix
     constexpr float fovy = glm::radians(60.0f);
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    const auto proj_matrix = glm::perspective(fovy, aspect, 0.1f, 1000.0f);
+    const glm::mat4 proj_matrix = glm::perspective(fovy, aspect, 0.1f, 1000.0f);
 
     // Copy model-view and projection matrices to uniform variables
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
