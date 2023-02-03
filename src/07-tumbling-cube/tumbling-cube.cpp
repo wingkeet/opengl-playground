@@ -111,13 +111,13 @@ static void render(GLFWwindow* window, double current_time)
     // Build model matrix
     const float tf = static_cast<float>(current_time);
     const mat4 identity_matrix{1.0f};
-    const mat4 translate = glm::translate(identity_matrix, vec3(
+    const mat4 translate = glm::translate(identity_matrix, vec3{
         std::sin(0.35f * tf) * 2.0f,
         std::cos(0.52f * tf) * 2.0f,
-        std::sin(0.70f * tf) * 2.0f));
-    mat4 rotate = glm::rotate(identity_matrix, 1.75f * tf, vec3(0.0f, 1.0f, 0.0f));
-    rotate = glm::rotate(rotate, 1.75f * tf, vec3(1.0f, 0.0f, 0.0f));
-    rotate = glm::rotate(rotate, 1.75f * tf, vec3(0.0f, 0.0f, 1.0f));
+        std::sin(0.70f * tf) * 2.0f});
+    mat4 rotate = glm::rotate(identity_matrix, 1.75f * tf, vec3{0.0f, 1.0f, 0.0f});
+    rotate = glm::rotate(rotate, 1.75f * tf, vec3{1.0f, 0.0f, 0.0f});
+    rotate = glm::rotate(rotate, 1.75f * tf, vec3{0.0f, 0.0f, 1.0f});
     const mat4 model_matrix = translate * rotate;
 
     // Build view matrix
