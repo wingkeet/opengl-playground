@@ -26,7 +26,7 @@ static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "transform.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "mvp.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
@@ -151,20 +151,24 @@ static void render(GLFWwindow* window, double currentTime)
     glClearBufferfv(GL_COLOR, 0, background);
 
     // Build model-view matrix
-    const auto identity_matrix = glm::mat4(1.0f);
-    const auto scale_matrix = glm::scale(
+    const glm::mat4 identity_matrix{1.0f};
+    const glm::mat4 scale_matrix = glm::scale(
         identity_matrix, glm::vec3(scale, scale, 0.0f));
-    const auto rotate_matrix = glm::rotate(
+    const glm::mat4 rotate_matrix = glm::rotate(
         identity_matrix, glm::radians(rotate_x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const auto translate_matrix = glm::translate(
+    const glm::mat4 translate_matrix = glm::translate(
         identity_matrix, glm::vec3(translate_x, translate_y, 0.0f));
-    const auto model_matrix = translate_matrix * rotate_matrix * scale_matrix;
-    const auto view_matrix = glm::translate(
+    const glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
+    const glm::mat4 view_matrix = glm::translate(
         identity_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
-    const auto mv_matrix = view_matrix * model_matrix;
+    const glm::mat4 mv_matrix = view_matrix * model_matrix;
 
-    // Copy model-view matrix to uniform variable
+    // Build projection matrix
+    const glm::mat4& proj_matrix{identity_matrix};
+
+    // Copy model-view and projection matrices to uniform variables
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
     // Draw our first triangle
     glDrawArrays(GL_TRIANGLES, 0, 3);
