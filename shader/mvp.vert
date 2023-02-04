@@ -6,7 +6,7 @@ layout (location = 1) in vec3 vertex_color;
 layout (location = 0) uniform mat4 mv_matrix;
 layout (location = 1) uniform mat4 proj_matrix;
 
-out vec3 varying_color;
+out vec3 varying_color; // interpolated by rasterizer
 
 void main()
 {

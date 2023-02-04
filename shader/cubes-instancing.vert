@@ -7,7 +7,7 @@ layout (location = 0) uniform mat4 view_matrix;
 layout (location = 1) uniform mat4 proj_matrix;
 layout (location = 2) uniform float tf;
 
-out vec3 varying_color;
+out vec3 varying_color; // interpolated by rasterizer
 
 // Returns a rotation matrix around the X axis
 mat4 rotate_x(float radians)
