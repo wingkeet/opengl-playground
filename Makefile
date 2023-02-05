@@ -11,7 +11,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/05-rectangle-dsa \
         $(BINDIR)/06-cube \
         $(BINDIR)/07-tumbling-cube \
-        $(BINDIR)/08-cubes-instancing
+        $(BINDIR)/08-cubes-instancing \
+        $(BINDIR)/09-circle
 
 all: $(TARGETS)
 
@@ -32,6 +33,8 @@ $(BINDIR)/07-tumbling-cube: $(OBJDIR)/07-tumbling-cube.o $(OBJDIR)/shader.o $(OB
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/08-cubes-instancing: $(OBJDIR)/08-cubes-instancing.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/09-circle: $(OBJDIR)/09-circle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -49,6 +52,8 @@ $(OBJDIR)/06-cube.o: $(SRCDIR)/06-cube/cube.cpp
 $(OBJDIR)/07-tumbling-cube.o: $(SRCDIR)/07-tumbling-cube/tumbling-cube.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/08-cubes-instancing.o: $(SRCDIR)/08-cubes-instancing/cubes-instancing.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/09-circle.o: $(SRCDIR)/09-circle/circle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
