@@ -118,9 +118,9 @@ static void render(GLFWwindow* window, double currentTime, int num_vertices)
 }
 
 // https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
-std::vector<GLfloat> gen_circle(int num_vertices)
+std::vector<float> gen_circle(int num_vertices)
 {
-    std::vector<GLfloat> vertices;
+    std::vector<float> vertices;
     const float angle = 2 * M_PI / num_vertices;
 
     for (int i = 0; i < num_vertices; i++) {
@@ -166,7 +166,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<GLfloat> vertices = gen_circle(50);
+    const std::vector<float> vertices = gen_circle(50);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
