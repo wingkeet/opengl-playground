@@ -12,7 +12,6 @@
 
 // Global variables
 static GLuint program{};
-static GLFWcursor* hand_cursor{};
 
 static GLuint compile_shaders()
 {
@@ -21,20 +20,6 @@ static GLuint compile_shaders()
         fs::canonical(dirname() / ".." / "shader" / "color.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
-}
-
-static bool hit_test(
-    GLFWwindow* window,
-    double xcursor, double ycursor,
-    double xndc, double yndc)
-{
-    int width{}, height{};
-    glfwGetFramebufferSize(window, &width, &height);
-    const double xw = (xndc + 1) * (width / 2.0); // window x [0..width]
-    const double yw = (-yndc + 1) * (height / 2.0); // window y [0..height]
-    const double xd = (xcursor - xw) * (xcursor - xw);
-    const double yd = (ycursor - yw) * (ycursor - yw);
-    return (xd + yd) < (5 * 5); // check is done in squared space to avoid square root
 }
 
 static void set_callbacks(GLFWwindow* window)
@@ -69,17 +54,6 @@ static void set_callbacks(GLFWwindow* window)
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 fmt::print("mouse up {}, {}\n", xpos, ypos);
-            }
-        }
-    );
-    glfwSetCursorPosCallback(
-        window,
-        [](GLFWwindow* window, double xpos, double ypos) {
-            const bool hit = hit_test(window, xpos, ypos, 0.5, -0.5);
-            glfwSetCursor(window, hit ? hand_cursor : nullptr);
-            const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-            if (state == GLFW_PRESS) {
-                fmt::print("{}, {}\n", xpos, ypos);
             }
         }
     );
@@ -147,11 +121,11 @@ static void render(GLFWwindow* window, double currentTime, int num_vertices)
 std::vector<GLfloat> gen_circle(int num_vertices)
 {
     std::vector<GLfloat> vertices;
-    const float theta = 2 * M_PI / num_vertices;
+    const float angle = 2 * M_PI / num_vertices;
 
     for (int i = 0; i < num_vertices; i++) {
-        vertices.push_back(std::cos(theta * i));
-        vertices.push_back(std::sin(theta * i));
+        vertices.push_back(std::cos(angle * i));
+        vertices.push_back(std::sin(angle * i));
         vertices.push_back(0.0f);
     }
 
@@ -186,7 +160,6 @@ int main()
     glfwSwapInterval(1); // vsync on
 
     print_info();
-    hand_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
     set_callbacks(window);
 
     program = compile_shaders();
