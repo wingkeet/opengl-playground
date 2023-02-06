@@ -104,7 +104,7 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double currentTime, int num_vertices)
+static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
     // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
@@ -120,10 +120,11 @@ static void render(GLFWwindow* window, double currentTime, int num_vertices)
 // https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
 std::vector<float> gen_circle(int num_vertices)
 {
-    std::vector<float> vertices;
     const float angle = 2 * M_PI / num_vertices;
+    std::vector<float> vertices;
+    vertices.reserve(num_vertices * 3);
 
-    for (int i = 0; i < num_vertices; i++) {
+    for (int i{}; i < num_vertices; i++) {
         vertices.push_back(std::cos(angle * i));
         vertices.push_back(std::sin(angle * i));
         vertices.push_back(0.0f);
