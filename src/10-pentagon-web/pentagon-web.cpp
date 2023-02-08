@@ -106,18 +106,45 @@ static void process_gamepad(GLFWwindow* window)
 
 static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
+    // Build model matrix
+    const glm::mat4 identity_matrix{1.0f};
+    const glm::mat4& model_matrix{identity_matrix};
+    // const float tf = static_cast<float>(current_time);
+    // const glm::mat4 model_matrix = glm::rotate(
+    //     identity_matrix, tf / 5, glm::vec3{0.0f, 0.0f, 1.0f});
+
+    // Build view matrix
+    const glm::vec3 camera{0.0f, 0.0f, 5.0f};
+    const glm::vec3 center{0.0f, 0.0f, 0.0f};
+    const glm::vec3 up{0.0f, 1.0f, 0.0f};
+    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
+
+    // Build model-view matrix
+    const glm::mat4 mv_matrix = view_matrix * model_matrix;
+
+    // Build orthographic projection matrix
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+    const float aspect = static_cast<float>(width) / static_cast<float>(height);
+    const glm::mat4 proj_matrix = glm::ortho(
+        -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
+
+    // Copy model-view and projection matrices to uniform variables
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
+
     // Set the background color
     const GLfloat background[]{0.8f, 0.8f, 0.8f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
     // Draw filled pentagon
-    glUniform3f(0, 0.47f, 0.52f, 0.035f);
-    glUniform1i(1, 0);
+    glUniform3f(2, 0.47f, 0.52f, 0.035f);
+    glUniform1i(3, 0);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 
     // Draw wireframe
-    glUniform1i(1, 1);
+    glUniform1i(3, 1);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
