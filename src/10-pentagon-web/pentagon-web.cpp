@@ -111,7 +111,7 @@ static void render(GLFWwindow* window, double current_time)
     const glm::mat4& model_matrix{identity_matrix};
     // const float tf = static_cast<float>(current_time);
     // const glm::mat4 model_matrix = glm::rotate(
-    //     identity_matrix, tf / 5, glm::vec3{0.0f, 0.0f, 1.0f});
+    //     identity_matrix, tf, glm::vec3{0.0f, 0.0f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -140,13 +140,16 @@ static void render(GLFWwindow* window, double current_time)
     // Draw filled pentagon
     glUniform3f(2, 0.47f, 0.52f, 0.035f);
     glUniform1i(3, 0);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
 
     // Draw wireframe
     glUniform1i(3, 1);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
+    glDrawArrays(GL_LINE_LOOP, 5, 5);
+    glDrawArrays(GL_LINE_LOOP, 10, 5);
+    glDrawArrays(GL_LINE_LOOP, 15, 5);
+    glDrawArrays(GL_LINE_LOOP, 20, 5);
+    glDrawArrays(GL_LINE_LOOP, 25, 5);
+    glDrawArrays(GL_LINES, 30, 10);
 }
 
 void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
@@ -160,20 +163,56 @@ void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
 
 std::vector<glm::vec2> gen_pentagon_web()
 {
-    const float radius = 0.9f;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(7);
+    vertices.reserve(40);
 
-    // Center vertex
-    vertices.emplace_back(glm::vec2{});
+    // Filled pentagon
+    add_vertex(vertices, 0.45f, 10.0f);
+    add_vertex(vertices, 0.55f, 90.0f);
+    add_vertex(vertices, 0.50f, 170.0f);
+    add_vertex(vertices, 0.55f, 270.0f - 35.0f);
+    add_vertex(vertices, 0.60f, 270.0f + 35.0f);
 
-    // Add vertices in counter-clockwise order
-    add_vertex(vertices, radius, 10.0f);
-    add_vertex(vertices, radius, 90.0f);
-    add_vertex(vertices, radius, 170.0f);
-    add_vertex(vertices, radius, 270.0f - 35.0f);
-    add_vertex(vertices, radius, 270.0f + 35.0f);
-    add_vertex(vertices, radius, 10.0f);
+    add_vertex(vertices, 0.20f, 10.0f);
+    add_vertex(vertices, 0.20f, 90.0f);
+    add_vertex(vertices, 0.20f, 170.0f);
+    add_vertex(vertices, 0.20f, 270.0f - 35.0f);
+    add_vertex(vertices, 0.20f, 270.0f + 35.0f);
+
+    add_vertex(vertices, 0.30f, 10.0f);
+    add_vertex(vertices, 0.30f, 90.0f);
+    add_vertex(vertices, 0.30f, 170.0f);
+    add_vertex(vertices, 0.30f, 270.0f - 35.0f);
+    add_vertex(vertices, 0.30f, 270.0f + 35.0f);
+
+    add_vertex(vertices, 0.40f, 10.0f);
+    add_vertex(vertices, 0.40f, 90.0f);
+    add_vertex(vertices, 0.40f, 170.0f);
+    add_vertex(vertices, 0.40f, 270.0f - 35.0f);
+    add_vertex(vertices, 0.40f, 270.0f + 35.0f);
+
+    add_vertex(vertices, 0.50f, 10.0f);
+    add_vertex(vertices, 0.50f, 90.0f);
+    add_vertex(vertices, 0.50f, 170.0f);
+    add_vertex(vertices, 0.50f, 270.0f - 35.0f);
+    add_vertex(vertices, 0.50f, 270.0f + 35.0f);
+
+    add_vertex(vertices, 0.60f, 10.0f);
+    add_vertex(vertices, 0.60f, 90.0f);
+    add_vertex(vertices, 0.60f, 170.0f);
+    add_vertex(vertices, 0.60f, 270.0f - 35.0f);
+    add_vertex(vertices, 0.60f, 270.0f + 35.0f);
+
+    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    add_vertex(vertices, 0.60f, 10.0f);
+    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    add_vertex(vertices, 0.60f, 90.0f);
+    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    add_vertex(vertices, 0.60f, 170.0f);
+    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    add_vertex(vertices, 0.60f, 270.0f - 35.0f);
+    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    add_vertex(vertices, 0.60f, 270.0f + 35.0f);
 
     return vertices;
 }
