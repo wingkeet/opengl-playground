@@ -104,7 +104,7 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double current_time, int num_vertices)
+static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
@@ -141,56 +141,42 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniform3f(2, 0.47f, 0.52f, 0.035f);
     glUniform1i(3, 0);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
 
     // Draw wireframe
     glUniform1i(3, 1);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
 }
 
-std::vector<float> gen_pentagon_web()
+std::vector<glm::vec3> gen_pentagon_web()
 {
     const float r = 0.9f; // radius
     float angle{}; // in radians
 
-    std::vector<float> vertices;
-    vertices.reserve(6 * 3);
+    std::vector<glm::vec3> vertices;
+    vertices.reserve(7);
 
     // center vertex
-    vertices.push_back(0.0f);
-    vertices.push_back(0.0f);
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{0.0f, 0.0f, 0.0f});
 
     angle = glm::radians(10.0f);
-    vertices.push_back(r * std::cos(angle));
-    vertices.push_back(r * std::sin(angle));
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
 
     angle = glm::radians(90.0f);
-    vertices.push_back(r * std::cos(angle));
-    vertices.push_back(r * std::sin(angle));
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
 
     angle = glm::radians(170.0f);
-    vertices.push_back(r * std::cos(angle));
-    vertices.push_back(r * std::sin(angle));
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
 
     angle = glm::radians(270.0f - 35.0f);
-    vertices.push_back(r * std::cos(angle));
-    vertices.push_back(r * std::sin(angle));
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
 
     angle = glm::radians(270.0f + 35.0f);
-    vertices.push_back(r * std::cos(angle));
-    vertices.push_back(r * std::sin(angle));
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
 
     angle = glm::radians(10.0f);
-    vertices.push_back(r * std::cos(angle));
-    vertices.push_back(r * std::sin(angle));
-    vertices.push_back(0.0f);
+    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
 
     return vertices;
 }
@@ -229,13 +215,13 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<float> vertices = gen_pentagon_web();
+    const std::vector<glm::vec3> vertices = gen_pentagon_web();
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(GLfloat) * vertices.size(), vertices.data(), 0);
+    glNamedBufferStorage(vbo, sizeof(glm::vec3) * vertices.size(), vertices.data(), 0);
 
     // Create VAO
     GLuint vao{};
@@ -243,13 +229,13 @@ int main()
 
     // Bind the vertex buffer to the VAO's vertex buffer binding point
     const GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
-    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*3);
+    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec3));
 
     // Enable vertex attribute location 0
     glEnableVertexArrayAttrib(vao, 0);
 
     // Specify the data format for each vertex attribute location
-    glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 0, vertices[0].length(), GL_FLOAT, GL_FALSE, 0);
 
     // Tell OpenGL to read the data for vertex attribute location 0
     // from the buffer, which is attached to vertex buffer binding point 0.
@@ -261,7 +247,7 @@ int main()
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
-        render(window, glfwGetTime(), vertices.size() / 3);
+        render(window, glfwGetTime());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
