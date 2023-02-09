@@ -208,7 +208,7 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Generate the vertices of our circle
+    // Generate the vertices of our pentagon-web
     const std::vector<glm::vec2> vertices = gen_pentagon_web();
 
     // Create and populate interleaved vertex buffer using
