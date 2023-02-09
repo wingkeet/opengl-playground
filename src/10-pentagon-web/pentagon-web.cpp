@@ -153,7 +153,9 @@ void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
 {
     const float radians = glm::radians(degrees);
     vertices.emplace_back(glm::vec2{
-        radius * std::cos(radians), radius * std::sin(radians)});
+        radius * std::cos(radians),
+        radius * std::sin(radians)
+    });
 }
 
 std::vector<glm::vec2> gen_pentagon_web()
@@ -162,9 +164,10 @@ std::vector<glm::vec2> gen_pentagon_web()
     std::vector<glm::vec2> vertices;
     vertices.reserve(7);
 
-    // center vertex
+    // Center vertex
     vertices.emplace_back(glm::vec2{});
 
+    // Add vertices in counter-clockwise order
     add_vertex(vertices, radius, 10.0f);
     add_vertex(vertices, radius, 90.0f);
     add_vertex(vertices, radius, 170.0f);
