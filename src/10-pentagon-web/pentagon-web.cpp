@@ -149,7 +149,6 @@ static void render(GLFWwindow* window, double current_time)
     glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
 }
 
-
 void add_vertex(std::vector<glm::vec3>& vertices, float radius, float degrees)
 {
     const float radians = glm::radians(degrees);
