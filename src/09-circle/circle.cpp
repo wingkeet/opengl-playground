@@ -17,7 +17,7 @@ static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "color.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "circle.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
@@ -118,16 +118,14 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 }
 
 // https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
-std::vector<float> gen_circle(int num_vertices)
+std::vector<glm::vec2> gen_circle(int num_vertices)
 {
-    const float angle = 2 * M_PI / num_vertices;
-    std::vector<float> vertices;
-    vertices.reserve(num_vertices * 3);
+    const float angle = glm::two_pi<float>() / num_vertices;
+    std::vector<glm::vec2> vertices;
+    vertices.reserve(num_vertices);
 
     for (int i{}; i < num_vertices; i++) {
-        vertices.push_back(std::cos(angle * i));
-        vertices.push_back(std::sin(angle * i));
-        vertices.push_back(0.0f);
+        vertices.emplace_back(glm::vec2{glm::cos(angle * i), glm::sin(angle * i)});
     }
 
     return vertices;
@@ -167,13 +165,13 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<float> vertices = gen_circle(50);
+    const std::vector<glm::vec2> vertices = gen_circle(50);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(GLfloat) * vertices.size(), vertices.data(), 0);
+    glNamedBufferStorage(vbo, sizeof(glm::vec2) * vertices.size(), vertices.data(), 0);
 
     // Create VAO
     GLuint vao{};
@@ -181,13 +179,13 @@ int main()
 
     // Bind the vertex buffer to the VAO's vertex buffer binding point
     const GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
-    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*3);
+    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec2));
 
     // Enable vertex attribute location 0
     glEnableVertexArrayAttrib(vao, 0);
 
     // Specify the data format for each vertex attribute location
-    glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 0, glm::vec2::length(), GL_FLOAT, GL_FALSE, 0);
 
     // Tell OpenGL to read the data for vertex attribute location 0
     // from the buffer, which is attached to vertex buffer binding point 0.
@@ -202,7 +200,7 @@ int main()
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
-        render(window, glfwGetTime(), vertices.size() / 3);
+        render(window, glfwGetTime(), vertices.size());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
