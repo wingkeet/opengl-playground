@@ -153,7 +153,9 @@ void add_vertex(std::vector<glm::vec3>& vertices, float radius, float degrees)
 {
     const float radians = glm::radians(degrees);
     vertices.emplace_back(glm::vec3{
-        radius * std::cos(radians), radius * std::sin(radians), 0.0f
+        radius * std::cos(radians),
+        radius * std::sin(radians),
+        0.0f
     });
 }
 
@@ -230,7 +232,7 @@ int main()
     glEnableVertexArrayAttrib(vao, 0);
 
     // Specify the data format for each vertex attribute location
-    glVertexArrayAttribFormat(vao, 0, vertices[0].length(), GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 0, glm::vec3::length(), GL_FLOAT, GL_FALSE, 0);
 
     // Tell OpenGL to read the data for vertex attribute location 0
     // from the buffer, which is attached to vertex buffer binding point 0.
