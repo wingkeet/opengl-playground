@@ -104,7 +104,7 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double time, int num_vertices)
+static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
     // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
