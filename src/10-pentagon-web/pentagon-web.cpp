@@ -149,24 +149,21 @@ static void render(GLFWwindow* window, double current_time)
     glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
 }
 
-void add_vertex(std::vector<glm::vec3>& vertices, float radius, float degrees)
+void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
 {
     const float radians = glm::radians(degrees);
-    vertices.emplace_back(glm::vec3{
-        radius * std::cos(radians),
-        radius * std::sin(radians),
-        0.0f
-    });
+    vertices.emplace_back(glm::vec2{
+        radius * std::cos(radians), radius * std::sin(radians)});
 }
 
-std::vector<glm::vec3> gen_pentagon_web()
+std::vector<glm::vec2> gen_pentagon_web()
 {
     const float radius = 0.9f;
-    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> vertices;
     vertices.reserve(7);
 
     // center vertex
-    vertices.emplace_back(glm::vec3{0.0f, 0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
 
     add_vertex(vertices, radius, 10.0f);
     add_vertex(vertices, radius, 90.0f);
@@ -212,13 +209,13 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<glm::vec3> vertices = gen_pentagon_web();
+    const std::vector<glm::vec2> vertices = gen_pentagon_web();
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(glm::vec3) * vertices.size(), vertices.data(), 0);
+    glNamedBufferStorage(vbo, sizeof(glm::vec2) * vertices.size(), vertices.data(), 0);
 
     // Create VAO
     GLuint vao{};
@@ -226,13 +223,13 @@ int main()
 
     // Bind the vertex buffer to the VAO's vertex buffer binding point
     const GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
-    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec3));
+    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec2));
 
     // Enable vertex attribute location 0
     glEnableVertexArrayAttrib(vao, 0);
 
     // Specify the data format for each vertex attribute location
-    glVertexArrayAttribFormat(vao, 0, glm::vec3::length(), GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 0, glm::vec2::length(), GL_FLOAT, GL_FALSE, 0);
 
     // Tell OpenGL to read the data for vertex attribute location 0
     // from the buffer, which is attached to vertex buffer binding point 0.
