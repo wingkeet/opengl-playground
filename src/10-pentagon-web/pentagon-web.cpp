@@ -149,34 +149,29 @@ static void render(GLFWwindow* window, double current_time)
     glDrawArrays(GL_TRIANGLE_FAN, 0, 7);
 }
 
+
+void add_vertex(std::vector<glm::vec3>& vertices, float radius, float degrees)
+{
+    const float radians = glm::radians(degrees);
+    vertices.emplace_back(
+        glm::vec3{radius * std::cos(radians), radius * std::sin(radians), 0.0f});
+}
+
 std::vector<glm::vec3> gen_pentagon_web()
 {
-    const float r = 0.9f; // radius
-    float angle{}; // in radians
-
+    const float radius = 0.9f;
     std::vector<glm::vec3> vertices;
     vertices.reserve(7);
 
     // center vertex
     vertices.emplace_back(glm::vec3{0.0f, 0.0f, 0.0f});
 
-    angle = glm::radians(10.0f);
-    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
-
-    angle = glm::radians(90.0f);
-    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
-
-    angle = glm::radians(170.0f);
-    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
-
-    angle = glm::radians(270.0f - 35.0f);
-    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
-
-    angle = glm::radians(270.0f + 35.0f);
-    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
-
-    angle = glm::radians(10.0f);
-    vertices.emplace_back(glm::vec3{r * std::cos(angle), r * std::sin(angle), 0.0f});
+    add_vertex(vertices, radius, 10.0f);
+    add_vertex(vertices, radius, 90.0f);
+    add_vertex(vertices, radius, 170.0f);
+    add_vertex(vertices, radius, 270.0f - 35.0f);
+    add_vertex(vertices, radius, 270.0f + 35.0f);
+    add_vertex(vertices, radius, 10.0f);
 
     return vertices;
 }
