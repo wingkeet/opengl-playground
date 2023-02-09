@@ -104,7 +104,7 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double current_time, int num_vertices)
+static void render(GLFWwindow* window, double time, int num_vertices)
 {
     // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
@@ -124,6 +124,8 @@ std::vector<glm::vec2> gen_circle(int num_vertices)
     std::vector<glm::vec2> vertices;
     vertices.reserve(num_vertices);
 
+    // We don't need a center point. Since a circle is a convex shape, we can
+    // simply use one of the points on the circle as the central vertex of our fan.
     for (int i{}; i < num_vertices; i++) {
         vertices.emplace_back(glm::vec2{glm::cos(angle * i), glm::sin(angle * i)});
     }
