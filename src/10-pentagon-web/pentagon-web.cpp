@@ -203,15 +203,15 @@ std::vector<glm::vec2> gen_pentagon_web()
     add_vertex(vertices, 0.60f, 270.0f - 35.0f);
     add_vertex(vertices, 0.60f, 270.0f + 35.0f);
 
-    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{});
     add_vertex(vertices, 0.60f, 10.0f);
-    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{});
     add_vertex(vertices, 0.60f, 90.0f);
-    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{});
     add_vertex(vertices, 0.60f, 170.0f);
-    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{});
     add_vertex(vertices, 0.60f, 270.0f - 35.0f);
-    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{});
     add_vertex(vertices, 0.60f, 270.0f + 35.0f);
 
     return vertices;
