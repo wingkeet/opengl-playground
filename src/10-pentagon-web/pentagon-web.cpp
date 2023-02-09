@@ -153,8 +153,9 @@ static void render(GLFWwindow* window, double current_time)
 void add_vertex(std::vector<glm::vec3>& vertices, float radius, float degrees)
 {
     const float radians = glm::radians(degrees);
-    vertices.emplace_back(
-        glm::vec3{radius * std::cos(radians), radius * std::sin(radians), 0.0f});
+    vertices.emplace_back(glm::vec3{
+        radius * std::cos(radians), radius * std::sin(radians), 0.0f
+    });
 }
 
 std::vector<glm::vec3> gen_pentagon_web()
