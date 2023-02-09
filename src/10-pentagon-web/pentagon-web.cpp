@@ -163,7 +163,7 @@ std::vector<glm::vec2> gen_pentagon_web()
     vertices.reserve(7);
 
     // center vertex
-    vertices.emplace_back(glm::vec2{0.0f, 0.0f});
+    vertices.emplace_back(glm::vec2{});
 
     add_vertex(vertices, radius, 10.0f);
     add_vertex(vertices, radius, 90.0f);
