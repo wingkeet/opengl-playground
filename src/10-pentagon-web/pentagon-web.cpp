@@ -173,7 +173,7 @@ std::vector<glm::vec2> gen_pentagon_web()
 
     // Wireframe pentagons
     for (int i{2}; i <= 6; i++) {
-        const float radius = i / 10.0f;
+        const float radius = 0.1f * i;
         add_vertex(vertices, radius, angles[0]);
         add_vertex(vertices, radius, angles[1]);
         add_vertex(vertices, radius, angles[2]);
@@ -181,7 +181,7 @@ std::vector<glm::vec2> gen_pentagon_web()
         add_vertex(vertices, radius, angles[4]);
     }
 
-    // Spokes emanating from center
+    // Spokes connecting the center to the outer edge
     for (int i{}; i < 5; i++) {
         vertices.emplace_back(glm::vec2{});
         add_vertex(vertices, 0.6f, angles[i]);
