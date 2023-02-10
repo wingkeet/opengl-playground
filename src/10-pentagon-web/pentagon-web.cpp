@@ -226,7 +226,7 @@ int main()
     // Generate the vertices of our pentagon-web
     const std::vector<glm::vec2> vertices = gen_pentagon_web();
 
-    // Create and populate interleaved vertex buffer using
+    // Create and populate vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
