@@ -108,10 +108,9 @@ static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
-    const glm::mat4& model_matrix{identity_matrix};
-    // const float tf = static_cast<float>(current_time);
-    // const glm::mat4 model_matrix = glm::rotate(
-    //     identity_matrix, tf, glm::vec3{0.0f, 0.0f, 1.0f});
+    const float tf = static_cast<float>(current_time);
+    const glm::mat4 model_matrix = glm::rotate(
+        identity_matrix, std::sin(tf) / 5.0f, glm::vec3{0.0f, 0.0f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -142,13 +141,11 @@ static void render(GLFWwindow* window, double current_time)
     glUniform1i(3, 0);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
 
-    // Draw wireframe
+    // Draw lines
     glUniform1i(3, 1);
-    glDrawArrays(GL_LINE_LOOP, 5, 5);
-    glDrawArrays(GL_LINE_LOOP, 10, 5);
-    glDrawArrays(GL_LINE_LOOP, 15, 5);
-    glDrawArrays(GL_LINE_LOOP, 20, 5);
-    glDrawArrays(GL_LINE_LOOP, 25, 5);
+    for (GLint i{5}; i <= 25; i += 5) {
+        glDrawArrays(GL_LINE_LOOP, i, 5);
+    }
     glDrawArrays(GL_LINES, 30, 10);
 }
 
@@ -163,56 +160,32 @@ void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
 
 std::vector<glm::vec2> gen_pentagon_web()
 {
+    const float angles[]{10.0f, 90.0f, 170.0f, 270.0f-35.0f, 270.0f+35.0f};
     std::vector<glm::vec2> vertices;
     vertices.reserve(40);
 
     // Filled pentagon
-    add_vertex(vertices, 0.45f, 10.0f);
-    add_vertex(vertices, 0.55f, 90.0f);
-    add_vertex(vertices, 0.50f, 170.0f);
-    add_vertex(vertices, 0.55f, 270.0f - 35.0f);
-    add_vertex(vertices, 0.60f, 270.0f + 35.0f);
+    add_vertex(vertices, 0.45f, angles[0]);
+    add_vertex(vertices, 0.55f, angles[1]);
+    add_vertex(vertices, 0.50f, angles[2]);
+    add_vertex(vertices, 0.55f, angles[3]);
+    add_vertex(vertices, 0.60f, angles[4]);
 
-    add_vertex(vertices, 0.20f, 10.0f);
-    add_vertex(vertices, 0.20f, 90.0f);
-    add_vertex(vertices, 0.20f, 170.0f);
-    add_vertex(vertices, 0.20f, 270.0f - 35.0f);
-    add_vertex(vertices, 0.20f, 270.0f + 35.0f);
+    // Wireframe pentagons
+    for (int i{2}; i <= 6; i++) {
+        const float radius = i / 10.0f;
+        add_vertex(vertices, radius, angles[0]);
+        add_vertex(vertices, radius, angles[1]);
+        add_vertex(vertices, radius, angles[2]);
+        add_vertex(vertices, radius, angles[3]);
+        add_vertex(vertices, radius, angles[4]);
+    }
 
-    add_vertex(vertices, 0.30f, 10.0f);
-    add_vertex(vertices, 0.30f, 90.0f);
-    add_vertex(vertices, 0.30f, 170.0f);
-    add_vertex(vertices, 0.30f, 270.0f - 35.0f);
-    add_vertex(vertices, 0.30f, 270.0f + 35.0f);
-
-    add_vertex(vertices, 0.40f, 10.0f);
-    add_vertex(vertices, 0.40f, 90.0f);
-    add_vertex(vertices, 0.40f, 170.0f);
-    add_vertex(vertices, 0.40f, 270.0f - 35.0f);
-    add_vertex(vertices, 0.40f, 270.0f + 35.0f);
-
-    add_vertex(vertices, 0.50f, 10.0f);
-    add_vertex(vertices, 0.50f, 90.0f);
-    add_vertex(vertices, 0.50f, 170.0f);
-    add_vertex(vertices, 0.50f, 270.0f - 35.0f);
-    add_vertex(vertices, 0.50f, 270.0f + 35.0f);
-
-    add_vertex(vertices, 0.60f, 10.0f);
-    add_vertex(vertices, 0.60f, 90.0f);
-    add_vertex(vertices, 0.60f, 170.0f);
-    add_vertex(vertices, 0.60f, 270.0f - 35.0f);
-    add_vertex(vertices, 0.60f, 270.0f + 35.0f);
-
-    vertices.emplace_back(glm::vec2{});
-    add_vertex(vertices, 0.60f, 10.0f);
-    vertices.emplace_back(glm::vec2{});
-    add_vertex(vertices, 0.60f, 90.0f);
-    vertices.emplace_back(glm::vec2{});
-    add_vertex(vertices, 0.60f, 170.0f);
-    vertices.emplace_back(glm::vec2{});
-    add_vertex(vertices, 0.60f, 270.0f - 35.0f);
-    vertices.emplace_back(glm::vec2{});
-    add_vertex(vertices, 0.60f, 270.0f + 35.0f);
+    // Spokes emanating from center
+    for (int i{}; i < 5; i++) {
+        vertices.emplace_back(glm::vec2{});
+        add_vertex(vertices, 0.6f, angles[i]);
+    }
 
     return vertices;
 }
