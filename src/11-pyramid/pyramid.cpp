@@ -147,7 +147,7 @@ static void render(GLFWwindow* window, double current_time)
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
-    // Draw our first cube
+    // Draw pyramid
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -193,8 +193,8 @@ int main()
     const GLfloat vertices[]{
         // front face, red
         -1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 0
-         1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 1
-         0.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f, // 2
+         1.0f, -1.0f,  1.0f, 0.0f, 1.0f, 0.0f, // 1
+         0.0f,  1.0f,  0.0f, 0.0f, 0.0f, 1.0f, // 2
 
         // back face, green
         -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // 3
