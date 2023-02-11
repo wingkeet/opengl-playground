@@ -188,7 +188,7 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Define the vertices of our pyramid.
+    // Define the vertices of our pyramid
     const GLfloat vertices[]{
         // front face, rgb
         -1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 0

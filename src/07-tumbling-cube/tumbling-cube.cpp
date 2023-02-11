@@ -181,13 +181,12 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Define the vertices of our cube.
-    // Note that the winding order is counter-clockwise.
+    // Define the vertices of our cube
     const GLfloat vertices[]{
-        // front face, red
+        // front face, rgbr
         -1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 0
-         1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 1
-         1.0f,  1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 2
+         1.0f, -1.0f,  1.0f, 0.0f, 1.0f, 0.0f, // 1
+         1.0f,  1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // 2
         -1.0f,  1.0f,  1.0f, 1.0f, 0.0f, 0.0f, // 3
 
         // back face, green
