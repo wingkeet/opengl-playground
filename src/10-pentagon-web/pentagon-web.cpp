@@ -165,20 +165,17 @@ std::vector<glm::vec2> gen_pentagon_web()
     vertices.reserve(40);
 
     // Filled pentagon
-    add_vertex(vertices, 0.45f, angles[0]);
-    add_vertex(vertices, 0.55f, angles[1]);
-    add_vertex(vertices, 0.50f, angles[2]);
-    add_vertex(vertices, 0.55f, angles[3]);
-    add_vertex(vertices, 0.60f, angles[4]);
+    const float radii[]{0.45f, 0.55f, 0.50f, 0.55f, 0.60f};
+    for (int i{}; i < 5; i++) {
+        add_vertex(vertices, radii[i], angles[i]);
+    }
 
     // Wireframe pentagons
-    for (int i{2}; i <= 6; i++) {
-        const float radius = 0.1f * i;
-        add_vertex(vertices, radius, angles[0]);
-        add_vertex(vertices, radius, angles[1]);
-        add_vertex(vertices, radius, angles[2]);
-        add_vertex(vertices, radius, angles[3]);
-        add_vertex(vertices, radius, angles[4]);
+    for (int i{}; i < 5; i++) {
+        const float radius = i * 0.1f + 0.2f;
+        for (int j{}; j < 5; j++) {
+            add_vertex(vertices, radius, angles[j]);
+        }
     }
 
     // Spokes connecting the center to the outer edge
