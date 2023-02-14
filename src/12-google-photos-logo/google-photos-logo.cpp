@@ -106,20 +106,14 @@ static void process_gamepad(GLFWwindow* window)
 
 static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
-    // Build model matrix
-    const glm::mat4 identity_matrix{1.0f};
     const float tf = static_cast<float>(current_time);
-    const glm::mat4 model_matrix = glm::scale(
-        identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
+    const glm::mat4 identity_matrix{1.0f};
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
-
-    // Build model-view matrix
-    const glm::mat4 mv_matrix = view_matrix * model_matrix;
+    glm::mat4 view_matrix = glm::lookAt(camera, center, up);
 
     // Build orthographic projection matrix
     int width{}, height{};
@@ -128,33 +122,69 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const glm::mat4 proj_matrix = glm::ortho(
         -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
 
-    // Copy model-view and projection matrices to uniform variables
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    // Copy projection matrices to uniform variable
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
     // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Set the color of our circle
-    glUniform3f(2, 1.0f, 0.0f, 0.65f);
+    // Build model matrix for each model
+    const float scale{0.25f};
+    glm::mat4 model_matrix;
+    glm::mat4 mv_matrix;
 
-    // Draw our first circle
+    // Red pie
+    model_matrix = glm::translate(identity_matrix, glm::vec3{0.0f, scale, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(-90.0f), glm::vec3{0.0f, 0.0f, 1.0f});
+    model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
+    mv_matrix = view_matrix * model_matrix;
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniform3f(2, 219.0f/255, 50.0f/255, 54.0/255);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+
+    // Green pie
+    model_matrix = glm::translate(identity_matrix, glm::vec3{0.0f, -scale, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(90.0f), glm::vec3{0.0f, 0.0f, 1.0f});
+    model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
+    mv_matrix = view_matrix * model_matrix;
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniform3f(2, 60.0f/255, 186.0f/255, 84.0/255);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+
+    // Blue pie
+    model_matrix = glm::translate(identity_matrix, glm::vec3{scale, 0.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(180.0f), glm::vec3{0.0f, 0.0f, 1.0f});
+    model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
+    mv_matrix = view_matrix * model_matrix;
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniform3f(2, 72.0f/255, 133.0f/255, 237.0/255);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+
+    // Yellow pie
+    model_matrix = glm::translate(identity_matrix, glm::vec3{-scale, 0.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, 0.0f, glm::vec3{0.0f, 0.0f, 1.0f});
+    model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
+    mv_matrix = view_matrix * model_matrix;
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniform3f(2, 244.0f/255, 194.0f/255, 13.0/255);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 
 // https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
-std::vector<glm::vec2> gen_circle(int num_vertices)
+std::vector<glm::vec2> gen_pie(float start, float end, int num_vertices)
 {
-    const float angle = glm::two_pi<float>() / num_vertices;
+    // const float angle = glm::two_pi<float>() / num_vertices;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(num_vertices);
+    // vertices.reserve(num_vertices);
 
-    // We don't need a center point. Since a circle is a convex shape,
-    // we can simply use one of the points on the circle as the central
-    // vertex of our triangle fan.
-    for (int i{}; i < num_vertices; i++) {
-        vertices.emplace_back(glm::vec2{std::cos(angle * i), std::sin(angle * i)});
+    // Center vertex
+    vertices.emplace_back(glm::vec2{});
+
+    for (float angle{start}; angle <= end; angle += 1.0f) {
+        vertices.emplace_back(glm::vec2{
+            std::cos(glm::radians(angle)), std::sin(glm::radians(angle))
+        });
     }
 
     return vertices;
@@ -194,7 +224,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_circle(50);
+    const std::vector<glm::vec2> vertices = gen_pie(0.0f, 180.0f, 50);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
