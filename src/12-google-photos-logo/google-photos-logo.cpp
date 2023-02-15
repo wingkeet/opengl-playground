@@ -173,16 +173,19 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 
 std::vector<glm::vec2> gen_pie(float start, float end, int num_vertices)
 {
-    // const float angle = glm::two_pi<float>() / num_vertices;
+    start = glm::radians(start);
+    end = glm::radians(end);
+    const float angle = (end - start) / (num_vertices - 1);
     std::vector<glm::vec2> vertices;
-    // vertices.reserve(num_vertices);
+    vertices.reserve(num_vertices);
 
     // Center vertex
     vertices.emplace_back(glm::vec2{});
 
-    for (float angle{start}; angle <= end; angle += 1.0f) {
+    for (int i{}; i < num_vertices; i++) {
         vertices.emplace_back(glm::vec2{
-            std::cos(glm::radians(angle)), std::sin(glm::radians(angle))
+            std::cos(angle * i + start),
+            std::sin(angle * i + start)
         });
     }
 
@@ -222,8 +225,8 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_pie(0.0f, 180.0f, 50);
+    // Generate the vertices of our pie
+    const std::vector<glm::vec2> vertices = gen_pie(0.0f, 180.0f, 20);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
