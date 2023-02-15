@@ -113,7 +113,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    glm::mat4 view_matrix = glm::lookAt(camera, center, up);
+    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
 
     // Build orthographic projection matrix
     int width{}, height{};
