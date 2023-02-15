@@ -110,10 +110,8 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const glm::mat4 identity_matrix{1.0f};
 
     // Build view matrix
-    const glm::vec3 camera{0.0f, 0.0f, 5.0f};
-    const glm::vec3 center{0.0f, 0.0f, 0.0f};
-    const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
+    const glm::mat4 view_matrix = glm::rotate(
+        identity_matrix, std::sin(tf) / 5.0f, glm::vec3{0.0f, 0.0f, 1.0f});
 
     // Build orthographic projection matrix
     int width{}, height{};
