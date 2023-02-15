@@ -177,7 +177,7 @@ std::vector<glm::vec2> gen_pie(float start, float end, int num_vertices)
     end = glm::radians(end);
     const float angle = (end - start) / (num_vertices - 1);
     std::vector<glm::vec2> vertices;
-    vertices.reserve(num_vertices);
+    vertices.reserve(num_vertices + 1);
 
     // Center vertex
     vertices.emplace_back(glm::vec2{});
