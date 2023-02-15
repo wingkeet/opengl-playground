@@ -171,6 +171,10 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 
+// `start` specifies the starting angle in degrees.
+// `end` specifies the ending angle in degrees.
+// `num_vertices` specifies the number of vertices on the circumference of the pie.
+//     It does not include the center vertex. Must be >= 2.
 std::vector<glm::vec2> gen_pie(float start, float end, int num_vertices)
 {
     start = glm::radians(start);
