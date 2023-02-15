@@ -122,7 +122,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const glm::mat4 proj_matrix = glm::ortho(
         -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
 
-    // Copy projection matrices to uniform variable
+    // Copy projection matrix to uniform variable
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
     // Set the background color
@@ -140,7 +140,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
     mv_matrix = view_matrix * model_matrix;
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-    glUniform3f(2, 219.0f/255, 50.0f/255, 54.0/255);
+    glUniform3f(2, 219.0f/255, 50.0f/255, 54.0f/255);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 
     // Green pie
@@ -149,7 +149,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
     mv_matrix = view_matrix * model_matrix;
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-    glUniform3f(2, 60.0f/255, 186.0f/255, 84.0/255);
+    glUniform3f(2, 60.0f/255, 186.0f/255, 84.0f/255);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 
     // Blue pie
@@ -158,7 +158,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
     mv_matrix = view_matrix * model_matrix;
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-    glUniform3f(2, 72.0f/255, 133.0f/255, 237.0/255);
+    glUniform3f(2, 72.0f/255, 133.0f/255, 237.0f/255);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 
     // Yellow pie
@@ -167,11 +167,10 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
     mv_matrix = view_matrix * model_matrix;
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-    glUniform3f(2, 244.0f/255, 194.0f/255, 13.0/255);
+    glUniform3f(2, 244.0f/255, 194.0f/255, 13.0f/255);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 
-// https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
 std::vector<glm::vec2> gen_pie(float start, float end, int num_vertices)
 {
     // const float angle = glm::two_pi<float>() / num_vertices;
