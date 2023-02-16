@@ -15,7 +15,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/09-circle \
         $(BINDIR)/10-pentagon-web \
         $(BINDIR)/11-pyramid \
-        $(BINDIR)/12-google-photos-logo
+        $(BINDIR)/12-google-photos-logo \
+        $(BINDIR)/13-unfilled-circle
 
 all: $(TARGETS)
 
@@ -44,6 +45,8 @@ $(BINDIR)/11-pyramid: $(OBJDIR)/11-pyramid.o $(OBJDIR)/shader.o $(OBJDIR)/utils.
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/12-google-photos-logo: $(OBJDIR)/12-google-photos-logo.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/13-unfilled-circle: $(OBJDIR)/13-unfilled-circle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -69,6 +72,8 @@ $(OBJDIR)/10-pentagon-web.o: $(SRCDIR)/10-pentagon-web/pentagon-web.cpp
 $(OBJDIR)/11-pyramid.o: $(SRCDIR)/11-pyramid/pyramid.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/12-google-photos-logo.o: $(SRCDIR)/12-google-photos-logo/google-photos-logo.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/13-unfilled-circle.o: $(SRCDIR)/13-unfilled-circle/unfilled-circle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
