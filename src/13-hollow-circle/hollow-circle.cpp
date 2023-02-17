@@ -138,7 +138,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     // Set the color of our circle
     glUniform3f(2, 0.58f, 0.29f, 0.0f);
 
-    // Draw our first circle
+    // Draw hollow circle
     glDrawArrays(GL_TRIANGLE_STRIP, 0, num_vertices);
 }
 
@@ -153,8 +153,8 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
  */
 std::vector<glm::vec2> gen_hollow_circle(float radius, float width, int triangles)
 {
-    const float w{width / 2.0f}; // half line width
-    const float angle = glm::two_pi<float>() / triangles;
+    const float w{width / 2}; // half width
+    const float angle{glm::two_pi<float>() / triangles};
     std::vector<glm::vec2> vertices;
     vertices.reserve(triangles + 2);
 
