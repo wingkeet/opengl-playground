@@ -143,7 +143,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 }
 
 /**
- * Generates an unfilled circle that is meant to be drawn using a triangle strip.
+ * Generates a hollow circle that is meant to be drawn using a triangle strip.
  * `radius` specifies the radius of the outer edge of the circle.
  * `width` specifies the width or thickness of the filled portion of the circle.
  *     The inner edge of the circle is given by `radius` - `width`.
