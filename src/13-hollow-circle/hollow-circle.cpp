@@ -136,56 +136,37 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glClearBufferfv(GL_COLOR, 0, background);
 
     // Set the color of our circle
-    glUniform3f(2, 1.0f, 0.0f, 0.65f);
+    glUniform3f(2, 0.58f, 0.29f, 0.0f);
 
     // Draw our first circle
     glDrawArrays(GL_TRIANGLE_STRIP, 0, num_vertices);
 }
 
-std::vector<glm::vec2> gen_line()
+/**
+ * Generates an unfilled circle that is meant to be drawn using a triangle strip.
+ * `radius` specifies the radius of the outer edge of the circle.
+ * `width` specifies the width or thickness of the filled portion of the circle.
+ *     The inner edge of the circle is given by `radius` - `width`.
+ * `triangles` specifies the number of triangles in the triangle strip.
+ *     Should be an even number, or a gap would appear.
+ * Returns a vector of 2d vertices. The number of vertices returned is always `triangles` + 2.
+ */
+std::vector<glm::vec2> gen_hollow_circle(float radius, float width, int triangles)
 {
-    // std::vector<glm::vec2> vertices{
-    //     glm::vec2{0.0f, 0.0f},
-    //     glm::vec2{0.1f, 0.1f},
-    //     glm::vec2{0.2f, 0.0f},
-    // };
-
-    const float r{0.5f};
-
-    std::vector<glm::vec2> vertices{
-        glm::vec2{r * std::cos(glm::radians(0.0f)), r * std::sin(glm::radians(0.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(2.0f)), (r-0.1f) * std::sin(glm::radians(2.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(4.0f)), (r+0.1f) * std::sin(glm::radians(4.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(6.0f)), (r-0.1f) * std::sin(glm::radians(6.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(8.0f)), (r+0.1f) * std::sin(glm::radians(8.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(10.0f)), (r-0.1f) * std::sin(glm::radians(10.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(12.0f)), (r+0.1f) * std::sin(glm::radians(12.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(14.0f)), (r-0.1f) * std::sin(glm::radians(14.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(16.0f)), (r+0.1f) * std::sin(glm::radians(16.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(18.0f)), (r-0.1f) * std::sin(glm::radians(18.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(20.0f)), (r+0.1f) * std::sin(glm::radians(20.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(22.0f)), (r-0.1f) * std::sin(glm::radians(22.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(24.0f)), (r+0.1f) * std::sin(glm::radians(24.0f))},
-        glm::vec2{(r-0.1f) * std::cos(glm::radians(26.0f)), (r-0.1f) * std::sin(glm::radians(26.0f))},
-        glm::vec2{(r+0.1f) * std::cos(glm::radians(28.0f)), (r+0.1f) * std::sin(glm::radians(28.0f))},
-    };
-
-    return vertices;
-}
-
-std::vector<glm::vec2> gen_circle(float radius, int steps)
-{
-    const float t{0.01f}; // line thickness
-    const float angle = glm::two_pi<float>() / steps;
+    const float w{width / 2.0f}; // half line width
+    const float angle = glm::two_pi<float>() / triangles;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(steps);
+    vertices.reserve(triangles + 2);
 
-    vertices.emplace_back(glm::vec2{radius, 0.0f});
+    // Radius of the center of the filled portion of the circle
+    radius -= w;
 
-    for (int i{1}, z{-1}; i <= steps; i++, z*=-1) {
+    // Generate alternating vertices on the inner edge and the outer edge.
+    // `edge` toggles between -1 (inner edge) and +1 (outer edge).
+    for (int i{}, edge{-1}; i < triangles+2; i++, edge*=-1) {
         vertices.emplace_back(glm::vec2{
-            (radius - t * z) * std::cos(angle * i),
-            (radius - t * z) * std::sin(angle * i)
+            (radius + w * edge) * std::cos(angle * i),
+            (radius + w * edge) * std::sin(angle * i)
         });
     }
 
@@ -209,7 +190,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "13-unfilled-circle", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, "13-hollow-circle", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -226,7 +207,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_circle(0.5f, 90);
+    const std::vector<glm::vec2> vertices = gen_hollow_circle(1.0f, 0.5f, 90);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
