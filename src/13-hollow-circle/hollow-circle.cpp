@@ -12,6 +12,7 @@
 
 // Global variables
 static GLuint program{};
+static bool wireframe{};
 
 static GLuint compile_shaders()
 {
@@ -41,6 +42,9 @@ static void set_callbacks(GLFWwindow* window)
                 glDeleteProgram(program);
                 program = compile_shaders();
                 glUseProgram(program);
+            }
+            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+                wireframe = !wireframe;
             }
         }
     );
@@ -91,6 +95,8 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
+
+    fmt::print("Use spacebar to toggle filled and wireframe mode.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -139,6 +145,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniform3f(2, 0.58f, 0.29f, 0.0f);
 
     // Draw hollow circle
+    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, num_vertices);
 }
 
@@ -151,7 +158,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
  *     Should be an even number, or a gap would appear.
  * Returns a vector of 2d vertices. The number of vertices returned is always `triangles` + 2.
  */
-std::vector<glm::vec2> gen_hollow_circle(float radius, float width, int triangles)
+static std::vector<glm::vec2> gen_hollow_circle(float radius, float width, int triangles)
 {
     const float w{width / 2}; // half width
     const float angle{glm::two_pi<float>() / triangles};
