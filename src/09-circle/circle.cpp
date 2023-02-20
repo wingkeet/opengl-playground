@@ -12,6 +12,7 @@
 
 // Global variables
 static GLuint program{};
+static bool wireframe{};
 
 static GLuint compile_shaders()
 {
@@ -41,6 +42,9 @@ static void set_callbacks(GLFWwindow* window)
                 glDeleteProgram(program);
                 program = compile_shaders();
                 glUseProgram(program);
+            }
+            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+                wireframe = !wireframe;
             }
         }
     );
@@ -91,6 +95,8 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
+
+    fmt::print("Use spacebar to toggle filled and wireframe mode.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -139,7 +145,8 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     // Set the color of our circle
     glUniform3f(2, 1.0f, 0.0f, 0.65f);
 
-    // Draw our first circle
+    // Draw circle
+    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 
@@ -223,9 +230,6 @@ int main()
     // This shows that we do not have to bind the VAO before
     // calling the above functions.
     glBindVertexArray(vao);
-
-    // Uncomment this call to draw in wireframe polygons
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
