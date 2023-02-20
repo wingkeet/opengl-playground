@@ -115,7 +115,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
     const float tf = static_cast<float>(current_time);
-    const glm::mat4 model_matrix{identity_matrix};
+    const glm::mat4& model_matrix{identity_matrix};
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
