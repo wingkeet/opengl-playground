@@ -151,7 +151,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 }
 
 // https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
-std::vector<glm::vec2> gen_circle(int num_vertices)
+static std::vector<glm::vec2> gen_circle(int num_vertices)
 {
     const float angle = glm::two_pi<float>() / num_vertices;
     std::vector<glm::vec2> vertices;
