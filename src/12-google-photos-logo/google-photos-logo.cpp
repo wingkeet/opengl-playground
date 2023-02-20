@@ -12,6 +12,7 @@
 
 // Global variables
 static GLuint program{};
+static bool wireframe{};
 
 static GLuint compile_shaders()
 {
@@ -41,6 +42,10 @@ static void set_callbacks(GLFWwindow* window)
                 glDeleteProgram(program);
                 program = compile_shaders();
                 glUseProgram(program);
+            }
+            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+                wireframe = !wireframe;
+                glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
             }
         }
     );
@@ -91,6 +96,8 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
+
+    fmt::print("Use spacebar to toggle filled and wireframe mode.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -262,8 +269,8 @@ int main()
     // calling the above functions.
     glBindVertexArray(vao);
 
-    // Uncomment this call to draw in wireframe polygons
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // Draw filled or wireframe polygons
+    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
