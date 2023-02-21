@@ -45,6 +45,7 @@ static void set_callbacks(GLFWwindow* window)
             }
             else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
                 wireframe = !wireframe;
+                glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
             }
         }
     );
@@ -112,11 +113,11 @@ static void process_gamepad(GLFWwindow* window)
 
 static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
-    // Build model matrix
-    const glm::mat4 identity_matrix{1.0f};
     const float tf = static_cast<float>(current_time);
-    const glm::mat4 model_matrix = glm::scale(
-        identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
+    const glm::mat4 identity_matrix{1.0f};
+
+    // Build model matrix
+    const glm::mat4 model_matrix = glm::scale(identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -230,6 +231,9 @@ int main()
     // This shows that we do not have to bind the VAO before
     // calling the above functions.
     glBindVertexArray(vao);
+
+    // Draw filled or wireframe polygons
+    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
