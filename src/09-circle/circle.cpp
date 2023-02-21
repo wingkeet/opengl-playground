@@ -147,7 +147,6 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniform3f(2, 1.0f, 0.0f, 0.65f);
 
     // Draw circle
-    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 

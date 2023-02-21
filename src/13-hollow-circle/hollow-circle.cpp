@@ -147,7 +147,6 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniform3f(2, 0.58f, 0.29f, 0.0f);
 
     // Draw hollow circle
-    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, num_vertices);
 }
 
