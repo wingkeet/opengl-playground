@@ -1,10 +1,20 @@
 # opengl-playground
 
-## Install libraries (FMT, GLFW3, GLM)
+## Prerequisites
+- These programs were developed and tested on Ubuntu 22.04 LTS.
+- Superuser privilege is required to install GCC and libraries.
+
+## Getting started
 
 ```
 sudo apt-get update
+sudo apt-get install build-essential
 sudo apt-get install libfmt-dev libglfw3-dev libglm-dev
+cd ~
+git clone https://github.com/wingkeet/opengl-playground.git
+cd opengl-playground
+make
+bin/01-triangle
 ```
 
 ## Install GLFW dependencies
