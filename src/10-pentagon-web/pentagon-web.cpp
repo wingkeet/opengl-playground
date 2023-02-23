@@ -107,8 +107,8 @@ static void process_gamepad(GLFWwindow* window)
 static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
-    const glm::mat4 identity_matrix{1.0f};
     const float tf = static_cast<float>(current_time);
+    const glm::mat4 identity_matrix{1.0f};
     const glm::mat4 model_matrix = glm::rotate(
         identity_matrix, std::sin(tf) / 5.0f, glm::vec3{0.0f, 0.0f, 1.0f});
 
@@ -149,7 +149,7 @@ static void render(GLFWwindow* window, double current_time)
     glDrawArrays(GL_LINES, 30, 10);
 }
 
-void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
+static void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
 {
     const float radians = glm::radians(degrees);
     vertices.emplace_back(glm::vec2{
@@ -158,7 +158,7 @@ void add_vertex(std::vector<glm::vec2>& vertices, float radius, float degrees)
     });
 }
 
-std::vector<glm::vec2> gen_pentagon_web()
+static std::vector<glm::vec2> gen_pentagon_web()
 {
     const float angles[]{10.0f, 90.0f, 170.0f, 270.0f-35.0f, 270.0f+35.0f};
     std::vector<glm::vec2> vertices;
