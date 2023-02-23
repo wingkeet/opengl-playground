@@ -150,10 +150,11 @@ static void render(GLFWwindow* window, double current_time)
     // Draw rounded rectangle
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
-    glDrawArrays(GL_TRIANGLE_FAN, 8, 10);
-    glDrawArrays(GL_TRIANGLE_FAN, 18, 10);
-    glDrawArrays(GL_TRIANGLE_FAN, 28, 10);
-    glDrawArrays(GL_TRIANGLE_FAN, 38, 10);
+    glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+    glDrawArrays(GL_TRIANGLE_FAN, 12, 10);
+    glDrawArrays(GL_TRIANGLE_FAN, 22, 10);
+    glDrawArrays(GL_TRIANGLE_FAN, 32, 10);
+    glDrawArrays(GL_TRIANGLE_FAN, 42, 10);
 }
 
 /**
@@ -195,19 +196,26 @@ static std::vector<glm::vec2> gen_rectangle(float width, float height, float rad
     const float h{height / 2}; // half height
     const float& r{radius};
     std::vector<glm::vec2> vertices;
-    vertices.reserve(48);
+    vertices.reserve(52);
 
-    // Rectangle spanning the width
+    // Top rectangle
+    vertices.emplace_back(glm::vec2{+w - r, +h});
+    vertices.emplace_back(glm::vec2{-w + r, +h});
+    vertices.emplace_back(glm::vec2{-w + r, +h - r});
+    vertices.emplace_back(glm::vec2{+w - r, +h - r});
+
+    // Middle rectangle
     vertices.emplace_back(glm::vec2{+w, +h - r});
     vertices.emplace_back(glm::vec2{-w, +h - r});
     vertices.emplace_back(glm::vec2{-w, -h + r});
     vertices.emplace_back(glm::vec2{+w, -h + r});
 
-    // Rectangle spanning the height
-    vertices.emplace_back(glm::vec2{+w - r, +h});
-    vertices.emplace_back(glm::vec2{-w + r, +h});
+    // Bottom rectangle
+    vertices.emplace_back(glm::vec2{+w - r, -h + r});
+    vertices.emplace_back(glm::vec2{-w + r, -h + r});
     vertices.emplace_back(glm::vec2{-w + r, -h});
     vertices.emplace_back(glm::vec2{+w - r, -h});
+
 
     // Generate pies counter-clockwise, starting from the top-right corner
     const std::array pies{
