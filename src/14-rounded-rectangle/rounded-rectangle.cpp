@@ -216,7 +216,6 @@ static std::vector<glm::vec2> gen_rectangle(float width, float height, float rad
     vertices.emplace_back(glm::vec2{-w + r, -h});
     vertices.emplace_back(glm::vec2{+w - r, -h});
 
-
     // Generate pies counter-clockwise, starting from the top-right corner
     const std::array pies{
         gen_pie(+w - r, +h - r, r, 0.0f, 90.0f, 9),
