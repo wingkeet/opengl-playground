@@ -156,7 +156,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
  * `width` specifies the width or thickness of the filled portion of the circle.
  *     The inner edge of the circle is given by `radius` - `width`.
  * `triangles` specifies the number of triangles in the triangle strip.
- *     Should be an even number, or a gap would appear.
+ *     Should be an even number, or a gap will appear.
  * Returns a vector of 2d vertices. The number of vertices returned is always `triangles` + 2.
  */
 static std::vector<glm::vec2> gen_hollow_circle(float radius, float width, int triangles)
@@ -171,7 +171,7 @@ static std::vector<glm::vec2> gen_hollow_circle(float radius, float width, int t
 
     // Generate alternating vertices on the inner edge and the outer edge.
     // `edge` toggles between -1 (inner edge) and +1 (outer edge).
-    for (int i{}, edge{-1}; i < triangles+2; i++, edge*=-1) {
+    for (int i{}, edge{-1}; i < triangles+2; i++, edge *= -1) {
         vertices.emplace_back(glm::vec2{
             (radius + w * edge) * std::cos(angle * i),
             (radius + w * edge) * std::sin(angle * i)
