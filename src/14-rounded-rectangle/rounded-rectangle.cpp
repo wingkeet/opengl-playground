@@ -159,8 +159,8 @@ static void render(GLFWwindow* window, double current_time)
 
 /**
  * Generates a pie.
- * `x` specifies the x coordinate of the center of the pie.
- * `y` specifies the y coordinate of the center of the pie.
+ * `cx` specifies the x coordinate of the center of the pie.
+ * `cy` specifies the y coordinate of the center of the pie.
  * `radius` specifies the radius of the pie.
  * `start` specifies the starting angle in degrees.
  * `end` specifies the ending angle in degrees.
