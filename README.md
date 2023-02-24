@@ -55,6 +55,13 @@ $ glxinfo | grep "direct rendering"
 direct rendering: Yes
 ```
 
+## Gallery
+
+![01-triangle](images/01-triangle.png)
+![06-cube](images/06-cube.png)
+![10-pentagon-web](images/10-pentagon-web.png)
+![14-rounded-rectangle](images/14-rounded-rectangle.png)
+
 ## Useful links
 - https://github.com/fmtlib/fmt
 - https://glad.dav1d.de
