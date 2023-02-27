@@ -31,7 +31,7 @@ sudo apt-get install doxygen
 
 Instructions: https://www.glfw.org/docs/latest/compile.html
 ```
-cd ~/opengl-learn
+cd ~/opengl-playground
 git clone https://github.com/glfw/glfw.git
 cd glfw
 cmake -S . -B build
