@@ -56,10 +56,11 @@ GLuint compile_shaders(const std::initializer_list<std::string_view>& filenames)
     // Create program, attach shaders to it, and link it
     const GLuint program = glCreateProgram();
     std::vector<GLuint> shaders;
+    shaders.reserve(filenames.size());
     for (auto filename : filenames) {
         const GLuint shader = create_shader(filename);
         glAttachShader(program, shader);
-        shaders.push_back(shader);
+        shaders.emplace_back(shader);
     }
     glLinkProgram(program);
 
