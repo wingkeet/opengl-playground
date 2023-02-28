@@ -17,7 +17,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/11-pyramid \
         $(BINDIR)/12-google-photos-logo \
         $(BINDIR)/13-hollow-circle \
-        $(BINDIR)/14-rounded-rectangle
+        $(BINDIR)/14-rounded-rectangle \
+        $(BINDIR)/15-rounded-triangle
 
 all: $(TARGETS)
 
@@ -50,6 +51,8 @@ $(BINDIR)/13-hollow-circle: $(OBJDIR)/13-hollow-circle.o $(OBJDIR)/shader.o $(OB
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/14-rounded-rectangle: $(OBJDIR)/14-rounded-rectangle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/15-rounded-triangle: $(OBJDIR)/15-rounded-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -79,6 +82,8 @@ $(OBJDIR)/12-google-photos-logo.o: $(SRCDIR)/12-google-photos-logo/google-photos
 $(OBJDIR)/13-hollow-circle.o: $(SRCDIR)/13-hollow-circle/hollow-circle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/14-rounded-rectangle.o: $(SRCDIR)/14-rounded-rectangle/rounded-rectangle.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/15-rounded-triangle.o: $(SRCDIR)/15-rounded-triangle/rounded-triangle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
