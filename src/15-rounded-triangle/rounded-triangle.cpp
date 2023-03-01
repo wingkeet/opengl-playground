@@ -206,47 +206,54 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
     std::vector<glm::vec2> vertices;
     vertices.reserve(45);
 
+    const float cos90 = std::cos(glm::radians(90.0f));
+    const float sin90 = std::sin(glm::radians(90.0f));
+    const float cos210 = std::cos(glm::radians(210.0f));
+    const float sin210 = std::sin(glm::radians(210.0f));
+    const float cos330 = std::cos(glm::radians(330.0f));
+    const float sin330 = std::sin(glm::radians(330.0f));
+
     // Interior triangle
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(90.0f)),  ri * std::sin(glm::radians(90.0f))});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(210.0f)),  ri * std::sin(glm::radians(210.0f))});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(330.0f)),  ri* std::sin(glm::radians(330.0f))});
+    vertices.emplace_back(glm::vec2{ri * cos90,  ri * sin90});
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri* sin330});
 
     // Bottom rectangle
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(330.0f)),  ri * std::sin(glm::radians(330.0f))});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(210.0f)),  ri * std::sin(glm::radians(210.0f))});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(210.0f)),  ri * std::sin(glm::radians(210.0f)) - rc});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(330.0f)),  ri * std::sin(glm::radians(330.0f)) - rc});
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210 - rc});
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc});
 
     float cx{}, cy{};
     const float angle{glm::radians(120.0f) / 8};
 
     // Right rectangle
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(90.0f)), ri * std::sin(glm::radians(90.0f))});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(330.0f)), ri * std::sin(glm::radians(330.0f))});
-    cx = ri * std::cos(glm::radians(330.0f));
-    cy = ri * std::sin(glm::radians(330.0f));
+    vertices.emplace_back(glm::vec2{ri * cos90, ri * sin90});
+    vertices.emplace_back(glm::vec2{ri * cos330, ri * sin330});
+    cx = ri * cos330;
+    cy = ri * sin330;
     vertices.emplace_back(glm::vec2{
         cx + rc * std::cos(angle * 8 + glm::radians(330.0f-60.0f)),
         cy + rc * std::sin(angle * 8 + glm::radians(330.0f-60.0f))
     });
-    cx = ri * std::cos(glm::radians(90.0f));
-    cy = ri * std::sin(glm::radians(90.0f));
+    cx = ri * cos90;
+    cy = ri * sin90;
     vertices.emplace_back(glm::vec2{
         cx + rc * std::cos(glm::radians(90.0f-60.0f)),
-        cy + rc* std::sin(glm::radians(90.0f-60.0f))
+        cy + rc * std::sin(glm::radians(90.0f-60.0f))
     });
 
     // Left rectangle
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(210.0f)), ri * std::sin(glm::radians(210.0f))});
-    vertices.emplace_back(glm::vec2{ri * std::cos(glm::radians(90.0f)), ri * std::sin(glm::radians(90.0f))});
-    cx = ri * std::cos(glm::radians(90.0f));
-    cy = ri * std::sin(glm::radians(90.0f));
+    vertices.emplace_back(glm::vec2{ri * cos210, ri * sin210});
+    vertices.emplace_back(glm::vec2{ri * cos90, ri * sin90});
+    cx = ri * cos90;
+    cy = ri * sin90;
     vertices.emplace_back(glm::vec2{
         cx + rc * std::cos(angle * 8 + glm::radians(90.0f-60.0f)),
         cy + rc * std::sin(angle * 8 + glm::radians(90.0f-60.0f))
     });
-    cx = ri * std::cos(glm::radians(210.0f));
-    cy = ri * std::sin(glm::radians(210.0f));
+    cx = ri * cos210;
+    cy = ri * sin210;
     vertices.emplace_back(glm::vec2{
         cx + rc * std::cos(glm::radians(210.0f-60.0f)),
         cy + rc * std::sin(glm::radians(210.0f-60.0f))
@@ -254,9 +261,9 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
 
     // Generate pies counter-clockwise, starting from the top corner
     const std::array pies{
-        gen_pie(ri * std::cos(glm::radians(90.0f)), ri * std::sin(glm::radians(90.0f)), rc, 90.0f-60.0f, 90.0f+60.0f, 9),
-        gen_pie(ri * std::cos(glm::radians(210.0f)), ri * std::sin(glm::radians(210.0f)), rc, 210.0f-60.0f, 210.0f+60.0f, 9),
-        gen_pie(ri * std::cos(glm::radians(330.0f)), ri * std::sin(glm::radians(330.0f)), rc, 330.0f-60.0f, 330.0f+60.0f, 9),
+        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, 9),
+        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, 9),
+        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, 9),
     };
 
     for (const auto& pie : pies) {
