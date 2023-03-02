@@ -98,7 +98,7 @@ static void print_info()
         fmt::print("Gamepad: none\n");
     }
 
-    fmt::print("Use spacebar to toggle filled and wireframe mode.\n");
+    fmt::print("Press spacebar to toggle filled and wireframe mode.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
