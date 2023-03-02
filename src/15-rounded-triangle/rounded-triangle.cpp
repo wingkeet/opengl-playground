@@ -204,13 +204,13 @@ static std::vector<glm::vec2> gen_pie(
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
-    std::vector<glm::vec2> vertices;
-    vertices.reserve(4);
-
     const float cos210 = std::cos(glm::radians(210.0f));
     const float sin210 = std::sin(glm::radians(210.0f));
     const float cos330 = std::cos(glm::radians(330.0f));
     const float sin330 = std::sin(glm::radians(330.0f));
+
+    std::vector<glm::vec2> vertices;
+    vertices.reserve(4);
 
     vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});
     vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
@@ -233,15 +233,15 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
  */
 static std::vector<glm::vec2> gen_triangle(float ri, float rc)
 {
-    std::vector<glm::vec2> vertices;
-    vertices.reserve(45);
-
     const float cos90 = std::cos(glm::radians(90.0f));
     const float sin90 = std::sin(glm::radians(90.0f));
     const float cos210 = std::cos(glm::radians(210.0f));
     const float sin210 = std::sin(glm::radians(210.0f));
     const float cos330 = std::cos(glm::radians(330.0f));
     const float sin330 = std::sin(glm::radians(330.0f));
+
+    std::vector<glm::vec2> vertices;
+    vertices.reserve(45);
 
     // Interior triangle
     vertices.emplace_back(glm::vec2{ri * cos90,  ri * sin90});
