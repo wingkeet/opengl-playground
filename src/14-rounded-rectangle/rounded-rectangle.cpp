@@ -190,6 +190,12 @@ static std::vector<glm::vec2> gen_pie(
     return vertices;
 }
 
+/**
+ * Generates a rounded rectangle centered at the origin.
+ * `width` specifies the width of the rectangle in the x axis.
+ * `height` specifies the height of the rectangle in the y axis.
+ * `radius` specifies the radius of the corners.
+ */
 static std::vector<glm::vec2> gen_rectangle(float width, float height, float radius)
 {
     const float w{width / 2}; // half width
