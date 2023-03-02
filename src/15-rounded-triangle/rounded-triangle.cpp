@@ -196,6 +196,37 @@ static std::vector<glm::vec2> gen_pie(
 }
 
 /**
+ * Helper function to generate an interior rectangle.
+ * `ri` specifies the radius of the interior triangle.
+ * `rc` specifies the radius of the corners.
+ * `angle` specifies the rotation angle in degrees.
+ * Returns a vector of four 2d vertices.
+ */
+static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
+{
+    std::vector<glm::vec2> vertices;
+    vertices.reserve(4);
+
+    const float cos210 = std::cos(glm::radians(210.0f));
+    const float sin210 = std::sin(glm::radians(210.0f));
+    const float cos330 = std::cos(glm::radians(330.0f));
+    const float sin330 = std::sin(glm::radians(330.0f));
+
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210 - rc});
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc});
+
+    const glm::mat4 rotate_matrix = glm::rotate(
+        glm::mat4{1.0f}, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
+    for (auto& v : vertices) {
+        v = rotate_matrix * glm::vec4{v, 0.0f, 1.0f};
+    }
+
+    return vertices;
+}
+
+/**
  * Generates a rounded triangle centered at the origin.
  * `ri` specifies the radius of the interior triangle.
  * `rc` specifies the radius of the corners.
@@ -217,57 +248,18 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
     vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
     vertices.emplace_back(glm::vec2{ri * cos330,  ri* sin330});
 
-    // Bottom rectangle
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210 - rc});
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc});
-
-    float cx{}, cy{};
-    const int triangles{8};
-    const float angle{glm::radians(120.0f) / triangles};
-
-    // Right rectangle
-    vertices.emplace_back(glm::vec2{ri * cos90, ri * sin90});
-    vertices.emplace_back(glm::vec2{ri * cos330, ri * sin330});
-    cx = ri * cos330;
-    cy = ri * sin330;
-    vertices.emplace_back(glm::vec2{
-        cx + rc * std::cos(angle * triangles + glm::radians(330.0f-60.0f)),
-        cy + rc * std::sin(angle * triangles + glm::radians(330.0f-60.0f))
-    });
-    cx = ri * cos90;
-    cy = ri * sin90;
-    vertices.emplace_back(glm::vec2{
-        cx + rc * std::cos(glm::radians(90.0f-60.0f)),
-        cy + rc * std::sin(glm::radians(90.0f-60.0f))
-    });
-
-    // Left rectangle
-    vertices.emplace_back(glm::vec2{ri * cos210, ri * sin210});
-    vertices.emplace_back(glm::vec2{ri * cos90, ri * sin90});
-    cx = ri * cos90;
-    cy = ri * sin90;
-    vertices.emplace_back(glm::vec2{
-        cx + rc * std::cos(angle * triangles + glm::radians(90.0f-60.0f)),
-        cy + rc * std::sin(angle * triangles + glm::radians(90.0f-60.0f))
-    });
-    cx = ri * cos210;
-    cy = ri * sin210;
-    vertices.emplace_back(glm::vec2{
-        cx + rc * std::cos(glm::radians(210.0f-60.0f)),
-        cy + rc * std::sin(glm::radians(210.0f-60.0f))
-    });
-
-    // Generate pies counter-clockwise, starting from the top corner
-    const std::array pies{
-        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, triangles),
-        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, triangles),
-        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, triangles),
+    // Interior rectangles and pies (rounded corners)
+    const std::array vv{
+        gen_rect(ri, rc, 0.0f),   // bottom rectangle
+        gen_rect(ri, rc, 120.0f), // right rectangle
+        gen_rect(ri, rc, 240.0f), // left rectangle
+        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, 8),     // top corner
+        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, 8), // bottom left corner
+        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, 8), // bottom right corner
     };
 
-    for (const auto& pie : pies) {
-        vertices.insert(vertices.end(), pie.begin(), pie.end());
+    for (const auto& v : vv) {
+        vertices.insert(vertices.end(), v.begin(), v.end());
     }
 
     return vertices;
