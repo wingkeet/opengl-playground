@@ -170,22 +170,22 @@ static void render(GLFWwindow* window, double current_time)
  * `radius` specifies the radius of the pie.
  * `start` specifies the starting angle in degrees.
  * `end` specifies the ending angle in degrees.
- * `num_triangles` specifies the number of triangles that make up the pie. Must be >= 1.
- * Returns a vector of 2d vertices. The number of vertices returned is `num_triangles` + 2.
+ * `triangles` specifies the number of triangles that make up the pie. Must be >= 1.
+ * Returns a vector of 2d vertices. The number of vertices returned is `triangles` + 2.
  */
 static std::vector<glm::vec2> gen_pie(
-    float cx, float cy, float radius, float start, float end, int num_triangles)
+    float cx, float cy, float radius, float start, float end, int triangles)
 {
     start = glm::radians(start);
     end = glm::radians(end);
-    const float angle = (end - start) / num_triangles;
+    const float angle = (end - start) / triangles;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(num_triangles + 2);
+    vertices.reserve(triangles + 2);
 
     // Center vertex
     vertices.emplace_back(glm::vec2{cx, cy});
 
-    for (int i{}; i < num_triangles + 1; i++) {
+    for (int i{}; i < triangles + 1; i++) {
         vertices.emplace_back(glm::vec2{
             cx + radius * std::cos(angle * i + start),
             cy + radius * std::sin(angle * i + start)
@@ -289,6 +289,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     GLFWwindow* window = glfwCreateWindow(600, 600, "15-rounded-triangle", nullptr, nullptr);
     if (!window) {
