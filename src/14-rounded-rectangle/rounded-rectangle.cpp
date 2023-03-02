@@ -117,9 +117,8 @@ static void render(GLFWwindow* window, double current_time)
     // Build model matrix
     const float tf = static_cast<float>(current_time);
     const glm::mat4 identity_matrix{1.0f};
-    const glm::mat4 model_matrix = identity_matrix;
-    // const glm::mat4 model_matrix = glm::rotate(
-    //     identity_matrix, std::sin(tf * 2) / 3, glm::vec3{0.0, 0.0f, 1.0f});
+    const glm::mat4 model_matrix = glm::rotate(
+        identity_matrix, std::sin(tf * 2) / 3, glm::vec3{0.0, 0.0f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
