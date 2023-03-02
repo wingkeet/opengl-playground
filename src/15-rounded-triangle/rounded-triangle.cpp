@@ -233,8 +233,8 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
     cx = ri * cos330;
     cy = ri * sin330;
     vertices.emplace_back(glm::vec2{
-        cx + rc * std::cos(angle * 8 + glm::radians(330.0f-60.0f)),
-        cy + rc * std::sin(angle * 8 + glm::radians(330.0f-60.0f))
+        cx + rc * std::cos(angle * triangles + glm::radians(330.0f-60.0f)),
+        cy + rc * std::sin(angle * triangles + glm::radians(330.0f-60.0f))
     });
     cx = ri * cos90;
     cy = ri * sin90;
@@ -249,8 +249,8 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
     cx = ri * cos90;
     cy = ri * sin90;
     vertices.emplace_back(glm::vec2{
-        cx + rc * std::cos(angle * 8 + glm::radians(90.0f-60.0f)),
-        cy + rc * std::sin(angle * 8 + glm::radians(90.0f-60.0f))
+        cx + rc * std::cos(angle * triangles + glm::radians(90.0f-60.0f)),
+        cy + rc * std::sin(angle * triangles + glm::radians(90.0f-60.0f))
     });
     cx = ri * cos210;
     cy = ri * sin210;
