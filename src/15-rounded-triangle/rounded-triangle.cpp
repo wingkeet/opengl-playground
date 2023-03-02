@@ -170,23 +170,22 @@ static void render(GLFWwindow* window, double current_time)
  * `radius` specifies the radius of the pie.
  * `start` specifies the starting angle in degrees.
  * `end` specifies the ending angle in degrees.
- * `num_vertices` specifies the number of vertices on the circumference of the pie.
- *     Does not include the center vertex. Must be >= 2.
- * Returns a vector of 2d vertices. The number of vertices returned is always `num_vertices` + 1.
+ * `num_triangles` specifies the number of triangles that make up the pie. Must be >= 1.
+ * Returns a vector of 2d vertices. The number of vertices returned is `num_triangles` + 2.
  */
 static std::vector<glm::vec2> gen_pie(
-    float cx, float cy, float radius, float start, float end, int num_vertices)
+    float cx, float cy, float radius, float start, float end, int num_triangles)
 {
     start = glm::radians(start);
     end = glm::radians(end);
-    const float angle = (end - start) / (num_vertices - 1);
+    const float angle = (end - start) / num_triangles;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(num_vertices + 1);
+    vertices.reserve(num_triangles + 2);
 
     // Center vertex
     vertices.emplace_back(glm::vec2{cx, cy});
 
-    for (int i{}; i < num_vertices; i++) {
+    for (int i{}; i < num_triangles + 1; i++) {
         vertices.emplace_back(glm::vec2{
             cx + radius * std::cos(angle * i + start),
             cy + radius * std::sin(angle * i + start)
@@ -195,6 +194,7 @@ static std::vector<glm::vec2> gen_pie(
 
     return vertices;
 }
+
 
 /**
  * Generates a rounded triangle centered at the origin.
@@ -261,9 +261,9 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
 
     // Generate pies counter-clockwise, starting from the top corner
     const std::array pies{
-        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, 9),
-        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, 9),
-        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, 9),
+        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, 8),
+        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, 8),
+        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, 8),
     };
 
     for (const auto& pie : pies) {
