@@ -224,7 +224,8 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
     vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc});
 
     float cx{}, cy{};
-    const float angle{glm::radians(120.0f) / 8};
+    const int num_triangles{8};
+    const float angle{glm::radians(120.0f) / num_triangles};
 
     // Right rectangle
     vertices.emplace_back(glm::vec2{ri * cos90, ri * sin90});
@@ -260,9 +261,9 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
 
     // Generate pies counter-clockwise, starting from the top corner
     const std::array pies{
-        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, 8),
-        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, 8),
-        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, 8),
+        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, num_triangles),
+        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, num_triangles),
+        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, num_triangles),
     };
 
     for (const auto& pie : pies) {
