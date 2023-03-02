@@ -195,7 +195,6 @@ static std::vector<glm::vec2> gen_pie(
     return vertices;
 }
 
-
 /**
  * Generates a rounded triangle centered at the origin.
  * `ri` specifies the radius of the internal triangle.

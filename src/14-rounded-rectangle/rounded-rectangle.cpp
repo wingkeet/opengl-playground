@@ -117,8 +117,9 @@ static void render(GLFWwindow* window, double current_time)
     // Build model matrix
     const float tf = static_cast<float>(current_time);
     const glm::mat4 identity_matrix{1.0f};
-    const glm::mat4 model_matrix = glm::rotate(
-        identity_matrix, std::sin(tf * 2) / 3, glm::vec3{0.0, 0.0f, 1.0f});
+    const glm::mat4 model_matrix = identity_matrix;
+    // const glm::mat4 model_matrix = glm::rotate(
+    //     identity_matrix, std::sin(tf * 2) / 3, glm::vec3{0.0, 0.0f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -164,23 +165,22 @@ static void render(GLFWwindow* window, double current_time)
  * `radius` specifies the radius of the pie.
  * `start` specifies the starting angle in degrees.
  * `end` specifies the ending angle in degrees.
- * `num_vertices` specifies the number of vertices on the circumference of the pie.
- *     Does not include the center vertex. Must be >= 2.
- * Returns a vector of 2d vertices. The number of vertices returned is always `num_vertices` + 1.
+ * `num_triangles` specifies the number of triangles that make up the pie. Must be >= 1.
+ * Returns a vector of 2d vertices. The number of vertices returned is `num_triangles` + 2.
  */
 static std::vector<glm::vec2> gen_pie(
-    float cx, float cy, float radius, float start, float end, int num_vertices)
+    float cx, float cy, float radius, float start, float end, int num_triangles)
 {
     start = glm::radians(start);
     end = glm::radians(end);
-    const float angle = (end - start) / (num_vertices - 1);
+    const float angle = (end - start) / num_triangles;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(num_vertices + 1);
+    vertices.reserve(num_triangles + 2);
 
     // Center vertex
     vertices.emplace_back(glm::vec2{cx, cy});
 
-    for (int i{}; i < num_vertices; i++) {
+    for (int i{}; i < num_triangles + 1; i++) {
         vertices.emplace_back(glm::vec2{
             cx + radius * std::cos(angle * i + start),
             cy + radius * std::sin(angle * i + start)
@@ -224,10 +224,10 @@ static std::vector<glm::vec2> gen_rectangle(float width, float height, float rad
 
     // Generate pies counter-clockwise, starting from the top-right corner
     const std::array pies{
-        gen_pie(+w - r, +h - r, r, 0.0f, 90.0f, 9),
-        gen_pie(-w + r, +h - r, r, 90.0f, 180.0f, 9),
-        gen_pie(-w + r, -h + r, r, 180.0f, 270.0f, 9),
-        gen_pie(+w - r, -h + r, r, 270.0f, 360.0f, 9)
+        gen_pie(+w - r, +h - r, r, 0.0f, 90.0f, 8),
+        gen_pie(-w + r, +h - r, r, 90.0f, 180.0f, 8),
+        gen_pie(-w + r, -h + r, r, 180.0f, 270.0f, 8),
+        gen_pie(+w - r, -h + r, r, 270.0f, 360.0f, 8)
     };
 
     for (const auto& pie : pies) {
