@@ -149,10 +149,10 @@ static void render(GLFWwindow* window, double current_time)
     glUniform3f(2, 0.83f, 0.68f, 0.21f);
 
     // Draw rounded triangle
-    const GLint first[]{0, 3, 7, 11, 15, 25, 35};
-    const GLsizei count[]{3, 4, 4, 4, 10, 10, 10};
-    const GLsizei drawcount{7};
-    glMultiDrawArrays(GL_TRIANGLE_FAN, first, count, drawcount);
+    const std::array first{0, 3, 7, 11, 15, 25, 35};
+    const std::array count{3, 4, 4, 4, 10, 10, 10};
+    static_assert(first.size() == count.size());
+    glMultiDrawArrays(GL_TRIANGLE_FAN, first.data(), count.data(), first.size());
 
     // Draw black point
     glUniform3f(2, 0.0f, 0.0f, 0.0f);
