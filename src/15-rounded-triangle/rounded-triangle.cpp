@@ -152,7 +152,7 @@ static void render(GLFWwindow* window, double current_time)
     const std::array first{0, 3, 7, 11, 15, 25, 35};
     const std::array count{3, 4, 4, 4, 10, 10, 10};
     static_assert(first.size() == count.size()); // check at compile time
-    glMultiDrawArrays(GL_TRIANGLE_FAN, first.data(), count.data(), first.size());
+    glMultiDrawArrays(GL_TRIANGLE_FAN, first.data(), count.data(), count.size());
 
     // Draw black point
     glUniform3f(2, 0.0f, 0.0f, 0.0f);
@@ -201,6 +201,7 @@ static std::vector<glm::vec2> gen_pie(
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
+    // Precalculate sines and cosines
     const float cos210 = std::cos(glm::radians(210.0f));
     const float sin210 = std::sin(glm::radians(210.0f));
     const float cos330 = std::cos(glm::radians(330.0f));
@@ -209,11 +210,13 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
     std::vector<glm::vec2> vertices;
     vertices.reserve(4);
 
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210 - rc});
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc});
+    // Start with bottom rectangle
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});      // top right vertex
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});      // top left vertex
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210 - rc}); // bottom left vertex
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc}); // bottom right vertex
 
+    // Rotate bottom rectangle by the `angle`
     const glm::mat4 rotate_matrix = glm::rotate(
         glm::mat4{1.0f}, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
     for (auto& v : vertices) {
@@ -230,6 +233,7 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
  */
 static std::vector<glm::vec2> gen_triangle(float ri, float rc)
 {
+    // Precalculate sines and cosines
     const float cos90 = std::cos(glm::radians(90.0f));
     const float sin90 = std::sin(glm::radians(90.0f));
     const float cos210 = std::cos(glm::radians(210.0f));
@@ -241,9 +245,9 @@ static std::vector<glm::vec2> gen_triangle(float ri, float rc)
     vertices.reserve(45);
 
     // Interior triangle
-    vertices.emplace_back(glm::vec2{ri * cos90,  ri * sin90});
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri* sin330});
+    vertices.emplace_back(glm::vec2{ri * cos90,  ri * sin90});   // top vertex
+    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210}); // bottom left vertex
+    vertices.emplace_back(glm::vec2{ri * cos330,  ri* sin330});  // bottom right vertex
 
     // Interior rectangles and pies (rounded corners)
     const std::array vv{
