@@ -71,3 +71,4 @@ direct rendering: Yes
 - https://registry.khronos.org/OpenGL-Refpages/gl4/
 - https://learnopengl.com
 - https://github.com/capnramses/antons_opengl_tutorials_book
+- https://tutors.com/lesson/how-to-find-orthocenter-of-a-triangle
