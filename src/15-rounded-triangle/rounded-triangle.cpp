@@ -149,13 +149,10 @@ static void render(GLFWwindow* window, double current_time)
     glUniform3f(2, 0.83f, 0.68f, 0.21f);
 
     // Draw rounded triangle
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawArrays(GL_TRIANGLE_FAN, 3, 4);
-    glDrawArrays(GL_TRIANGLE_FAN, 7, 4);
-    glDrawArrays(GL_TRIANGLE_FAN, 11, 4);
-    glDrawArrays(GL_TRIANGLE_FAN, 15, 10);
-    glDrawArrays(GL_TRIANGLE_FAN, 25, 10);
-    glDrawArrays(GL_TRIANGLE_FAN, 35, 10);
+    const GLint first[]{0, 3, 7, 11, 15, 25, 35};
+    const GLsizei count[]{3, 4, 4, 4, 10, 10, 10};
+    const GLsizei drawcount{7};
+    glMultiDrawArrays(GL_TRIANGLE_FAN, first, count, drawcount);
 
     // Draw black point
     glUniform3f(2, 0.0f, 0.0f, 0.0f);
