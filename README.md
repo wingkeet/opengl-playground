@@ -62,7 +62,7 @@ direct rendering: Yes
 ![10-pentagon-web](images/10-pentagon-web.png)
 ![14-rounded-rectangle](images/14-rounded-rectangle.png)
 
-## Useful links
+## Resources
 - https://github.com/fmtlib/fmt
 - https://glad.dav1d.de
 - https://www.glfw.org
