@@ -150,7 +150,7 @@ static void render(GLFWwindow* window, double currentTime)
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Build model-view matrix
+    // Build model matrix
     const glm::mat4 identity_matrix{1.0f};
     const glm::mat4 scale_matrix = glm::scale(
         identity_matrix, glm::vec3(scale, scale, 0.0f));
@@ -159,8 +159,12 @@ static void render(GLFWwindow* window, double currentTime)
     const glm::mat4 translate_matrix = glm::translate(
         identity_matrix, glm::vec3(translate_x, translate_y, 0.0f));
     const glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
+
+    // Build view matrix
     const glm::mat4 view_matrix = glm::translate(
         identity_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
+
+    // Build model-view matrix
     const glm::mat4 mv_matrix = view_matrix * model_matrix;
 
     // Build projection matrix
