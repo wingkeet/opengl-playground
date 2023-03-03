@@ -151,7 +151,7 @@ static void render(GLFWwindow* window, double current_time)
     // Draw rounded triangle
     const std::array first{0, 3, 7, 11, 15, 25, 35};
     const std::array count{3, 4, 4, 4, 10, 10, 10};
-    static_assert(first.size() == count.size());
+    static_assert(first.size() == count.size()); // check at compile time
     glMultiDrawArrays(GL_TRIANGLE_FAN, first.data(), count.data(), first.size());
 
     // Draw black point
