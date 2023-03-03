@@ -150,7 +150,8 @@ static void render(GLFWwindow* window, double currentTime)
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Build model matrix
+    // Build model matrix.
+    // The recommended order of transformations is scale, rotate, translate (SRT).
     const glm::mat4 identity_matrix{1.0f};
     const glm::mat4 scale_matrix = glm::scale(
         identity_matrix, glm::vec3(scale, scale, 0.0f));
