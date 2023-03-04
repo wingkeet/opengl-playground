@@ -175,6 +175,7 @@ static std::vector<glm::vec2> gen_pie(
     start = glm::radians(start);
     end = glm::radians(end);
     const float angle = (end - start) / triangles;
+ 
     std::vector<glm::vec2> vertices;
     vertices.reserve(triangles + 2);
 
@@ -200,25 +201,22 @@ static std::vector<glm::vec2> gen_pie(
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
-    std::vector<glm::vec2> vertices;
-    vertices.reserve(4);
-
     // Calculate dimensions of rectangle centered at the origin
     const float w = std::sqrt(3.0f) * ri / 2; // half width
     const float h = rc / 2;                   // half height
 
     // Build transformation matrix
-    glm::mat4 matrix = glm::rotate(
-        glm::mat4{1.0f}, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
-    matrix = glm::translate(matrix, glm::vec3{0.0f, -ri * 2 / 3 + rc, 0.0f});
+    angle = glm::radians(angle);
+    glm::mat4 tm = glm::rotate(glm::mat4{1.0f}, angle, glm::vec3{0.0, 0.0f, 1.0f});
+    tm = glm::translate(tm, glm::vec3{0.0f, -ri * 2 / 3 + rc, 0.0f});
 
-    // Generate vertices of rectangle
-    vertices.emplace_back(matrix * glm::vec4{-w, +h, 0.0f, 1.0f}); // top left vertex
-    vertices.emplace_back(matrix * glm::vec4{-w, -h, 0.0f, 1.0f}); // bottom left vertex
-    vertices.emplace_back(matrix * glm::vec4{+w, -h, 0.0f, 1.0f}); // bottom right vertex
-    vertices.emplace_back(matrix * glm::vec4{+w, +h, 0.0f, 1.0f}); // top right vertex
-
-    return vertices;
+    // Return vertices of rectangle
+    return {
+        tm * glm::vec4{-w, +h, 0.0f, 1.0f}, // top left vertex
+        tm * glm::vec4{-w, -h, 0.0f, 1.0f}, // bottom left vertex
+        tm * glm::vec4{+w, -h, 0.0f, 1.0f}, // bottom right verte
+        tm * glm::vec4{+w, +h, 0.0f, 1.0f}, // top right vertex
+    };
 }
 
 /**
