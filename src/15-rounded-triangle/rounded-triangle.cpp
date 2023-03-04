@@ -200,27 +200,23 @@ static std::vector<glm::vec2> gen_pie(
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
-    // Precalculate sines and cosines
-    const float cos210 = std::cos(glm::radians(210.0f));
-    const float sin210 = std::sin(glm::radians(210.0f));
-    const float cos330 = std::cos(glm::radians(330.0f));
-    const float sin330 = std::sin(glm::radians(330.0f));
-
     std::vector<glm::vec2> vertices;
     vertices.reserve(4);
 
-    // Start with bottom rectangle
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330});      // top right vertex
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210});      // top left vertex
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210 - rc}); // bottom left vertex
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri * sin330 - rc}); // bottom right vertex
+    // Calculate dimensions of rectangle centered at the origin
+    const float w = std::sqrt(3.0f) * ri / 2; // half width
+    const float h = rc / 2;                   // half height
 
-    // Rotate bottom rectangle by the `angle`
-    const glm::mat4 rotate_matrix = glm::rotate(
+    // Build transformation matrix
+    glm::mat4 matrix = glm::rotate(
         glm::mat4{1.0f}, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
-    for (auto& v : vertices) {
-        v = rotate_matrix * glm::vec4{v, 0.0f, 1.0f};
-    }
+    matrix = glm::translate(matrix, glm::vec3{0.0f, -ri * 2 / 3 + rc, 0.0f});
+
+    // Generate vertices of rectangle
+    vertices.emplace_back(matrix * glm::vec4{-w, +h, 0.0f, 1.0f}); // top left vertex
+    vertices.emplace_back(matrix * glm::vec4{-w, -h, 0.0f, 1.0f}); // bottom left vertex
+    vertices.emplace_back(matrix * glm::vec4{+w, -h, 0.0f, 1.0f}); // bottom right vertex
+    vertices.emplace_back(matrix * glm::vec4{+w, +h, 0.0f, 1.0f}); // top right vertex
 
     return vertices;
 }
