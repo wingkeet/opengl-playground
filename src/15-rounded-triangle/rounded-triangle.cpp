@@ -214,7 +214,7 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
     return {
         tm * glm::vec4{-w, +h, 0.0f, 1.0f}, // top left vertex
         tm * glm::vec4{-w, -h, 0.0f, 1.0f}, // bottom left vertex
-        tm * glm::vec4{+w, -h, 0.0f, 1.0f}, // bottom right verte
+        tm * glm::vec4{+w, -h, 0.0f, 1.0f}, // bottom right vertex
         tm * glm::vec4{+w, +h, 0.0f, 1.0f}, // top right vertex
     };
 }
