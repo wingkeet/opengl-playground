@@ -207,7 +207,7 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
     const float dy = ri * std::sin(glm::radians(330.0f));
 
     // Build transformation matrix
-    glm::mat4 tm = glm::mat4{1.0f};
+    glm::mat4 tm{1.0f};
     tm = glm::rotate(tm, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
     tm = glm::translate(tm, glm::vec3{0.0f, dy-rc/2, 0.0f});
 
