@@ -116,10 +116,8 @@ static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     const float tf = static_cast<float>(current_time);
-    const glm::mat4 identity_matrix{1.0f};
-    const glm::mat4& model_matrix{identity_matrix};
-    // const glm::mat4 model_matrix = glm::rotate(
-    //     identity_matrix, std::sin(tf) * 1.6f, glm::vec3{0.0, 0.0f, 1.0f});
+    glm::mat4 model_matrix{1.0f};
+    // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 1.6f, glm::vec3{0.0, 0.0f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -201,14 +199,17 @@ static std::vector<glm::vec2> gen_pie(
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
-    // Calculate dimensions of rectangle centered at the origin
+    // Dimensions of rectangle centered at the origin
     const float w = std::sqrt(3.0f) * ri / 2; // half width
     const float h = rc / 2;                   // half height
 
+    // Distance from the origin to the bottom side of the internal triangle
+    const float dy = ri * std::sin(glm::radians(330.0f));
+
     // Build transformation matrix
-    angle = glm::radians(angle);
-    glm::mat4 tm = glm::rotate(glm::mat4{1.0f}, angle, glm::vec3{0.0, 0.0f, 1.0f});
-    tm = glm::translate(tm, glm::vec3{0.0f, -ri * 2 / 3 + rc, 0.0f});
+    glm::mat4 tm = glm::mat4{1.0f};
+    tm = glm::rotate(tm, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
+    tm = glm::translate(tm, glm::vec3{0.0f, dy-rc/2, 0.0f});
 
     // Return vertices of rectangle
     return {
