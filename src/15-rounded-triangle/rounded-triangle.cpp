@@ -194,7 +194,7 @@ static std::vector<glm::vec2> gen_pie(
  * Helper function to generate an interior rectangle.
  * `ri` specifies the radius of the interior triangle.
  * `rc` specifies the radius of the corners.
- * `angle` specifies the rotation angle in degrees.
+ * `angle` specifies the rotation angle in degrees. For the bottom rectangle, the angle is zero.
  * Returns a vector of four 2d vertices.
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
@@ -203,13 +203,15 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
     const float w = std::sqrt(3.0f) * ri / 2; // half width
     const float h = rc / 2;                   // half height
 
-    // Distance from the origin to the bottom side of the internal triangle
-    const float dy = ri * std::sin(glm::radians(330.0f));
+    // Find the apothem (the distance from the midpoint of a side to the triangle's center)
+    // https://en.wikipedia.org/wiki/Equilateral_triangle
+    // https://en.wikipedia.org/wiki/Apothem
+    const float apo = ri * std::cos(glm::pi<float>() / 3);
 
     // Build transformation matrix
     glm::mat4 tm{1.0f};
     tm = glm::rotate(tm, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
-    tm = glm::translate(tm, glm::vec3{0.0f, dy-rc/2, 0.0f});
+    tm = glm::translate(tm, glm::vec3{0.0f, -(apo + rc / 2), 0.0f});
 
     // Return vertices of rectangle
     return {
