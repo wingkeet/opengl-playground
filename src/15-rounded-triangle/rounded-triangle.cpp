@@ -207,8 +207,8 @@ static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
     const float apothem = height / 3;
 
     // Calculate dimensions of rectangle
-    const float w = side / 2;  // half width
-    const float h = rc / 2;    // half height
+    const float w = side / 2; // half width
+    const float h = rc / 2;   // half height
 
     // Build transformation matrix
     glm::mat4 tm{1.0f};
