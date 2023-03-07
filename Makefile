@@ -18,7 +18,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/12-google-photos-logo \
         $(BINDIR)/13-hollow-circle \
         $(BINDIR)/14-rounded-rectangle \
-        $(BINDIR)/15-rounded-triangle
+        $(BINDIR)/15-rounded-triangle \
+        $(BINDIR)/16-high-voltage
 
 all: $(TARGETS)
 
@@ -53,6 +54,8 @@ $(BINDIR)/14-rounded-rectangle: $(OBJDIR)/14-rounded-rectangle.o $(OBJDIR)/shade
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/15-rounded-triangle: $(OBJDIR)/15-rounded-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/16-high-voltage: $(OBJDIR)/16-high-voltage.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -84,6 +87,8 @@ $(OBJDIR)/13-hollow-circle.o: $(SRCDIR)/13-hollow-circle/hollow-circle.cpp
 $(OBJDIR)/14-rounded-rectangle.o: $(SRCDIR)/14-rounded-rectangle/rounded-rectangle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/15-rounded-triangle.o: $(SRCDIR)/15-rounded-triangle/rounded-triangle.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/16-high-voltage.o: $(SRCDIR)/16-high-voltage/high-voltage.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
