@@ -144,7 +144,7 @@ static void render(GLFWwindow* window, double current_time)
     glClearBufferfv(GL_COLOR, 0, background);
 
     // Set the color of our triangle to gold
-    glUniform3f(2, 0.83f, 0.68f, 0.21f);
+    glUniform3f(2, 0.82f, 0.65f, 0.17f);
 
     // Draw rounded triangle
     const GLint first[]{0, 3, 7, 11, 15, 25, 35};
