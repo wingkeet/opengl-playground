@@ -173,7 +173,7 @@ static std::vector<glm::vec2> gen_pie(
     start = glm::radians(start);
     end = glm::radians(end);
     const float angle = (end - start) / triangles;
- 
+
     std::vector<glm::vec2> vertices;
     vertices.reserve(triangles + 2);
 
@@ -194,24 +194,26 @@ static std::vector<glm::vec2> gen_pie(
  * Helper function to generate an interior rectangle.
  * `ri` specifies the radius of the interior triangle.
  * `rc` specifies the radius of the corners.
- * `angle` specifies the rotation angle in degrees. For the bottom rectangle, the angle is zero.
+ * `angle` specifies the rotation angle in degrees.
+ *     For the bottom rectangle, the angle is zero.
  * Returns a vector of four 2d vertices.
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
-    // Dimensions of rectangle centered at the origin
-    const float w = std::sqrt(3.0f) * ri / 2; // half width
-    const float h = rc / 2;                   // half height
-
-    // Find the apothem (the distance from the midpoint of a side to the triangle's center)
+    // For an equilateral triangle, find some properties.
     // https://en.wikipedia.org/wiki/Equilateral_triangle
-    // https://en.wikipedia.org/wiki/Apothem
-    const float apo = ri * std::cos(glm::pi<float>() / 3);
+    const float side = std::sqrt(3.0f) * ri;
+    const float height = std::sqrt(3.0f) / 2 * side;
+    const float apothem = height / 3;
+
+    // Calculate dimensions of rectangle
+    const float w = side / 2;  // half width
+    const float h = rc / 2;    // half height
 
     // Build transformation matrix
     glm::mat4 tm{1.0f};
     tm = glm::rotate(tm, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
-    tm = glm::translate(tm, glm::vec3{0.0f, -(apo + rc / 2), 0.0f});
+    tm = glm::translate(tm, glm::vec3{0.0f, -(apothem + rc / 2), 0.0f});
 
     // Return vertices of rectangle
     return {
