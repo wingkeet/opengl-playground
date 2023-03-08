@@ -19,7 +19,7 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/13-hollow-circle \
         $(BINDIR)/14-rounded-rectangle \
         $(BINDIR)/15-rounded-triangle \
-        $(BINDIR)/16-rounded-polygon
+        $(BINDIR)/16-polygons
 
 all: $(TARGETS)
 
@@ -54,7 +54,7 @@ $(BINDIR)/14-rounded-rectangle: $(OBJDIR)/14-rounded-rectangle.o $(OBJDIR)/shade
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/15-rounded-triangle: $(OBJDIR)/15-rounded-triangle.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
-$(BINDIR)/16-rounded-polygon: $(OBJDIR)/16-rounded-polygon.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+$(BINDIR)/16-polygons: $(OBJDIR)/16-polygons.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
@@ -88,7 +88,7 @@ $(OBJDIR)/14-rounded-rectangle.o: $(SRCDIR)/14-rounded-rectangle/rounded-rectang
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/15-rounded-triangle.o: $(SRCDIR)/15-rounded-triangle/rounded-triangle.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
-$(OBJDIR)/16-rounded-polygon.o: $(SRCDIR)/16-rounded-polygon/rounded-polygon.cpp
+$(OBJDIR)/16-polygons.o: $(SRCDIR)/16-polygons/polygons.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files

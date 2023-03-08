@@ -1,5 +1,4 @@
 #include "glad.h"
-#include <array>
 #include <cmath>
 #include <filesystem>
 #include <fmt/core.h>
@@ -112,12 +111,13 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double current_time)
+static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
-    // Build model matrix
     const float tf = static_cast<float>(current_time);
-    glm::mat4 model_matrix{1.0f};
-    // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 1.6f, glm::vec3{0.0, 0.0f, 1.0f});
+    const glm::mat4 identity_matrix{1.0f};
+
+    // Build model matrix
+    const glm::mat4 model_matrix = glm::scale(identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -143,122 +143,25 @@ static void render(GLFWwindow* window, double current_time)
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Set the color of our triangle to cornflower blue
+    // Set the color of our circle to cornflower blue
     glUniform3f(2, 0.39f, 0.58f, 0.93f);
 
-    // Draw rounded triangle
-    const GLint first[]{0, 3, 7, 11, 15, 25, 35};
-    const GLsizei count[]{3, 4, 4, 4, 10, 10, 10};
-    glMultiDrawArrays(GL_TRIANGLE_FAN, first, count, 7);
-
-    // Draw black point
-    glUniform3f(2, 0.0f, 0.0f, 0.0f);
-    glPointSize(8);
-    glDrawArrays(GL_POINTS, 0, 1);
+    // Draw circle
+    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 
-/**
- * Generates a pie.
- * `cx` specifies the x coordinate of the center of the pie.
- * `cy` specifies the y coordinate of the center of the pie.
- * `radius` specifies the radius of the pie.
- * `start` specifies the starting angle in degrees.
- * `end` specifies the ending angle in degrees.
- * `triangles` specifies the number of triangles that make up the pie. Must be >= 1.
- * Returns a vector of 2d vertices. The number of vertices returned is `triangles` + 2.
- */
-static std::vector<glm::vec2> gen_pie(
-    float cx, float cy, float radius, float start, float end, int triangles)
+// https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
+static std::vector<glm::vec2> gen_circle(int num_vertices)
 {
-    start = glm::radians(start);
-    end = glm::radians(end);
-    const float angle = (end - start) / triangles;
-
+    const float angle{glm::two_pi<float>() / num_vertices};
     std::vector<glm::vec2> vertices;
-    vertices.reserve(triangles + 2);
+    vertices.reserve(num_vertices);
 
-    // Center vertex
-    vertices.emplace_back(glm::vec2{cx, cy});
-
-    for (int i{}; i < triangles + 1; i++) {
-        vertices.emplace_back(glm::vec2{
-            cx + radius * std::cos(angle * i + start),
-            cy + radius * std::sin(angle * i + start)
-        });
-    }
-
-    return vertices;
-}
-
-/**
- * Helper function to generate an interior rectangle.
- * `ri` specifies the radius of the interior triangle.
- * `rc` specifies the radius of the corners.
- * `angle` specifies the rotation angle in degrees.
- *     For the bottom rectangle, the angle is zero.
- * Returns a vector of four 2d vertices.
- */
-static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
-{
-    // For an equilateral triangle, find some properties.
-    // https://en.wikipedia.org/wiki/Equilateral_triangle
-    const float side = std::sqrt(3.0f) * ri;
-    const float height = std::sqrt(3.0f) / 2 * side;
-    const float apothem = height / 3;
-
-    // Calculate dimensions of rectangle
-    const float w = side / 2; // half width
-    const float h = rc / 2;   // half height
-
-    // Build transformation matrix
-    glm::mat4 tm{1.0f};
-    tm = glm::rotate(tm, glm::radians(angle), glm::vec3{0.0, 0.0f, 1.0f});
-    tm = glm::translate(tm, glm::vec3{0.0f, -(apothem + rc / 2), 0.0f});
-
-    // Return vertices of rectangle
-    return {
-        tm * glm::vec4{-w, +h, 0.0f, 1.0f}, // top left vertex
-        tm * glm::vec4{-w, -h, 0.0f, 1.0f}, // bottom left vertex
-        tm * glm::vec4{+w, -h, 0.0f, 1.0f}, // bottom right vertex
-        tm * glm::vec4{+w, +h, 0.0f, 1.0f}, // top right vertex
-    };
-}
-
-/**
- * Generates a rounded triangle centered at the origin.
- * `ri` specifies the radius of the interior triangle.
- * `rc` specifies the radius of the corners.
- */
-static std::vector<glm::vec2> gen_triangle(float ri, float rc)
-{
-    // Precalculate sines and cosines
-    const float cos90 = std::cos(glm::radians(90.0f));
-    const float sin90 = std::sin(glm::radians(90.0f));
-    const float cos210 = std::cos(glm::radians(210.0f));
-    const float sin210 = std::sin(glm::radians(210.0f));
-    const float cos330 = std::cos(glm::radians(330.0f));
-    const float sin330 = std::sin(glm::radians(330.0f));
-
-    std::vector<glm::vec2> vertices;
-    vertices.reserve(45);
-
-    // Interior triangle
-    vertices.emplace_back(glm::vec2{ri * cos90,  ri * sin90});   // top vertex
-    vertices.emplace_back(glm::vec2{ri * cos210,  ri * sin210}); // bottom left vertex
-    vertices.emplace_back(glm::vec2{ri * cos330,  ri* sin330});  // bottom right vertex
-
-    // Interior rectangles and pies (rounded corners)
-    const std::array vv{
-        gen_rect(ri, rc, 0.0f),   // bottom rectangle
-        gen_rect(ri, rc, 120.0f), // right rectangle
-        gen_rect(ri, rc, 240.0f), // left rectangle
-        gen_pie(ri * cos90, ri * sin90, rc, 90.0f-60.0f, 90.0f+60.0f, 8),     // top corner
-        gen_pie(ri * cos210, ri * sin210, rc, 210.0f-60.0f, 210.0f+60.0f, 8), // bottom left corner
-        gen_pie(ri * cos330, ri * sin330, rc, 330.0f-60.0f, 330.0f+60.0f, 8), // bottom right corner
-    };
-
-    for (const auto& v : vv) {
-        vertices.insert(vertices.end(), v.begin(), v.end());
+    // We don't need a center point. Since a circle is a convex shape,
+    // we can simply use one of the points on the circle as the central
+    // vertex of our triangle fan.
+    for (int i{}; i < num_vertices; i++) {
+        vertices.emplace_back(glm::vec2{std::cos(angle * i), std::sin(angle * i)});
     }
 
     return vertices;
@@ -280,9 +183,8 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 4);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "16-rounded-polygon", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, "16-polygons", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -298,8 +200,8 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Generate the vertices of our rounded triangle
-    const std::vector<glm::vec2> vertices = gen_triangle(0.9f, 0.1f);
+    // Generate the vertices of our circle
+    const std::vector<glm::vec2> vertices = gen_circle(5);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
@@ -334,7 +236,7 @@ int main()
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
-        render(window, glfwGetTime());
+        render(window, glfwGetTime(), vertices.size());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
