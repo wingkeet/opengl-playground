@@ -298,7 +298,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our rounded triangle
-    const std::vector<glm::vec2> vertices = gen_triangle(0.9f, 0.1f);
+    const std::vector<glm::vec2> vertices = gen_triangle(0.78f, 0.22f);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
