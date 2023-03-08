@@ -150,18 +150,23 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
 }
 
-// https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
-static std::vector<glm::vec2> gen_circle(int num_vertices)
+/**
+ * Generates a regular polygon (https://en.wikipedia.org/wiki/Regular_polygon).
+ * `sides` specifies the number of sides of the regular polygon.
+ * Returns a vector of 2d vertices. The number of vertices returned is `sides`.
+ */
+static std::vector<glm::vec2> gen_polygon(int sides)
 {
-    const float angle{glm::two_pi<float>() / num_vertices};
+    const float angle{glm::two_pi<float>() / sides};
     std::vector<glm::vec2> vertices;
-    vertices.reserve(num_vertices);
+    vertices.reserve(sides);
 
-    // We don't need a center point. Since a circle is a convex shape,
-    // we can simply use one of the points on the circle as the central
+    // We don't need a center point. Since a polygon is a convex shape,
+    // we can simply use one of the points on the polygon as the central
     // vertex of our triangle fan.
-    for (int i{}; i < num_vertices; i++) {
-        vertices.emplace_back(glm::vec2{std::cos(angle * i), std::sin(angle * i)});
+    const float top = glm::half_pi<float>();
+    for (int i{}; i < sides; i++) {
+        vertices.emplace_back(glm::vec2{std::cos(angle * i + top), std::sin(angle * i + top)});
     }
 
     return vertices;
@@ -201,7 +206,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_circle(5);
+    const std::vector<glm::vec2> vertices = gen_polygon(8);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
