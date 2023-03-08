@@ -140,18 +140,21 @@ static void render(GLFWwindow* window, double current_time)
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
     // Set the background color
-    const GLfloat background[]{0.8f, 0.8f, 0.8f, 1.0f};
+    const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
     // Set the color of our triangle to gold
     glUniform3f(2, 0.82f, 0.65f, 0.17f);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Draw rounded triangle
+    const GLint first[]{0, 3, 7, 11, 15, 25, 35};
+    const GLsizei count[]{3, 4, 4, 4, 10, 10, 10};
+    glMultiDrawArrays(GL_TRIANGLE_FAN, first, count, 7);
+
+    // Draw black point
     glUniform3f(2, 0.0f, 0.0f, 0.0f);
-    const GLint first[]{3, 7, 11, 15, 25, 35};
-    const GLsizei count[]{4, 4, 4, 10, 10, 10};
-    glMultiDrawArrays(GL_TRIANGLE_FAN, first, count, 6);
+    glPointSize(8);
+    glDrawArrays(GL_POINTS, 0, 1);
 }
 
 /**
@@ -279,7 +282,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "16-high-voltage", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, "16-rounded-polygon", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -296,7 +299,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our rounded triangle
-    const std::vector<glm::vec2> vertices = gen_triangle(0.8f, 0.1f);
+    const std::vector<glm::vec2> vertices = gen_triangle(0.9f, 0.1f);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
