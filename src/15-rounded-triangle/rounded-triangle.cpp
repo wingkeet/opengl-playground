@@ -200,11 +200,10 @@ static std::vector<glm::vec2> gen_pie(
  */
 static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle)
 {
-    // For an equilateral triangle, find some properties.
+    // For an equilateral triangle, find the side length and apothem.
     // https://en.wikipedia.org/wiki/Equilateral_triangle
-    const float side = std::sqrt(3.0f) * ri;
-    const float height = std::sqrt(3.0f) / 2 * side;
-    const float apothem = height / 3;
+    const float side = ri * std::sqrt(3.0f); // radius of circumscribed circle
+    const float apothem = ri / 2; // radius of inscribed circle
 
     // Calculate dimensions of rectangle
     const float w = side / 2; // half width
