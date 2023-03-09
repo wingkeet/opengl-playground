@@ -141,11 +141,11 @@ static void render(GLFWwindow* window, double current_time)
     // Draw polygons
     for (int n{3}, first{}; n <= 8; first+=n, n++) {
         const float scale{0.1f};
-        glm::mat4 model_matrix{1.0f};
-        model_matrix = glm::translate(model_matrix, glm::vec3{(n-3) * 0.3f - 0.75f, 0.0f, 0.0f});
-        model_matrix = glm::rotate(model_matrix, 0.0f, glm::vec3{0.0f, 0.0f, 1.0f});
-        model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
-        const glm::mat4 mv_matrix = view_matrix * model_matrix;
+        glm::mat4 mm{1.0f};
+        mm = glm::translate(mm, glm::vec3{(n-3) * 0.3f - 0.75f, 0.0f, 0.0f});
+        mm = glm::rotate(mm, 0.0f, glm::vec3{0.0f, 0.0f, 1.0f});
+        mm = glm::scale(mm, glm::vec3{scale, scale, 1.0f});
+        const glm::mat4 mv_matrix = view_matrix * mm;
         glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
         glDrawArrays(GL_TRIANGLE_FAN, first, n);
     }
