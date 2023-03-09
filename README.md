@@ -73,3 +73,4 @@ direct rendering: Yes
 - https://github.com/capnramses/antons_opengl_tutorials_book
 - https://tutors.com/lesson/how-to-find-orthocenter-of-a-triangle
 - https://en.wikipedia.org/wiki/Equilateral_triangle
+- https://en.wikipedia.org/wiki/Regular_polygon
