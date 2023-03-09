@@ -116,17 +116,11 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const float tf = static_cast<float>(current_time);
     const glm::mat4 identity_matrix{1.0f};
 
-    // Build model matrix
-    const glm::mat4 model_matrix = glm::scale(identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
-
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
     const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
-
-    // Build model-view matrix
-    const glm::mat4 mv_matrix = view_matrix * model_matrix;
 
     // Build orthographic projection matrix
     int width{}, height{};
@@ -135,19 +129,27 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const glm::mat4 proj_matrix = glm::ortho(
         -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
 
-    // Copy model-view and projection matrices to uniform variables
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    // Copy projection matrix to uniform variable
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
     // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Set the color of our circle to cornflower blue
+    // Set the color of our polygons to cornflower blue
     glUniform3f(2, 0.39f, 0.58f, 0.93f);
 
-    // Draw circle
-    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+    // Draw polygons
+    const float scale = 0.1f;
+    glm::mat4 model_matrix;
+    for (int n = 3; n <= 8; n++) {
+        model_matrix = glm::translate(identity_matrix, glm::vec3{(n-3) * 0.3f - 0.8f, 0.0f, 0.0f});
+        model_matrix = glm::rotate(model_matrix, 0.0f, glm::vec3{0.0f, 0.0f, 1.0f});
+        model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
+        const glm::mat4 mv_matrix = view_matrix * model_matrix;
+        glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    }
 }
 
 /**
