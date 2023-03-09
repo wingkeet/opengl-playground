@@ -139,7 +139,7 @@ static void render(GLFWwindow* window, double current_time)
     glUniform3f(2, 0.39f, 0.58f, 0.93f);
 
     // Draw polygons
-    for (int n{3}, first{}; n <= 8; first+=n, n++) {
+    for (int n{3}, first{}; n<=8; first+=n, n++) {
         const float scale{0.1f};
         glm::mat4 mm{1.0f};
         mm = glm::translate(mm, glm::vec3{(n-3) * 0.3f - 0.75f, 0.0f, 0.0f});
@@ -153,20 +153,20 @@ static void render(GLFWwindow* window, double current_time)
 
 /**
  * Generates a regular polygon (https://en.wikipedia.org/wiki/Regular_polygon).
- * `sides` specifies the number of sides of the regular polygon.
- * Returns a vector of 2d vertices. The number of vertices returned is `sides`.
+ * `n` specifies the number of sides of the regular polygon.
+ * Returns a vector of 2d vertices. The number of vertices returned is `n`.
  */
-static std::vector<glm::vec2> gen_polygon(int sides)
+static std::vector<glm::vec2> gen_polygon(int n)
 {
-    const float angle = glm::two_pi<float>() / sides;
+    const float angle = glm::two_pi<float>() / n;
     std::vector<glm::vec2> vertices;
-    vertices.reserve(sides);
+    vertices.reserve(n);
 
     // We don't need a center point. Since a polygon is a convex shape,
     // we can simply use one of the points on the polygon as the central
     // vertex of our triangle fan.
     const float top = glm::half_pi<float>();
-    for (int i{}; i < sides; i++) {
+    for (int i{}; i < n; i++) {
         vertices.emplace_back(glm::vec2{
             std::cos(angle * i + top), std::sin(angle * i + top)
         });
