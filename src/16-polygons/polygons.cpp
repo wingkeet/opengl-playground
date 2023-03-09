@@ -157,7 +157,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
  */
 static std::vector<glm::vec2> gen_polygon(int sides)
 {
-    const float angle{glm::two_pi<float>() / sides};
+    const float angle = glm::two_pi<float>() / sides;
     std::vector<glm::vec2> vertices;
     vertices.reserve(sides);
 
@@ -166,7 +166,9 @@ static std::vector<glm::vec2> gen_polygon(int sides)
     // vertex of our triangle fan.
     const float top = glm::half_pi<float>();
     for (int i{}; i < sides; i++) {
-        vertices.emplace_back(glm::vec2{std::cos(angle * i + top), std::sin(angle * i + top)});
+        vertices.emplace_back(glm::vec2{
+            std::cos(angle * i + top), std::sin(angle * i + top)
+        });
     }
 
     return vertices;
@@ -206,7 +208,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_polygon(8);
+    const std::vector<glm::vec2> vertices = gen_polygon(6);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
