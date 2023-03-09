@@ -111,10 +111,9 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double current_time, int num_vertices)
+static void render(GLFWwindow* window, double current_time)
 {
     const float tf = static_cast<float>(current_time);
-    const glm::mat4 identity_matrix{1.0f};
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -140,15 +139,15 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniform3f(2, 0.39f, 0.58f, 0.93f);
 
     // Draw polygons
-    const float scale = 0.1f;
-    glm::mat4 model_matrix;
-    for (int n = 3; n <= 8; n++) {
-        model_matrix = glm::translate(identity_matrix, glm::vec3{(n-3) * 0.3f - 0.8f, 0.0f, 0.0f});
+    for (int n{3}, first{}; n <= 8; first+=n, n++) {
+        const float scale{0.1f};
+        glm::mat4 model_matrix{1.0f};
+        model_matrix = glm::translate(model_matrix, glm::vec3{(n-3) * 0.3f - 0.75f, 0.0f, 0.0f});
         model_matrix = glm::rotate(model_matrix, 0.0f, glm::vec3{0.0f, 0.0f, 1.0f});
         model_matrix = glm::scale(model_matrix, glm::vec3{scale, scale, 1.0f});
         const glm::mat4 mv_matrix = view_matrix * model_matrix;
         glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+        glDrawArrays(GL_TRIANGLE_FAN, first, n);
     }
 }
 
@@ -209,8 +208,12 @@ int main()
     program = compile_shaders();
     glUseProgram(program);
 
-    // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_polygon(6);
+    // Generate the vertices of our polygons
+    std::vector<glm::vec2> vertices;
+    for (int n{3}; n <= 8; n++) {
+        const std::vector<glm::vec2> v = gen_polygon(n);
+        vertices.insert(vertices.end(), v.begin(), v.end());
+    }
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
@@ -245,7 +248,7 @@ int main()
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
-        render(window, glfwGetTime(), vertices.size());
+        render(window, glfwGetTime());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
