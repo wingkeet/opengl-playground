@@ -190,16 +190,16 @@ static std::vector<glm::vec2> gen_pie(
 
 /**
  * Generates a rectangle that lies on the external side of a regular polygon.
+ * `n` specifies the number of sides of the regular polygon. Must be >=3.
  * `ri` specifies the circumradius of the regular polygon.
  * `rc` specifies the radius of the corners.
  * `angle` specifies the rotation angle in radians.
  *     For the bottom rectangle, the angle is zero.
- * 'n' specifies the number of sides of the regular polygon.
- * Returns a vector of four 2d vertices.
+ * Returns a vector of six 2d vertices.
  */
-static std::vector<glm::vec2> gen_rect(float ri, float rc, float angle, int n)
+static std::vector<glm::vec2> gen_rect(int n, float ri, float rc, float angle)
 {
-    // For an regular polygon, find the side length and apothem.
+    // Find the side length and apothem of a regular polygon.
     // https://en.wikipedia.org/wiki/Regular_polygon#Circumradius
     const float side = ri * 2 * std::sin(glm::pi<float>() / n);
     const float apothem = ri * std::cos(glm::pi<float>() / n);
@@ -252,7 +252,7 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
 
     // Rectangles
     for (int i = 0; i < n; i++) {
-        const auto v = gen_rect(ri, rc, i * angle, n);
+        const auto v = gen_rect(n, ri, rc, i * angle);
         vertices.insert(vertices.end(), v.begin(), v.end());
     }
 
@@ -302,7 +302,7 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our rounded polygon
-    const std::vector<glm::vec2> vertices = gen_polygon(6, 0.85f, 0.15f);
+    const std::vector<glm::vec2> vertices = gen_polygon(6, 0.8f, 0.2f);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
