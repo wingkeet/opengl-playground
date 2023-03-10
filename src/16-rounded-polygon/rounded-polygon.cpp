@@ -226,7 +226,7 @@ static std::vector<glm::vec2> gen_rect(int n, float ri, float rc, float angle)
 
 /**
  * Generates a rounded polygon centered at the origin.
- * 'n' specifies the number of sides of the regular polygon.
+ * `n` specifies the number of sides of the regular polygon. Must be >=3.
  * `ri` specifies the circumradius of the regular polygon.
  * `rc` specifies the radius of the corners.
  */
