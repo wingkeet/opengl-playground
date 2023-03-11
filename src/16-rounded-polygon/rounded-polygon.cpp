@@ -236,15 +236,18 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
     const float angle = glm::two_pi<float>() / n;
 
     std::vector<glm::vec2> vertices;
-    vertices.reserve(3*n + 6*n + 24*n);
+    vertices.reserve(3*n + 6*n + 8*3*n);
 
     // Regular polygon
     for (int i = 0; i < n; i++) {
-        vertices.emplace_back(glm::vec2{});
+        vertices.emplace_back(glm::vec2{}); // origin
+
         float x{}, y{};
+
         x = ri * std::cos(i * angle + first);
         y = ri * std::sin(i * angle + first);
         vertices.emplace_back(glm::vec2{x, y});
+
         x = ri * std::cos((i+1) * angle + first);
         y = ri * std::sin((i+1) * angle + first);
         vertices.emplace_back(glm::vec2{x, y});
@@ -258,9 +261,10 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
 
     // Pies (rounded corners)
     for (int i = 0; i < n; i++) {
-        const float x = ri * std::cos(i * angle + first);
-        const float y = ri * std::sin(i * angle + first);
-        const auto v = gen_pie(x, y, rc, i*angle + first - angle/2, i*angle + first + angle/2, 8);
+        const float a = i * angle + first;
+        const float x = ri * std::cos(a);
+        const float y = ri * std::sin(a);
+        const auto v = gen_pie(x, y, rc, a - angle/2, a + angle/2, 8);
         vertices.insert(vertices.end(), v.begin(), v.end());
     }
 
