@@ -11,7 +11,7 @@
 
 // Global variables
 static GLuint program{};
-static glm::vec2 rotate{};
+static glm::vec2 rotate{20.0f, -30.0f};
 
 static std::string window_title()
 {
@@ -146,8 +146,8 @@ static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     glm::mat4 model_matrix{1.0f};
-    model_matrix = glm::rotate(model_matrix, glm::radians(rotate.y), glm::vec3{0.0f, 1.0f, 0.0f});
     model_matrix = glm::rotate(model_matrix, glm::radians(rotate.x), glm::vec3{1.0f, 0.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(rotate.y), glm::vec3{0.0f, 1.0f, 0.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
