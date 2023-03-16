@@ -11,11 +11,11 @@
 
 // Global variables
 static GLuint program{};
-static float camera_y{2.0f};
+static glm::vec2 rotate{};
 
 static std::string window_title()
 {
-    return fmt::format("06-cube (camera={:2.1f})", camera_y);
+    return fmt::format("06-cube ({:2.1f}, {:2.1f})", rotate.x, rotate.y);
 }
 
 static GLuint compile_shaders()
@@ -29,6 +29,8 @@ static GLuint compile_shaders()
 
 static void set_callbacks(GLFWwindow* window)
 {
+    static double x{}, y{};
+
     glfwSetFramebufferSizeCallback(
         window,
         [](GLFWwindow* window, int width, int height) {
@@ -47,6 +49,10 @@ static void set_callbacks(GLFWwindow* window)
                 program = compile_shaders();
                 glUseProgram(program);
             }
+            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+                rotate.x = rotate.y = 0;
+                glfwSetWindowTitle(window, window_title().c_str());
+            }
         }
     );
     glfwSetMouseButtonCallback(
@@ -56,18 +62,34 @@ static void set_callbacks(GLFWwindow* window)
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                 fmt::print("mouse down {}, {}\n", xpos, ypos);
+                x = xpos;
+                y = ypos;
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 fmt::print("mouse up {}, {}\n", xpos, ypos);
+                rotate.x += (ypos - y) / 5;
+                rotate.y += (xpos - x) / 5;
+                rotate.x = std::fmod(rotate.x, 360.0f);
+                rotate.y = std::fmod(rotate.y, 360.0f);
+                glfwSetWindowTitle(window, window_title().c_str());
+                x = xpos;
+                y = ypos;
             }
         }
     );
-    glfwSetScrollCallback(
+    glfwSetCursorPosCallback(
         window,
-        [](GLFWwindow* window, double xoffset, double yoffset) {
-            camera_y += yoffset * 0.5;
-            camera_y = glm::clamp(camera_y, -3.0f, 3.0f);
-            glfwSetWindowTitle(window, window_title().c_str());
+        [](GLFWwindow* window, double xpos, double ypos) {
+            const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            if (state == GLFW_PRESS) {
+                rotate.x += (ypos - y) / 5;
+                rotate.y += (xpos - x) / 5;
+                rotate.x = std::fmod(rotate.x, 360.0f);
+                rotate.y = std::fmod(rotate.y, 360.0f);
+                glfwSetWindowTitle(window, window_title().c_str());
+                x = xpos;
+                y = ypos;
+            }
         }
     );
     glfwSetWindowFocusCallback(
@@ -105,7 +127,8 @@ static void print_info()
         fmt::print("Gamepad: none\n");
     }
 
-    fmt::print("Use mouse wheel to move the camera up and down.\n");
+    fmt::print("Press and hold left mouse button and then move mouse to rotate the cube.\n");
+    fmt::print("Press spacebar to rotate the cube to the home position.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -122,13 +145,12 @@ static void process_gamepad(GLFWwindow* window)
 static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
-    const float tf = static_cast<float>(current_time);
-    const glm::mat4 identity_matrix{1.0f};
-    const glm::mat4 model_matrix = glm::rotate(identity_matrix,
-        std::sin(tf) * 2.0f, glm::vec3{0.0f, 1.0f, 0.0f});
+    glm::mat4 model_matrix{1.0f};
+    model_matrix = glm::rotate(model_matrix, glm::radians(rotate.y), glm::vec3{0.0f, 1.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(rotate.x), glm::vec3{1.0f, 0.0f, 0.0f});
 
     // Build view matrix
-    const glm::vec3 camera{0.0f, camera_y, 5.0f};
+    const glm::vec3 camera{0.0f, 0.0f, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
     const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
