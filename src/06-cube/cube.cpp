@@ -144,7 +144,8 @@ static void process_gamepad(GLFWwindow* window)
 
 static void render(GLFWwindow* window, double current_time)
 {
-    // Build model matrix
+    // Build model matrix. Order of rotation must be Y followed by X.
+    // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
     glm::mat4 model_matrix{1.0f};
     model_matrix = glm::rotate(model_matrix, glm::radians(rotate.x), glm::vec3{1.0f, 0.0f, 0.0f});
     model_matrix = glm::rotate(model_matrix, glm::radians(rotate.y), glm::vec3{0.0f, 1.0f, 0.0f});
