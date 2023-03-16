@@ -67,8 +67,8 @@ static void set_callbacks(GLFWwindow* window)
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 fmt::print("mouse up {}, {}\n", xpos, ypos);
-                rotate.x += (ypos - y) / 5;
-                rotate.y += (xpos - x) / 5;
+                rotate.x += (ypos - y) / 3;
+                rotate.y += (xpos - x) / 3;
                 rotate.x = std::fmod(rotate.x, 360.0f);
                 rotate.y = std::fmod(rotate.y, 360.0f);
                 glfwSetWindowTitle(window, window_title().c_str());
@@ -82,8 +82,8 @@ static void set_callbacks(GLFWwindow* window)
         [](GLFWwindow* window, double xpos, double ypos) {
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if (state == GLFW_PRESS) {
-                rotate.x += (ypos - y) / 5;
-                rotate.y += (xpos - x) / 5;
+                rotate.x += (ypos - y) / 3;
+                rotate.y += (xpos - x) / 3;
                 rotate.x = std::fmod(rotate.x, 360.0f);
                 rotate.y = std::fmod(rotate.y, 360.0f);
                 glfwSetWindowTitle(window, window_title().c_str());
