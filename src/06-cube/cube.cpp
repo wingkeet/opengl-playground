@@ -15,7 +15,7 @@ static glm::vec2 rotate{20.0f, -30.0f};
 
 static std::string window_title()
 {
-    return fmt::format("06-cube ({:2.1f}, {:2.1f})", rotate.x, rotate.y);
+    return fmt::format("06-cube (rx={:2.1f}, ry={:2.1f})", rotate.x, rotate.y);
 }
 
 static GLuint compile_shaders()
