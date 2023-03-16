@@ -13,13 +13,13 @@
 
 // Global variables
 static GLuint program{};
-static bool wireframe{};
+static bool wireframe{true};
 
 static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "mvp-color.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "mvp3d-color.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
@@ -117,11 +117,11 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     // Build model matrix
     const float tf = static_cast<float>(current_time);
     glm::mat4 model_matrix{1.0f};
-    model_matrix = glm::rotate(model_matrix, glm::radians(-30.0f), glm::vec3{0.0, 1.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(-60.0f), glm::vec3{0.0, 1.0f, 0.0f});
     // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 2, glm::vec3{0.0, 1.0f, 0.0f});
 
     // Build view matrix
-    const glm::vec3 camera{0.0f, 0.0f, 3.0f};
+    const glm::vec3 camera{0.0f, 2.0f, 3.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
     const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
@@ -140,9 +140,11 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
-    // Set the background color
-    const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
-    glClearBufferfv(GL_COLOR, 0, background);
+    // Clear color buffer and depth buffer
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     // Set the color of our polygon to gold
     glUniform3f(2, 0.82f, 0.65f, 0.17f);
@@ -164,25 +166,27 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
  * `start` specifies the starting angle in radians.
  * `end` specifies the ending angle in radians.
  * `triangles` specifies the number of triangles that make up the pie. Must be >= 1.
- * Returns a vector of 2d vertices. The number of vertices returned is `triangles` * 3.
+ * Returns a vector of vertices. The number of vertices returned is `triangles` * 3.
  */
-static std::vector<glm::vec2> gen_pie(
+static std::vector<glm::vec3> gen_pie(
     float x, float y, float radius, float start, float end, int triangles)
 {
     const float angle = (end - start) / triangles;
 
-    std::vector<glm::vec2> vertices;
+    std::vector<glm::vec3> vertices;
     vertices.reserve(triangles * 3);
 
     for (int i{}; i < triangles; i++) {
-        vertices.emplace_back(glm::vec2{x, y}); // center vertex
-        vertices.emplace_back(glm::vec2{
+        vertices.emplace_back(glm::vec3{x, y, 0.0f}); // center vertex
+        vertices.emplace_back(glm::vec3{
             x + radius * std::cos(i * angle + start),
-            y + radius * std::sin(i * angle + start)
+            y + radius * std::sin(i * angle + start),
+            0.0f
         });
-        vertices.emplace_back(glm::vec2{
+        vertices.emplace_back(glm::vec3{
             x + radius * std::cos((i+1) * angle + start),
-            y + radius * std::sin((i+1) * angle + start)
+            y + radius * std::sin((i+1) * angle + start),
+            0.0f
         });
     }
 
@@ -196,9 +200,9 @@ static std::vector<glm::vec2> gen_pie(
  * `rc` specifies the radius of the corners.
  * `angle` specifies the rotation angle in radians.
  *     For the bottom rectangle, the angle is zero.
- * Returns a vector of six 2d vertices.
+ * Returns a vector of 6 vertices.
  */
-static std::vector<glm::vec2> gen_rect(int n, float ri, float rc, float angle)
+static std::vector<glm::vec3> gen_rect(int n, float ri, float rc, float angle)
 {
     // Find the side length and apothem of a regular polygon.
     // https://en.wikipedia.org/wiki/Regular_polygon#Circumradius
@@ -231,27 +235,27 @@ static std::vector<glm::vec2> gen_rect(int n, float ri, float rc, float angle)
  * `ri` specifies the circumradius of the regular polygon.
  * `rc` specifies the radius of the corners.
  */
-static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
+static std::vector<glm::vec3> gen_polygon(int n, float ri, float rc)
 {
     const float first = glm::radians(n % 2 ? 90.0f : 90.0f - 180.0f / n);
     const float angle = glm::two_pi<float>() / n;
 
-    std::vector<glm::vec2> vertices;
+    std::vector<glm::vec3> vertices;
     vertices.reserve(3*n + 6*n + 8*3*n);
 
     // Regular polygon
     for (int i = 0; i < n; i++) {
-        vertices.emplace_back(glm::vec2{}); // origin
+        vertices.emplace_back(glm::vec3{}); // origin
 
         float x{}, y{};
 
         x = ri * std::cos(i * angle + first);
         y = ri * std::sin(i * angle + first);
-        vertices.emplace_back(glm::vec2{x, y});
+        vertices.emplace_back(glm::vec3{x, y, 0.0f});
 
         x = ri * std::cos((i+1) * angle + first);
         y = ri * std::sin((i+1) * angle + first);
-        vertices.emplace_back(glm::vec2{x, y});
+        vertices.emplace_back(glm::vec3{x, y, 0.0f});
     }
 
     // Rectangles
@@ -268,6 +272,61 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
         const auto v = gen_pie(x, y, rc, a - angle/2, a + angle/2, 8);
         vertices.insert(vertices.end(), v.begin(), v.end());
     }
+
+    return vertices;
+}
+
+/**
+ * Generates a rounded polygon centered at the origin.
+ * `n` specifies the number of sides of the regular polygon. Must be >=3.
+ * `ri` specifies the circumradius of the regular polygon.
+ * `rc` specifies the radius of the corners.
+ */
+static std::vector<glm::vec3> gen_polygon_3d(int n, float ri, float rc)
+{
+    glm::mat4 tm;
+
+    // Front face
+    tm = glm::translate(glm::mat4{1.0f}, glm::vec3{0.0f, 0.0f, 1.0f});
+    std::vector<glm::vec3> front = gen_polygon(n, ri, rc);
+    for (auto& v : front) {
+        v = tm * glm::vec4{v, 1.0f};
+    }
+
+    // Back face
+    tm = glm::translate(glm::mat4{1.0f}, glm::vec3{0.0f, 0.0f, -1.0f});
+    //tm = glm::rotate(tm, glm::pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f});
+    std::vector<glm::vec3> back = gen_polygon(n, ri, rc);
+    for (auto& v : back) {
+        v = tm * glm::vec4{v, 1.0f};
+    }
+
+    std::vector<glm::vec3> vertices{front};
+    vertices.insert(vertices.end(), back.begin(), back.end());
+
+    // Rectangular faces
+    for (int i = 0; i < n; i++) {
+        vertices.emplace_back(front[3*n + 6*i + 1]);
+        vertices.emplace_back(front[3*n + 6*i + 2]);
+        vertices.emplace_back(back[3*n + 6*i + 2]);
+
+        vertices.emplace_back(front[3*n + 6*i + 1]);
+        vertices.emplace_back(back[3*n + 6*i + 2]);
+        vertices.emplace_back(back[3*n + 6*i + 1]);
+    }
+
+    // Rounded faces
+    // for (int i = 0; i < n; i++) {
+    //     for (int j = 0; j < 8; j++) {
+    //         vertices.emplace_back(front[3*n + 6*n + 3*j*i + 2]);
+    //         vertices.emplace_back(front [3*n + 6*n + 3*j*i + 1]);
+    //         vertices.emplace_back(back [3*n + 6*n + 3*j*i + 1]);
+
+    //         vertices.emplace_back(front[3*n + 6*n + 3*j*i + 2]);
+    //         vertices.emplace_back(back [3*n + 6*n + 3*j*i + 1]);
+    //         vertices.emplace_back(back [3*n + 6*n + 3*j*i + 2]);
+    //     }
+    // }
 
     return vertices;
 }
@@ -307,13 +366,13 @@ int main()
     glUseProgram(program);
 
     // Generate the vertices of our rounded polygon
-    const std::vector<glm::vec2> vertices = gen_polygon(3, 0.8f, 0.2f);
+    const std::vector<glm::vec3> vertices = gen_polygon_3d(4, 0.8f, 0.2f);
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(glm::vec2) * vertices.size(), vertices.data(), 0);
+    glNamedBufferStorage(vbo, sizeof(glm::vec3) * vertices.size(), vertices.data(), 0);
 
     // Create VAO
     GLuint vao{};
@@ -321,13 +380,13 @@ int main()
 
     // Bind the vertex buffer to the VAO's vertex buffer binding point
     const GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
-    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec2));
+    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec3));
 
     // Enable vertex attribute location 0
     glEnableVertexArrayAttrib(vao, 0);
 
     // Specify the data format for each vertex attribute location
-    glVertexArrayAttribFormat(vao, 0, glm::vec2::length(), GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 0, glm::vec3::length(), GL_FLOAT, GL_FALSE, 0);
 
     // Tell OpenGL to read the data for vertex attribute location 0
     // from the buffer, which is attached to vertex buffer binding point 0.
