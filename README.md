@@ -70,6 +70,7 @@ direct rendering: Yes
 - https://www.khronos.org/opengl/wiki/Main_Page
 - https://registry.khronos.org/OpenGL-Refpages/gl4/
 - https://learnopengl.com
+- http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
 - https://github.com/capnramses/antons_opengl_tutorials_book
 - https://tutors.com/lesson/how-to-find-orthocenter-of-a-triangle
 - https://en.wikipedia.org/wiki/Equilateral_triangle
