@@ -49,7 +49,7 @@ static void set_callbacks(GLFWwindow* window)
                 program = compile_shaders();
                 glUseProgram(program);
             }
-            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+            else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
                 rotate.x = rotate.y = 0;
                 glfwSetWindowTitle(window, window_title().c_str());
             }
@@ -128,7 +128,7 @@ static void print_info()
     }
 
     fmt::print("Press and hold left mouse button and then move mouse to rotate the cube.\n");
-    fmt::print("Press spacebar to rotate the cube to the home position.\n");
+    fmt::print("Press <home> to rotate the cube to the home position.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
