@@ -14,6 +14,12 @@
 // Global variables
 static GLuint program{};
 static bool wireframe{true};
+static glm::vec2 rotate{20.0f, -30.0f};
+
+static std::string window_title()
+{
+    return fmt::format("17-rounded-polygon-3d (rx={:2.1f}, ry={:2.1f})", rotate.x, rotate.y);
+}
 
 static GLuint compile_shaders()
 {
@@ -26,6 +32,8 @@ static GLuint compile_shaders()
 
 static void set_callbacks(GLFWwindow* window)
 {
+    static double x{}, y{};
+
     glfwSetFramebufferSizeCallback(
         window,
         [](GLFWwindow* window, int width, int height) {
@@ -48,6 +56,10 @@ static void set_callbacks(GLFWwindow* window)
                 wireframe = !wireframe;
                 glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
             }
+            else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
+                rotate.x = rotate.y = 0;
+                glfwSetWindowTitle(window, window_title().c_str());
+            }
         }
     );
     glfwSetMouseButtonCallback(
@@ -57,9 +69,33 @@ static void set_callbacks(GLFWwindow* window)
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                 fmt::print("mouse down {}, {}\n", xpos, ypos);
+                x = xpos;
+                y = ypos;
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 fmt::print("mouse up {}, {}\n", xpos, ypos);
+                rotate.x += (ypos - y) / 3;
+                rotate.y += (xpos - x) / 3;
+                rotate.x = std::fmod(rotate.x, 360.0f);
+                rotate.y = std::fmod(rotate.y, 360.0f);
+                glfwSetWindowTitle(window, window_title().c_str());
+                x = xpos;
+                y = ypos;
+            }
+        }
+    );
+    glfwSetCursorPosCallback(
+        window,
+        [](GLFWwindow* window, double xpos, double ypos) {
+            const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            if (state == GLFW_PRESS) {
+                rotate.x += (ypos - y) / 3;
+                rotate.y += (xpos - x) / 3;
+                rotate.x = std::fmod(rotate.x, 360.0f);
+                rotate.y = std::fmod(rotate.y, 360.0f);
+                glfwSetWindowTitle(window, window_title().c_str());
+                x = xpos;
+                y = ypos;
             }
         }
     );
@@ -98,7 +134,9 @@ static void print_info()
         fmt::print("Gamepad: none\n");
     }
 
-    fmt::print("Press spacebar to toggle filled and wireframe mode.\n");
+    fmt::print("Press <spacebar> to toggle filled and wireframe mode.\n");
+    fmt::print("Press and hold left mouse button and then move mouse to rotate the cube.\n");
+    fmt::print("Press <home> to rotate the cube to the home position.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -114,14 +152,14 @@ static void process_gamepad(GLFWwindow* window)
 
 static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
-    // Build model matrix
-    const float tf = static_cast<float>(current_time);
+    // Build model matrix. Order of rotation must be Y followed by X.
+    // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
     glm::mat4 model_matrix{1.0f};
-    model_matrix = glm::rotate(model_matrix, glm::radians(-60.0f), glm::vec3{0.0, 1.0f, 0.0f});
-    // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 2, glm::vec3{0.0, 1.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(rotate.x), glm::vec3{1.0f, 0.0f, 0.0f});
+    model_matrix = glm::rotate(model_matrix, glm::radians(rotate.y), glm::vec3{0.0f, 1.0f, 0.0f});
 
     // Build view matrix
-    const glm::vec3 camera{0.0f, 2.0f, 3.0f};
+    const glm::vec3 camera{0.0f, 0.0f, 3.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
     const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
@@ -349,7 +387,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "17-rounded-polygon-3d", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, window_title().c_str(), nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
