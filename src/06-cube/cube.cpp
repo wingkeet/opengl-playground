@@ -61,12 +61,10 @@ static void set_callbacks(GLFWwindow* window)
             double xpos{}, ypos{};
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                fmt::print("mouse down {}, {}\n", xpos, ypos);
                 x = xpos;
                 y = ypos;
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-                fmt::print("mouse up {}, {}\n", xpos, ypos);
                 rotate.x += (ypos - y) / 3;
                 rotate.y += (xpos - x) / 3;
                 rotate.x = std::fmod(rotate.x, 360.0f);
