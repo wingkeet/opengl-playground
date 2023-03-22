@@ -126,7 +126,7 @@ static void print_info()
     }
 
     fmt::print("Press and hold left mouse button and then move mouse to rotate the cube.\n");
-    fmt::print("Press <home> to rotate the cube to the home position.\n");
+    fmt::print("Press 'home' to rotate the cube to the home position.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
