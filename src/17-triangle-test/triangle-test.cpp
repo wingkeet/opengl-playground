@@ -1,26 +1,52 @@
 #include "glad.h"
-#include <cmath>
 #include <filesystem>
 #include <fmt/core.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <vector>
 #include "shader.h"
 #include "utils.h"
 
 // Global variables
 static GLuint program{};
-static bool wireframe{};
+static GLFWcursor* hand_cursor{};
 
 static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "mvp-color.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "basic.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
+}
+
+static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+static bool point_in_triangle(
+    GLFWwindow* window,
+    glm::vec2 p,
+    glm::vec2 p1,
+    glm::vec2 p2,
+    glm::vec2 p3)
+{
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+    const float ndc_x = p.x / width * 2 - 1;     // [-1..+1]
+    const float ndc_y = -(p.y / height * 2 - 1); // [-1..+1]
+    p = glm::vec2{ndc_x, ndc_y};
+
+    const float d1 = sign(p, p1, p2);
+    const float d2 = sign(p, p2, p3);
+    const float d3 = sign(p, p3, p1);
+
+    const bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    const bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+    return !(has_neg && has_pos);
 }
 
 static void set_callbacks(GLFWwindow* window)
@@ -43,10 +69,6 @@ static void set_callbacks(GLFWwindow* window)
                 program = compile_shaders();
                 glUseProgram(program);
             }
-            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-                wireframe = !wireframe;
-                glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-            }
         }
     );
     glfwSetMouseButtonCallback(
@@ -59,6 +81,18 @@ static void set_callbacks(GLFWwindow* window)
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 fmt::print("mouse up {}, {}\n", xpos, ypos);
+            }
+        }
+    );
+    glfwSetCursorPosCallback(
+        window,
+        [](GLFWwindow* window, double xpos, double ypos) {
+            const bool hit = point_in_triangle(window, glm::vec2{xpos, ypos},
+                glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
+            glfwSetCursor(window, hit ? hand_cursor : nullptr);
+            const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            if (state == GLFW_PRESS) {
+                fmt::print("{}, {}\n", xpos, ypos);
             }
         }
     );
@@ -96,8 +130,6 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
-
-    fmt::print("Press spacebar to toggle filled and wireframe mode.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
@@ -111,60 +143,13 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double current_time, int num_vertices)
+static void render(GLFWwindow* window, double currentTime)
 {
-    const float tf = static_cast<float>(current_time);
-    const glm::mat4 identity_matrix{1.0f};
-
-    // Build model matrix
-    const glm::mat4 model_matrix = glm::scale(identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
-
-    // Build view matrix
-    const glm::vec3 camera{0.0f, 0.0f, 5.0f};
-    const glm::vec3 center{0.0f, 0.0f, 0.0f};
-    const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
-
-    // Build model-view matrix
-    const glm::mat4 mv_matrix = view_matrix * model_matrix;
-
-    // Build orthographic projection matrix
-    int width{}, height{};
-    glfwGetFramebufferSize(window, &width, &height);
-    const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    const glm::mat4 proj_matrix = glm::ortho(
-        -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
-
-    // Copy model-view and projection matrices to uniform variables
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
-
-    // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Set the color of our circle
-    glUniform3f(2, 1.0f, 0.0f, 0.65f);
-
-    // Draw circle
-    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
-}
-
-// https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
-static std::vector<glm::vec2> gen_circle(int num_vertices)
-{
-    const float angle{glm::two_pi<float>() / num_vertices};
-    std::vector<glm::vec2> vertices;
-    vertices.reserve(num_vertices);
-
-    // We don't need a center point. Since a circle is a convex shape,
-    // we can simply use one of the points on the circle as the central
-    // vertex of our triangle fan.
-    for (int i{}; i < num_vertices; i++) {
-        vertices.emplace_back(glm::vec2{std::cos(angle * i), std::sin(angle * i)});
-    }
-
-    return vertices;
+    // Draw our first triangle
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 int main()
@@ -184,7 +169,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "17-cylinder", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "17-triangle-test", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -195,19 +180,26 @@ int main()
     glfwSwapInterval(1); // vsync on
 
     print_info();
+    hand_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
     set_callbacks(window);
 
     program = compile_shaders();
     glUseProgram(program);
 
-    // Generate the vertices of our circle
-    const std::vector<glm::vec2> vertices = gen_circle(50);
+    // Define the vertices of our triangle.
+    // Note that the winding order is counter-clockwise.
+    const GLfloat vertices[]{
+        // position         color
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+    };
 
     // Create and populate interleaved vertex buffer using
     // DSA (Direct State Access) API in OpenGL 4.5.
     GLuint vbo{};
     glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(glm::vec2) * vertices.size(), vertices.data(), 0);
+    glNamedBufferStorage(vbo, sizeof(vertices), vertices, 0);
 
     // Create VAO
     GLuint vao{};
@@ -215,28 +207,31 @@ int main()
 
     // Bind the vertex buffer to the VAO's vertex buffer binding point
     const GLuint binding_index{0}; // [0..GL_MAX_VERTEX_ATTRIB_BINDINGS)
-    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(glm::vec2));
+    glVertexArrayVertexBuffer(vao, binding_index, vbo, 0, sizeof(GLfloat)*6);
 
-    // Enable vertex attribute location 0
+    // Enable vertex attribute locations 0 and 1
     glEnableVertexArrayAttrib(vao, 0);
+    glEnableVertexArrayAttrib(vao, 1);
 
     // Specify the data format for each vertex attribute location
-    glVertexArrayAttribFormat(vao, 0, glm::vec2::length(), GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3);
 
-    // Tell OpenGL to read the data for vertex attribute location 0
+    // Tell OpenGL to read the data for vertex attribute locations 0 and 1
     // from the buffer, which is attached to vertex buffer binding point 0.
     glVertexArrayAttribBinding(vao, 0, binding_index);
+    glVertexArrayAttribBinding(vao, 1, binding_index);
 
     // This shows that we do not have to bind the VAO before
     // calling the above functions.
     glBindVertexArray(vao);
 
-    // Draw filled or wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+    // Uncomment this call to draw in wireframe polygons
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
-        render(window, glfwGetTime(), vertices.size());
+        render(window, glfwGetTime());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
