@@ -11,12 +11,14 @@
 // Global variables
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
+static glm::mat4 mv_matrix{};
+static glm::mat4 proj_matrix{};
 
 static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "basic.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "mvp.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
@@ -28,20 +30,21 @@ static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
 
 static bool point_in_triangle(
     GLFWwindow* window,
-    glm::vec2 p,
+    glm::vec2 win,
     glm::vec2 p1,
     glm::vec2 p2,
     glm::vec2 p3)
 {
+    // https://en.wikibooks.org/wiki/OpenGL_Programming/Object_selection#Unprojecting_window_coordinates
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
-    const float ndc_x = p.x / width * 2 - 1;     // [-1..+1]
-    const float ndc_y = -(p.y / height * 2 - 1); // [-1..+1]
-    p = glm::vec2{ndc_x, ndc_y};
+    const glm::vec4 viewport{0, 0, width, height};
+    glm::vec3 obj = glm::unProject(glm::vec3{win, 0.0f}, mv_matrix, proj_matrix, viewport);
+    obj.y = -obj.y;
 
-    const float d1 = sign(p, p1, p2);
-    const float d2 = sign(p, p2, p3);
-    const float d3 = sign(p, p3, p1);
+    const float d1 = sign(obj, p1, p2);
+    const float d2 = sign(obj, p2, p3);
+    const float d3 = sign(obj, p3, p1);
 
     const bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
     const bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
@@ -143,12 +146,38 @@ static void process_gamepad(GLFWwindow* window)
     }
 }
 
-static void render(GLFWwindow* window, double currentTime)
+static void render(GLFWwindow* window, double current_time)
 {
+    // Build model matrix
+    const float tf = static_cast<float>(current_time);
+    glm::mat4 model_matrix{1.0f};
+    // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 1.6f, glm::vec3{0.0, 0.0f, 1.0f});
+
+    // Build view matrix
+    const glm::vec3 camera{0.0f, 0.0f, 5.0f};
+    const glm::vec3 center{0.0f, 0.0f, 0.0f};
+    const glm::vec3 up{0.0f, 1.0f, 0.0f};
+    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
+
+    // Build model-view matrix
+    mv_matrix = view_matrix * model_matrix;
+
+    // Build orthographic projection matrix
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+    const float aspect = static_cast<float>(width) / static_cast<float>(height);
+    proj_matrix = glm::ortho(
+        -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
+
+    // Copy model-view and projection matrices to uniform variables
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
+    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
+
+    // Set the background color
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Draw our first triangle
+    // Draw rounded polygon
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
