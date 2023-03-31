@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include "shader.h"
 #include "utils.h"
 
@@ -18,18 +19,32 @@ static GLuint compile_shaders()
     });
 }
 
-static bool hit_test(
+static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+static bool point_in_triangle(
     GLFWwindow* window,
-    double xcursor, double ycursor,
-    double xndc, double yndc)
+    glm::vec2 win,
+    glm::vec2 p1,
+    glm::vec2 p2,
+    glm::vec2 p3)
 {
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
-    const double xw = (xndc + 1) * (width / 2.0); // window x [0..width]
-    const double yw = (-yndc + 1) * (height / 2.0); // window y [0..height]
-    const double xd = (xcursor - xw) * (xcursor - xw);
-    const double yd = (ycursor - yw) * (ycursor - yw);
-    return (xd + yd) < (5 * 5); // check is done in squared space to avoid square root
+    const float ndc_x = win.x / width * 2 - 1;     // [-1..+1]
+    const float ndc_y = -(win.y / height * 2 - 1); // [-1..+1]
+    const glm::vec2 p = glm::vec2{ndc_x, ndc_y};
+
+    const float d1 = sign(p, p1, p2);
+    const float d2 = sign(p, p2, p3);
+    const float d3 = sign(p, p3, p1);
+
+    const bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    const bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+    return !(has_neg && has_pos);
 }
 
 static void set_callbacks(GLFWwindow* window)
@@ -70,7 +85,8 @@ static void set_callbacks(GLFWwindow* window)
     glfwSetCursorPosCallback(
         window,
         [](GLFWwindow* window, double xpos, double ypos) {
-            const bool hit = hit_test(window, xpos, ypos, 0.5, -0.5);
+            const bool hit = point_in_triangle(window, glm::vec2{xpos, ypos},
+                glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
             glfwSetCursor(window, hit ? hand_cursor : nullptr);
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if (state == GLFW_PRESS) {
