@@ -11,9 +11,11 @@
 // Global variables
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
-static glm::mat4 mv_matrix{};
+static glm::mat4 model_matrix{};
+static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
 static bool moving{};
+static glm::vec2 translation{0.2f, -0.3f};
 
 static GLuint compile_shaders()
 {
@@ -40,18 +42,17 @@ static glm::vec3 win_to_obj(
     const glm::vec4 viewport{0, 0, width, height};
     glm::vec3 obj = glm::unProject(
         glm::vec3{win.x, height - win.y - 1, 0.0f},
-        mv_matrix, proj_matrix, viewport);
+        view_matrix, proj_matrix, viewport);
     return obj;
 }
 
 static bool point_in_triangle(
-    GLFWwindow* window,
-    glm::vec2 win,
+    glm::vec2 obj,
     glm::vec2 p1,
     glm::vec2 p2,
     glm::vec2 p3)
 {
-    const glm::vec3 obj = win_to_obj(window, win);
+    obj -= translation;
 
     const float d1 = sign(obj, p1, p2);
     const float d2 = sign(obj, p2, p3);
@@ -65,6 +66,8 @@ static bool point_in_triangle(
 
 static void set_callbacks(GLFWwindow* window)
 {
+    static glm::vec2 trans{};
+
     glfwSetFramebufferSizeCallback(
         window,
         [](GLFWwindow* window, int width, int height) {
@@ -91,15 +94,15 @@ static void set_callbacks(GLFWwindow* window)
             double xpos{}, ypos{};
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                fmt::print("mouse down {}, {}\n", xpos, ypos);
-                const bool hit = point_in_triangle(window, glm::vec2{xpos, ypos},
+                const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
+                const bool hit = point_in_triangle(obj,
                     glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
                 if (hit) {
                     moving = true;
+                    trans = obj - translation;
                 }
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-                fmt::print("mouse up {}, {}\n", xpos, ypos);
                 moving = false;
             }
         }
@@ -107,12 +110,13 @@ static void set_callbacks(GLFWwindow* window)
     glfwSetCursorPosCallback(
         window,
         [](GLFWwindow* window, double xpos, double ypos) {
-            const bool hit = point_in_triangle(window, glm::vec2{xpos, ypos},
+            const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
+            const bool hit = point_in_triangle(obj,
                 glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
             glfwSetCursor(window, hit ? hand_cursor : nullptr);
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if (moving && state == GLFW_PRESS) {
-                fmt::print("{}, {}\n", xpos, ypos);
+                translation = obj - trans;
             }
         }
     );
@@ -167,17 +171,17 @@ static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
     const float tf = static_cast<float>(current_time);
-    glm::mat4 model_matrix{1.0f};
-    model_matrix = glm::translate(model_matrix, glm::vec3{-0.2f, 0.3f, 0.0f});
+    model_matrix = glm::mat4{1.0f};
+    model_matrix = glm::translate(model_matrix, glm::vec3{translation, 0.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
-    const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
+    view_matrix = glm::lookAt(camera, center, up);
 
     // Build model-view matrix
-    mv_matrix = view_matrix * model_matrix;
+    const glm::mat4 mv_matrix = view_matrix * model_matrix;
 
     // Build orthographic projection matrix
     int width{}, height{};
