@@ -11,7 +11,6 @@
 // Global variables
 static GLuint program{};
 static GLFWcursor* hand_cursor{};
-static glm::mat4 model_matrix{};
 static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
 static bool moving{};
@@ -171,8 +170,7 @@ static void process_gamepad(GLFWwindow* window)
 static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
-    const float tf = static_cast<float>(current_time);
-    model_matrix = glm::mat4{1.0f};
+    glm::mat4 model_matrix = glm::mat4{1.0f};
     model_matrix = glm::translate(model_matrix, glm::vec3{translation, 0.0f});
 
     // Build view matrix
