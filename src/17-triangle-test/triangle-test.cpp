@@ -39,7 +39,7 @@ static glm::vec3 win_to_obj(
     glfwGetFramebufferSize(window, &width, &height);
     const glm::vec4 viewport{0, 0, width, height};
     glm::vec3 obj = glm::unProject(
-        glm::vec3{win.x, height - win.y, 0.0f},
+        glm::vec3{win.x, height - win.y - 1, 0.0f},
         mv_matrix, proj_matrix, viewport);
     return obj;
 }
