@@ -13,6 +13,7 @@ static GLuint program{};
 static GLFWcursor* hand_cursor{};
 static glm::mat4 mv_matrix{};
 static glm::mat4 proj_matrix{};
+static bool moving{};
 
 static GLuint compile_shaders()
 {
@@ -28,6 +29,21 @@ static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 }
 
+// Unproject window coordinates to object coordinates
+static glm::vec3 win_to_obj(
+    GLFWwindow* window,
+    glm::vec2 win)
+{
+    // https://en.wikibooks.org/wiki/OpenGL_Programming/Object_selection#Unprojecting_window_coordinates
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+    const glm::vec4 viewport{0, 0, width, height};
+    glm::vec3 obj = glm::unProject(
+        glm::vec3{win.x, height - win.y, 0.0f},
+        mv_matrix, proj_matrix, viewport);
+    return obj;
+}
+
 static bool point_in_triangle(
     GLFWwindow* window,
     glm::vec2 win,
@@ -35,12 +51,7 @@ static bool point_in_triangle(
     glm::vec2 p2,
     glm::vec2 p3)
 {
-    // https://en.wikibooks.org/wiki/OpenGL_Programming/Object_selection#Unprojecting_window_coordinates
-    int width{}, height{};
-    glfwGetFramebufferSize(window, &width, &height);
-    const glm::vec4 viewport{0, 0, width, height};
-    glm::vec3 obj = glm::unProject(glm::vec3{win, 0.0f}, mv_matrix, proj_matrix, viewport);
-    obj.y = -obj.y;
+    const glm::vec3 obj = win_to_obj(window, win);
 
     const float d1 = sign(obj, p1, p2);
     const float d2 = sign(obj, p2, p3);
@@ -81,9 +92,15 @@ static void set_callbacks(GLFWwindow* window)
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                 fmt::print("mouse down {}, {}\n", xpos, ypos);
+                const bool hit = point_in_triangle(window, glm::vec2{xpos, ypos},
+                    glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
+                if (hit) {
+                    moving = true;
+                }
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 fmt::print("mouse up {}, {}\n", xpos, ypos);
+                moving = false;
             }
         }
     );
@@ -94,7 +111,7 @@ static void set_callbacks(GLFWwindow* window)
                 glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
             glfwSetCursor(window, hit ? hand_cursor : nullptr);
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-            if (state == GLFW_PRESS) {
+            if (moving && state == GLFW_PRESS) {
                 fmt::print("{}, {}\n", xpos, ypos);
             }
         }
@@ -151,7 +168,7 @@ static void render(GLFWwindow* window, double current_time)
     // Build model matrix
     const float tf = static_cast<float>(current_time);
     glm::mat4 model_matrix{1.0f};
-    // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 1.6f, glm::vec3{0.0, 0.0f, 1.0f});
+    model_matrix = glm::translate(model_matrix, glm::vec3{-0.2f, 0.3f, 0.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -198,7 +215,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "17-triangle-test", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, "17-triangle-test", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
