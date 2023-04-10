@@ -26,11 +26,6 @@ static GLuint compile_shaders()
     });
 }
 
-static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
-{
-    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
-}
-
 // Unproject window coordinates to object coordinates
 static glm::vec3 win_to_obj(
     GLFWwindow* window,
@@ -46,14 +41,17 @@ static glm::vec3 win_to_obj(
     return obj;
 }
 
+static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
 static bool point_in_triangle(
     glm::vec2 obj,
     glm::vec2 p1,
     glm::vec2 p2,
     glm::vec2 p3)
 {
-    obj -= translation;
-
     const float d1 = sign(obj, p1, p2);
     const float d2 = sign(obj, p2, p3);
     const float d3 = sign(obj, p3, p1);
@@ -95,7 +93,7 @@ static void set_callbacks(GLFWwindow* window)
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                 const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
-                const bool hit = point_in_triangle(obj,
+                const bool hit = point_in_triangle(obj - translation,
                     glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
                 if (hit) {
                     moving = true;
@@ -111,7 +109,7 @@ static void set_callbacks(GLFWwindow* window)
         window,
         [](GLFWwindow* window, double xpos, double ypos) {
             const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
-            const bool hit = point_in_triangle(obj,
+            const bool hit = point_in_triangle(obj - translation,
                 glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
             glfwSetCursor(window, hit ? hand_cursor : nullptr);
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
@@ -154,6 +152,9 @@ static void print_info()
     else {
         fmt::print("Gamepad: none\n");
     }
+
+    fmt::print("Press and hold left mouse button inside the triangle and\n");
+    fmt::print("  then move mouse to translate the triangle.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
