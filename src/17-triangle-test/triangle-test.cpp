@@ -14,7 +14,7 @@ static GLFWcursor* hand_cursor{};
 static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
 static bool moving{};
-static glm::vec2 translation{0.2f, -0.3f};
+static glm::vec2 translation{};
 
 static GLuint compile_shaders()
 {
