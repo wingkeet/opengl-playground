@@ -13,8 +13,8 @@ static GLuint program{};
 static GLFWcursor* hand_cursor{};
 static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
-static bool moving{};
 static glm::vec2 translation{};
+static bool moving{};
 
 static GLuint compile_shaders()
 {
@@ -46,14 +46,14 @@ static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
 }
 
 static bool point_in_triangle(
-    glm::vec2 obj,
+    glm::vec2 p,
     glm::vec2 p1,
     glm::vec2 p2,
     glm::vec2 p3)
 {
-    const float d1 = sign(obj, p1, p2);
-    const float d2 = sign(obj, p2, p3);
-    const float d3 = sign(obj, p3, p1);
+    const float d1 = sign(p, p1, p2);
+    const float d2 = sign(p, p2, p3);
+    const float d3 = sign(p, p3, p1);
 
     const bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
     const bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
@@ -182,7 +182,7 @@ static void process_gamepad(GLFWwindow* window)
 static void render(GLFWwindow* window, double current_time)
 {
     // Build model matrix
-    glm::mat4 model_matrix = glm::mat4{1.0f};
+    glm::mat4 model_matrix{1.0f};
     model_matrix = glm::translate(model_matrix, glm::vec3{translation, 0.0f});
 
     // Build view matrix
@@ -209,7 +209,7 @@ static void render(GLFWwindow* window, double current_time)
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Draw rounded polygon
+    // Draw triangle
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
