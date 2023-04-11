@@ -83,6 +83,16 @@ static void set_callbacks(GLFWwindow* window)
                 program = compile_shaders();
                 glUseProgram(program);
             }
+            else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
+                moving = false;
+                translation.x = translation.y = 0;
+                double xpos{}, ypos{};
+                glfwGetCursorPos(window, &xpos, &ypos);
+                const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
+                const bool hit = point_in_triangle(obj - translation,
+                    glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
+                glfwSetCursor(window, hit ? hand_cursor : nullptr);
+            }
         }
     );
     glfwSetMouseButtonCallback(
@@ -154,6 +164,7 @@ static void print_info()
 
     fmt::print("Press and hold left mouse button inside the triangle and\n");
     fmt::print("  then move mouse to translate the triangle.\n");
+    fmt::print("Press 'home' to return the triangle to the home position.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
