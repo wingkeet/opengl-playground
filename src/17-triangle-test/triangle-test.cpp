@@ -15,12 +15,13 @@ static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
 static glm::vec2 translation{};
 static bool moving{};
+static bool selected{};
 
 static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "mvp.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "triangle-test.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
@@ -84,15 +85,8 @@ static void set_callbacks(GLFWwindow* window)
                 glUseProgram(program);
             }
             else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
-                if (!moving) {
-                    translation.x = translation.y = 0;
-                    double xpos{}, ypos{};
-                    glfwGetCursorPos(window, &xpos, &ypos);
-                    const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
-                    const bool hit = point_in_triangle(obj - translation,
-                        glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
-                    glfwSetCursor(window, hit ? hand_cursor : nullptr);
-                }
+                translation.x = translation.y = 0;
+                moving = false;
             }
         }
     );
@@ -105,6 +99,7 @@ static void set_callbacks(GLFWwindow* window)
                 const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
                 const bool hit = point_in_triangle(obj - translation,
                     glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
+                selected = hit;
                 if (hit) {
                     moving = true;
                     trans = obj - translation;
@@ -118,12 +113,9 @@ static void set_callbacks(GLFWwindow* window)
     glfwSetCursorPosCallback(
         window,
         [](GLFWwindow* window, double xpos, double ypos) {
-            const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
-            const bool hit = point_in_triangle(obj - translation,
-                glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
-            glfwSetCursor(window, hit ? hand_cursor : nullptr);
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if (moving && state == GLFW_PRESS) {
+                const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
                 translation = obj - trans;
             }
         }
@@ -210,7 +202,16 @@ static void render(GLFWwindow* window, double current_time)
     glClearBufferfv(GL_COLOR, 0, background);
 
     // Draw triangle
+    glUniform1i(2, 0);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    if (selected) {
+        // Draw wireframe
+        glUniform1i(2, 1);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
 }
 
 int main()
