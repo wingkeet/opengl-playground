@@ -13,7 +13,9 @@ static GLuint program{};
 static GLFWcursor* hand_cursor{};
 static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
-static glm::vec2 translation{};
+static float scaling{1.0f};
+static float rotation{0.0f};
+static glm::vec2 translation{0.0f, 0.0f};
 static bool moving{};
 static bool selected{};
 
@@ -85,8 +87,10 @@ static void set_callbacks(GLFWwindow* window)
                 glUseProgram(program);
             }
             else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
-                translation.x = translation.y = 0;
                 moving = false;
+                scaling = 1.0f;
+                rotation = 0.0f;
+                translation.x = translation.y = 0.0f;
             }
         }
     );
@@ -117,6 +121,15 @@ static void set_callbacks(GLFWwindow* window)
             if (moving && state == GLFW_PRESS) {
                 const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
                 translation = obj - trans;
+            }
+        }
+    );
+    glfwSetScrollCallback(
+        window,
+        [](GLFWwindow* window, double xoffset, double yoffset) {
+            if (selected) {
+                scaling += -yoffset * 0.05f;
+                scaling = glm::clamp(scaling, 0.3f, 3.0f);
             }
         }
     );
@@ -176,6 +189,8 @@ static void render(GLFWwindow* window, double current_time)
     // Build model matrix
     glm::mat4 model_matrix{1.0f};
     model_matrix = glm::translate(model_matrix, glm::vec3{translation, 0.0f});
+    model_matrix = glm::rotate(model_matrix, rotation, glm::vec3{0.0f, 0.0f, 1.0f});
+    model_matrix = glm::scale(model_matrix, glm::vec3{scaling, scaling, 0.0f});
 
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
@@ -230,6 +245,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     GLFWwindow* window = glfwCreateWindow(600, 600, "17-triangle-test", nullptr, nullptr);
     if (!window) {
