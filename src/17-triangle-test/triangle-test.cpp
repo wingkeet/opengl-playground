@@ -168,9 +168,11 @@ static void print_info()
         fmt::print("Gamepad: none\n");
     }
 
-    fmt::print("Press and hold left mouse button inside the triangle and\n");
-    fmt::print("  then move mouse to translate the triangle.\n");
-    fmt::print("Press 'home' to return the triangle to the home position.\n");
+    fmt::print("Press the left mouse button inside/outside the triangle to select/unselect.\n");
+    fmt::print("To scale, scroll the mouse wheel.\n");
+    fmt::print("To rotate, press and hold the left mouse button outside the triangle and then move the mouse.\n");
+    fmt::print("To translate, press and hold the left mouse button inside the triangle and then move the mouse.\n");
+    fmt::print("Press 'home' to return the triangle to the default size, rotation and position.\n");
 }
 
 static void process_gamepad(GLFWwindow* window)
