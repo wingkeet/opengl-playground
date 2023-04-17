@@ -28,8 +28,8 @@ static GLuint compile_shaders()
     });
 }
 
-// Unproject window coordinates to object coordinates
-static glm::vec3 win_to_obj(
+// Unproject window coordinates to world coordinates
+static glm::vec3 window_to_world(
     GLFWwindow* window,
     glm::vec2 win)
 {
@@ -37,10 +37,10 @@ static glm::vec3 win_to_obj(
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
     const glm::vec4 viewport{0, 0, width, height};
-    const glm::vec3 obj = glm::unProject(
+    const glm::vec3 world = glm::unProject(
         glm::vec3{win.x, height - win.y - 1, 0.0f},
         view_matrix, proj_matrix, viewport);
-    return obj;
+    return world;
 }
 
 static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
@@ -54,6 +54,15 @@ static bool point_in_triangle(
     glm::vec2 p2,
     glm::vec2 p3)
 {
+    glm::mat4 model_matrix{1.0f};
+    model_matrix = glm::translate(model_matrix, glm::vec3{translation, 0.0f});
+    model_matrix = glm::rotate(model_matrix, rotation, glm::vec3{0.0f, 0.0f, 1.0f});
+    model_matrix = glm::scale(model_matrix, glm::vec3{scaling, scaling, 0.0f});
+
+    p1 = model_matrix * glm::vec4{p1, 0.0f, 1.0f};
+    p2 = model_matrix * glm::vec4{p2, 0.0f, 1.0f};
+    p3 = model_matrix * glm::vec4{p3, 0.0f, 1.0f};
+ 
     const float d1 = sign(p, p1, p2);
     const float d2 = sign(p, p2, p3);
     const float d3 = sign(p, p3, p1);
@@ -100,13 +109,13 @@ static void set_callbacks(GLFWwindow* window)
             double xpos{}, ypos{};
             glfwGetCursorPos(window, &xpos, &ypos);
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
-                const bool hit = point_in_triangle(obj - translation,
+                const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
+                const bool hit = point_in_triangle(world,
                     glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
                 selected = hit;
                 if (hit) {
                     moving = true;
-                    trans = obj - translation;
+                    trans = world - translation;
                 }
             }
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
@@ -119,8 +128,8 @@ static void set_callbacks(GLFWwindow* window)
         [](GLFWwindow* window, double xpos, double ypos) {
             const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if (moving && state == GLFW_PRESS) {
-                const glm::vec2 obj = win_to_obj(window, glm::vec2{xpos, ypos});
-                translation = obj - trans;
+                const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
+                translation = world - trans;
             }
         }
     );
@@ -170,7 +179,7 @@ static void print_info()
 
     fmt::print("Press the left mouse button inside/outside the triangle to select/unselect.\n");
     fmt::print("To scale, scroll the mouse wheel.\n");
-    fmt::print("To rotate, press and hold the left mouse button outside the triangle and then move the mouse.\n");
+    fmt::print("To rotate, press and hold the right mouse button anywhere and then move the mouse.\n");
     fmt::print("To translate, press and hold the left mouse button inside the triangle and then move the mouse.\n");
     fmt::print("Press 'home' to return the triangle to the default size, rotation and position.\n");
 }
