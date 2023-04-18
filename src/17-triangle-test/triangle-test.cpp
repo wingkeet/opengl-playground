@@ -11,7 +11,7 @@
 
 // Global variables
 static GLuint program{};
-static GLFWcursor* hand_cursor{};
+static GLFWcursor* crosshair_cursor{};
 static glm::mat4 view_matrix{};
 static glm::mat4 proj_matrix{};
 static float scaling{1.0f};
@@ -138,6 +138,8 @@ static void set_callbacks(GLFWwindow* window)
             else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
                 rotating = false;
             }
+
+            glfwSetCursor(window, moving || rotating ? crosshair_cursor : nullptr);
         }
     );
     glfwSetCursorPosCallback(
@@ -296,7 +298,7 @@ int main()
     glfwSwapInterval(1); // vsync on
 
     print_info();
-    hand_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+    crosshair_cursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
     set_callbacks(window);
 
     program = compile_shaders();
