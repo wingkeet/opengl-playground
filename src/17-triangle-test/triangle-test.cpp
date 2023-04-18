@@ -114,10 +114,9 @@ static void set_callbacks(GLFWwindow* window)
 
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                 const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
-                const bool hit = point_in_triangle(world,
+                selected = point_in_triangle(world,
                     glm::vec2{-0.5f, -0.5f}, glm::vec2{0.5f, -0.5f}, glm::vec2{0.0f, 0.5f});
-                selected = hit;
-                if (hit) {
+                if (selected) {
                     moving = true;
                     trans = world - translation;
                 }
@@ -130,7 +129,7 @@ static void set_callbacks(GLFWwindow* window)
                     rotating = true;
                     const glm::vec2 origin{translation};
                     const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
-                    const glm::vec2 a = glm::vec2{1.0f, 0.0f};
+                    const glm::vec2 a{1.0f, 0.0f};
                     const glm::vec2 b = glm::normalize(world - origin);
                     const float r = glm::orientedAngle(a, b);
                     rot = r - rotation;
@@ -154,7 +153,7 @@ static void set_callbacks(GLFWwindow* window)
             else if (rotating && rb_state == GLFW_PRESS) {
                 const glm::vec2 origin{translation};
                 const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
-                const glm::vec2 a = glm::vec2{1.0f, 0.0f};
+                const glm::vec2 a{1.0f, 0.0f};
                 const glm::vec2 b = glm::normalize(world - origin);
                 const float r = glm::orientedAngle(a, b);
                 rotation = r - rot;
