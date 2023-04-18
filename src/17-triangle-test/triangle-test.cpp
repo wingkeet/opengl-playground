@@ -99,10 +99,11 @@ static void set_callbacks(GLFWwindow* window)
                 glUseProgram(program);
             }
             else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
-                moving = rotating = false;
                 scaling = 1.0f;
                 rotation = 0.0f;
                 translation.x = translation.y = 0.0f;
+                moving = rotating = false;
+                glfwSetCursor(window, nullptr);
             }
         }
     );
