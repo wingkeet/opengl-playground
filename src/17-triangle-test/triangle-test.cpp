@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/vector_angle.hpp>
 #include "shader.h"
 #include "utils.h"
 
@@ -17,6 +18,7 @@ static float scaling{1.0f};
 static float rotation{0.0f};
 static glm::vec2 translation{0.0f, 0.0f};
 static bool moving{};
+static bool rotating{};
 static bool selected{};
 
 static GLuint compile_shaders()
@@ -62,7 +64,7 @@ static bool point_in_triangle(
     p1 = model_matrix * glm::vec4{p1, 0.0f, 1.0f};
     p2 = model_matrix * glm::vec4{p2, 0.0f, 1.0f};
     p3 = model_matrix * glm::vec4{p3, 0.0f, 1.0f};
- 
+
     const float d1 = sign(p, p1, p2);
     const float d2 = sign(p, p2, p3);
     const float d3 = sign(p, p3, p1);
@@ -76,6 +78,7 @@ static bool point_in_triangle(
 static void set_callbacks(GLFWwindow* window)
 {
     static glm::vec2 trans{};
+    static float rot{};
 
     glfwSetFramebufferSizeCallback(
         window,
@@ -96,7 +99,7 @@ static void set_callbacks(GLFWwindow* window)
                 glUseProgram(program);
             }
             else if (key == GLFW_KEY_HOME && action == GLFW_PRESS) {
-                moving = false;
+                moving = rotating = false;
                 scaling = 1.0f;
                 rotation = 0.0f;
                 translation.x = translation.y = 0.0f;
@@ -108,6 +111,7 @@ static void set_callbacks(GLFWwindow* window)
         [](GLFWwindow* window, int button, int action, int mods) {
             double xpos{}, ypos{};
             glfwGetCursorPos(window, &xpos, &ypos);
+
             if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                 const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
                 const bool hit = point_in_triangle(world,
@@ -121,15 +125,39 @@ static void set_callbacks(GLFWwindow* window)
             else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                 moving = false;
             }
+            else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+                if (selected) {
+                    rotating = true;
+                    const glm::vec2 origin{translation};
+                    const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
+                    const glm::vec2 a = glm::normalize(origin + glm::vec2{1.0f, 0.0f});
+                    const glm::vec2 b = glm::normalize(world - origin);
+                    const float r = glm::orientedAngle(a, b);
+                    rot = r - rotation;
+                }
+            }
+            else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+                rotating = false;
+            }
         }
     );
     glfwSetCursorPosCallback(
         window,
         [](GLFWwindow* window, double xpos, double ypos) {
-            const int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-            if (moving && state == GLFW_PRESS) {
+            const int lb_state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            const int rb_state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+
+            if (moving && lb_state == GLFW_PRESS) {
                 const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
                 translation = world - trans;
+            }
+            else if (rotating && rb_state == GLFW_PRESS) {
+                const glm::vec2 origin{translation};
+                const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
+                const glm::vec2 a = glm::normalize(origin + glm::vec2{1.0f, 0.0f});
+                const glm::vec2 b = glm::normalize(world - origin);
+                const float r = glm::orientedAngle(a, b);
+                rotation = r - rot;
             }
         }
     );
