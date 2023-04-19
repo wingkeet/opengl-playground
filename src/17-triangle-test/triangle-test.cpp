@@ -353,9 +353,6 @@ int main()
     // calling the above functions.
     glBindVertexArray(vao);
 
-    // Uncomment this call to draw in wireframe polygons
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     while (!glfwWindowShouldClose(window)) {
         process_gamepad(window);
         render(window, glfwGetTime());
