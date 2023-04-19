@@ -21,6 +21,12 @@ static bool moving{};
 static bool rotating{};
 static bool selected{};
 
+static std::string window_title()
+{
+    const float degrees = std::fmod(glm::degrees(rotation) + 360.0f, 360.0f);
+    return fmt::format("17-triangle-test (rz={:2.1f})", degrees);
+}
+
 static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
@@ -104,6 +110,7 @@ static void set_callbacks(GLFWwindow* window)
                 translation.x = translation.y = 0.0f;
                 moving = rotating = false;
                 glfwSetCursor(window, nullptr);
+                glfwSetWindowTitle(window, window_title().c_str());
             }
         }
     );
@@ -160,6 +167,7 @@ static void set_callbacks(GLFWwindow* window)
                 const glm::vec2 b = glm::normalize(world - origin);
                 const float r = glm::orientedAngle(a, b);
                 rotation = r - rot;
+                glfwSetWindowTitle(window, window_title().c_str());
             }
         }
     );
@@ -288,7 +296,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "17-triangle-test", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, window_title().c_str(), nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
