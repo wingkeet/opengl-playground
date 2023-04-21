@@ -153,14 +153,11 @@ static void set_callbacks(GLFWwindow* window)
     glfwSetCursorPosCallback(
         window,
         [](GLFWwindow* window, double xpos, double ypos) {
-            const int lb_state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-            const int rb_state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
-
-            if (moving && lb_state == GLFW_PRESS) {
+            if (moving) {
                 const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
                 translation = world - trans;
             }
-            else if (rotating && rb_state == GLFW_PRESS) {
+            else if (rotating) {
                 const glm::vec2 origin{translation};
                 const glm::vec2 world = window_to_world(window, glm::vec2{xpos, ypos});
                 const glm::vec2 a{1.0f, 0.0f};
