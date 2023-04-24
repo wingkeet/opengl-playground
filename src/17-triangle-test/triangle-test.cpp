@@ -44,7 +44,7 @@ static glm::vec3 window_to_world(
     // https://en.wikibooks.org/wiki/OpenGL_Programming/Object_selection#Unprojecting_window_coordinates
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
-    glm::vec3 window_coords{win.x, height - win.y - 1, 0.0f};
+    const glm::vec3 window_coords{win.x, height - win.y - 1, 0.0f};
     const glm::vec4 viewport{0, 0, width, height};
     const glm::vec3 world_coords = glm::unProject(window_coords, view_matrix, proj_matrix, viewport);
     return world_coords;
