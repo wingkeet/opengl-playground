@@ -44,11 +44,10 @@ static glm::vec3 window_to_world(
     // https://en.wikibooks.org/wiki/OpenGL_Programming/Object_selection#Unprojecting_window_coordinates
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
+    glm::vec3 window_coords{win.x, height - win.y - 1, 0.0f};
     const glm::vec4 viewport{0, 0, width, height};
-    const glm::vec3 world = glm::unProject(
-        glm::vec3{win.x, height - win.y - 1, 0.0f},
-        view_matrix, proj_matrix, viewport);
-    return world;
+    const glm::vec3 world_coords = glm::unProject(window_coords, view_matrix, proj_matrix, viewport);
+    return world_coords;
 }
 
 static float sign(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
