@@ -11,6 +11,7 @@
 
 // Global variables
 static GLuint program{};
+static glm::mat4 proj_matrix{};
 
 static GLuint compile_shaders()
 {
@@ -21,12 +22,25 @@ static GLuint compile_shaders()
     });
 }
 
+static void set_viewport(GLFWwindow* window)
+{
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+
+    const float w = width, h = height;
+    const float aspect = w / h;
+    proj_matrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
+    const GLint loc_res = glGetUniformLocation(program, "u_resolution");
+    glUniform2f(loc_res, w, h);
+}
+
 static void set_callbacks(GLFWwindow* window)
 {
     glfwSetFramebufferSizeCallback(
         window,
         [](GLFWwindow* window, int width, int height) {
-            glViewport(0, 0, width, height);
+            set_viewport(window);
         }
     );
     glfwSetKeyCallback(
@@ -126,7 +140,6 @@ int main()
     // https://stackoverflow.com/questions/60440682/drawing-a-line-in-modern-opengl
 
     const GLint loc_mvp = glGetUniformLocation(program, "u_mvp");
-    const GLint loc_res = glGetUniformLocation(program, "u_resolution");
     const GLint loc_thi = glGetUniformLocation(program, "u_thickness");
 
     glUniform1f(loc_thi, 20.0f);
@@ -155,41 +168,35 @@ int main()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
     const GLsizei N = (GLsizei)varray.size() - 2;
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-    glm::mat4 project{};
-    int vpSize[2]{0, 0};
+    set_viewport(window);
     while (!glfwWindowShouldClose(window)) {
-        int w, h;
-        glfwGetFramebufferSize(window, &w, &h);
-        if (w != vpSize[0] ||  h != vpSize[1])
-        {
-            vpSize[0] = w; vpSize[1] = h;
-            glViewport(0, 0, vpSize[0], vpSize[1]);
-            float aspect = (float)w / (float)h;
-            project = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
-            glUniform2f(loc_res, (float)w, (float)h);
-        }
-
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glm::mat4 modelview1{1.0f};
-        modelview1 = glm::translate(modelview1, glm::vec3{-0.6f, 0.0f, 0.0f});
-        modelview1 = glm::scale(modelview1, glm::vec3{0.5f, 0.5f, 1.0f});
-        const glm::mat4 mvp1 = project * modelview1;
+        // Draw filled polygons
+        {
+            glm::mat4 mv_matrix{1.0f};
+            mv_matrix = glm::translate(mv_matrix, glm::vec3{-0.6f, 0.0f, 0.0f});
+            mv_matrix = glm::scale(mv_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
+            const glm::mat4 mvp_matrix = proj_matrix * mv_matrix;
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp1));
-        glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
+            glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
+        }
 
-        glm::mat4 modelview2{1.0f};
-        modelview2 = glm::translate(modelview2, glm::vec3{0.6f, 0.0f, 0.0f});
-        modelview2 = glm::scale(modelview2, glm::vec3{0.5f, 0.5f, 1.0f});
-        const glm::mat4 mvp2 = project * modelview2;
+        // Draw outlined polygons
+        {
+            glm::mat4 mv_matrix{1.0f};
+            mv_matrix = glm::translate(mv_matrix, glm::vec3{0.6f, 0.0f, 0.0f});
+            mv_matrix = glm::scale(mv_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
+            const glm::mat4 mvp_matrix = proj_matrix * mv_matrix;
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp2));
-        glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
+            glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
