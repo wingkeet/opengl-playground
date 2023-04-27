@@ -69,9 +69,17 @@ static void print_info()
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &max_uniform_block_size);
     fmt::print("GL_MAX_UNIFORM_BLOCK_SIZE: {}\n", max_uniform_block_size);
 
+    GLint max_uniform_buffer_bindings{};
+    glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &max_uniform_buffer_bindings);
+    fmt::print("GL_MAX_UNIFORM_BUFFER_BINDINGS: {}\n", max_uniform_buffer_bindings);
+
     GLint max_shader_storage_block_size{};
     glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_shader_storage_block_size);
     fmt::print("GL_MAX_SHADER_STORAGE_BLOCK_SIZE: {}\n", max_shader_storage_block_size);
+
+    GLint max_shader_storage_buffer_bindings{};
+    glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &max_shader_storage_buffer_bindings);
+    fmt::print("GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: {}\n", max_shader_storage_buffer_bindings);
 }
 
 static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
