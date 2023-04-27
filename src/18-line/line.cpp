@@ -128,15 +128,15 @@ int main()
     varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
     varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
     for (int u{}; u <= 90; u += 10) {
-        double a = glm::radians((float)u);
-        double c = std::cos(a), s = std::sin(a);
-        varray.emplace_back(glm::vec4{(float)c, (float)s, 0.0f, 1.0f});
+        float a = glm::radians((float)u);
+        float c = std::cos(a), s = std::sin(a);
+        varray.emplace_back(glm::vec4{c, s, 0.0f, 1.0f});
     }
     varray.emplace_back(glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f));
     for (int u{90}; u >= 0; u -= 10) {
-        double a = glm::radians((float)u);
-        double c = std::cos(a), s = std::sin(a);
-        varray.emplace_back(glm::vec4{(float)c-1.0f, (float)s-1.0f, 0.0f, 1.0f});
+        float a = glm::radians((float)u);
+        float c = std::cos(a), s = std::sin(a);
+        varray.emplace_back(glm::vec4{c-1.0f, s-1.0f, 0.0f, 1.0f});
     }
     varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
     varray.emplace_back(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
