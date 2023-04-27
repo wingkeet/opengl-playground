@@ -78,7 +78,7 @@ static GLuint create_ssbo(std::vector<glm::vec4> &varray)
 {
     GLuint ssbo;
     glGenBuffers(1, &ssbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo );
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
     glBufferData(GL_SHADER_STORAGE_BUFFER, varray.size()*sizeof(*varray.data()), varray.data(), GL_STATIC_DRAW);
     return ssbo;
 }
@@ -122,7 +122,7 @@ int main()
     const GLint loc_res = glGetUniformLocation(program, "u_resolution");
     const GLint loc_thi = glGetUniformLocation(program, "u_thickness");
 
-    glUniform1f(loc_thi, 20.0);
+    glUniform1f(loc_thi, 20.0f);
 
     std::vector<glm::vec4> varray;
     varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
@@ -142,7 +142,7 @@ int main()
     varray.emplace_back(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
     const GLuint ssbo = create_ssbo(varray);
 
-    GLuint vao;
+    GLuint vao{};
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
