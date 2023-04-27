@@ -118,34 +118,31 @@ int main()
 
     // https://stackoverflow.com/questions/60440682/drawing-a-line-in-modern-opengl
 
-    GLint  loc_mvp  = glGetUniformLocation(program, "u_mvp");
-    GLint  loc_res  = glGetUniformLocation(program, "u_resolution");
-    GLint  loc_thi  = glGetUniformLocation(program, "u_thickness");
+    GLint loc_mvp = glGetUniformLocation(program, "u_mvp");
+    GLint loc_res = glGetUniformLocation(program, "u_resolution");
+    GLint loc_thi = glGetUniformLocation(program, "u_thickness");
 
     glUniform1f(loc_thi, 20.0);
 
-    GLushort pattern = 0x18ff;
-    GLfloat  factor  = 2.0f;
-
     std::vector<glm::vec4> varray;
-    varray.emplace_back(glm::vec4(0.0f, -1.0f, 0.0f, 1.0f));
-    varray.emplace_back(glm::vec4(1.0f, -1.0f, 0.0f, 1.0f));
-    for (int u=0; u <= 90; u += 10)
+    varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
+    varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
+    for (int u{}; u <= 90; u += 10)
     {
-        double a = u*M_PI/180.0;
-        double c = cos(a), s = sin(a);
-        varray.emplace_back(glm::vec4((float)c, (float)s, 0.0f, 1.0f));
+        double a = glm::radians((float)u);
+        double c = std::cos(a), s = std::sin(a);
+        varray.emplace_back(glm::vec4{(float)c, (float)s, 0.0f, 1.0f});
     }
     varray.emplace_back(glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f));
-    for (int u = 90; u >= 0; u -= 10)
+    for (int u{90}; u >= 0; u -= 10)
     {
-        double a = u * M_PI / 180.0;
-        double c = cos(a), s = sin(a);
-        varray.emplace_back(glm::vec4((float)c-1.0f, (float)s-1.0f, 0.0f, 1.0f));
+        double a = glm::radians((float)u);
+        double c = std::cos(a), s = std::sin(a);
+        varray.emplace_back(glm::vec4{(float)c-1.0f, (float)s-1.0f, 0.0f, 1.0f});
     }
-    varray.emplace_back(glm::vec4(1.0f, -1.0f, 0.0f, 1.0f));
-    varray.emplace_back(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    GLuint ssbo = create_ssbo(varray);
+    varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
+    varray.emplace_back(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
+    const GLuint ssbo = create_ssbo(varray);
 
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -155,7 +152,7 @@ int main()
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    glm::mat4(project);
+    glm::mat4 project{};
     int vpSize[2]{0, 0};
     while (!glfwWindowShouldClose(window))
     {
@@ -165,26 +162,26 @@ int main()
         {
             vpSize[0] = w; vpSize[1] = h;
             glViewport(0, 0, vpSize[0], vpSize[1]);
-            float aspect = (float)w/(float)h;
+            float aspect = (float)w / (float)h;
             project = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
             glUniform2f(loc_res, (float)w, (float)h);
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glm::mat4 modelview1( 1.0f );
-        modelview1 = glm::translate(modelview1, glm::vec3(-0.6f, 0.0f, 0.0f) );
-        modelview1 = glm::scale(modelview1, glm::vec3(0.5f, 0.5f, 1.0f) );
-        glm::mat4 mvp1 = project * modelview1;
+        glm::mat4 modelview1{1.0f};
+        modelview1 = glm::translate(modelview1, glm::vec3{-0.6f, 0.0f, 0.0f});
+        modelview1 = glm::scale(modelview1, glm::vec3{0.5f, 0.5f, 1.0f});
+        const glm::mat4 mvp1 = project * modelview1;
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp1));
         glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
 
-        glm::mat4 modelview2( 1.0f );
-        modelview2 = glm::translate(modelview2, glm::vec3(0.6f, 0.0f, 0.0f) );
-        modelview2 = glm::scale(modelview2, glm::vec3(0.5f, 0.5f, 1.0f) );
-        glm::mat4 mvp2 = project * modelview2;
+        glm::mat4 modelview2{1.0f};
+        modelview2 = glm::translate(modelview2, glm::vec3{0.6f, 0.0f, 0.0f});
+        modelview2 = glm::scale(modelview2, glm::vec3{0.5f, 0.5f, 1.0f});
+        const glm::mat4 mvp2 = project * modelview2;
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp2));
