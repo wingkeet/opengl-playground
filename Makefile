@@ -20,7 +20,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/14-rounded-rectangle \
         $(BINDIR)/15-rounded-triangle \
         $(BINDIR)/16-rounded-polygon \
-        $(BINDIR)/17-triangle-test
+        $(BINDIR)/17-triangle-test \
+        $(BINDIR)/18-line
 
 all: $(TARGETS)
 
@@ -59,6 +60,8 @@ $(BINDIR)/16-rounded-polygon: $(OBJDIR)/16-rounded-polygon.o $(OBJDIR)/shader.o 
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/17-triangle-test: $(OBJDIR)/17-triangle-test.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/18-line: $(OBJDIR)/18-line.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -94,6 +97,8 @@ $(OBJDIR)/15-rounded-triangle.o: $(SRCDIR)/15-rounded-triangle/rounded-triangle.
 $(OBJDIR)/16-rounded-polygon.o: $(SRCDIR)/16-rounded-polygon/rounded-polygon.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/17-triangle-test.o: $(SRCDIR)/17-triangle-test/triangle-test.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/18-line.o: $(SRCDIR)/18-line/line.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
