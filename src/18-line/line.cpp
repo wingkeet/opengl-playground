@@ -118,9 +118,9 @@ int main()
 
     // https://stackoverflow.com/questions/60440682/drawing-a-line-in-modern-opengl
 
-    GLint loc_mvp = glGetUniformLocation(program, "u_mvp");
-    GLint loc_res = glGetUniformLocation(program, "u_resolution");
-    GLint loc_thi = glGetUniformLocation(program, "u_thickness");
+    const GLint loc_mvp = glGetUniformLocation(program, "u_mvp");
+    const GLint loc_res = glGetUniformLocation(program, "u_resolution");
+    const GLint loc_thi = glGetUniformLocation(program, "u_thickness");
 
     glUniform1f(loc_thi, 20.0);
 
