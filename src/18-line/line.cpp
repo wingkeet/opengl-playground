@@ -74,12 +74,11 @@ static void print_info()
     fmt::print("GL_MAX_SHADER_STORAGE_BLOCK_SIZE: {}\n", max_shader_storage_block_size);
 }
 
-static GLuint create_ssbo(std::vector<glm::vec4> &varray)
+static GLuint create_ssbo(std::vector<glm::vec4>& varray)
 {
-    GLuint ssbo;
-    glGenBuffers(1, &ssbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, varray.size()*sizeof(*varray.data()), varray.data(), GL_STATIC_DRAW);
+    GLuint ssbo{};
+    glCreateBuffers(1, &ssbo);
+    glNamedBufferStorage(ssbo, varray.size()*sizeof(*varray.data()), varray.data(), 0);
     return ssbo;
 }
 
