@@ -43,25 +43,6 @@ static void set_callbacks(GLFWwindow* window)
             }
         }
     );
-    glfwSetMouseButtonCallback(
-        window,
-        [](GLFWwindow* window, int button, int action, int mods) {
-            double xpos{}, ypos{};
-            glfwGetCursorPos(window, &xpos, &ypos);
-            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                fmt::print("mouse down {}, {}\n", xpos, ypos);
-            }
-            else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-                fmt::print("mouse up {}, {}\n", xpos, ypos);
-            }
-        }
-    );
-    glfwSetWindowFocusCallback(
-        window,
-        [](GLFWwindow* window, int focused) {
-            //fmt::print("focused {}\n", focused);
-        }
-    );
 }
 
 static void print_info()
@@ -91,36 +72,9 @@ static void print_info()
     GLint max_shader_storage_block_size{};
     glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_shader_storage_block_size);
     fmt::print("GL_MAX_SHADER_STORAGE_BLOCK_SIZE: {}\n", max_shader_storage_block_size);
-
-    if (glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
-        fmt::print("Gamepad: {}\n", glfwGetGamepadName(GLFW_JOYSTICK_1));
-    }
-    else {
-        fmt::print("Gamepad: none\n");
-    }
 }
 
-static void process_gamepad(GLFWwindow* window)
-{
-    GLFWgamepadstate state{};
-
-    if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
-        if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, GLFW_TRUE);
-        }
-    }
-}
-
-static void render(GLFWwindow* window, double currentTime)
-{
-    const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
-    glClearBufferfv(GL_COLOR, 0, background);
-
-    // Draw our first triangle
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
-GLuint create_ssbo(std::vector<glm::vec4> &varray)
+static GLuint create_ssbo(std::vector<glm::vec4> &varray)
 {
     GLuint ssbo;
     glGenBuffers(1, &ssbo);
