@@ -250,8 +250,7 @@ static void render(GLFWwindow* window, double current_time)
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    proj_matrix = glm::ortho(
-        -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
+    proj_matrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
 
     // Copy model-view and projection matrices to uniform variables
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
