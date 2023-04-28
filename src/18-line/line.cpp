@@ -148,14 +148,14 @@ int main()
     varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
     varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
     for (int u{}; u <= 90; u += 10) {
-        float a = glm::radians((float)u);
-        float c = std::cos(a), s = std::sin(a);
+        const float a = glm::radians(static_cast<float>(u));
+        const float c = std::cos(a), s = std::sin(a);
         varray.emplace_back(glm::vec4{c, s, 0.0f, 1.0f});
     }
     varray.emplace_back(glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f));
     for (int u{90}; u >= 0; u -= 10) {
-        float a = glm::radians((float)u);
-        float c = std::cos(a), s = std::sin(a);
+        const float a = glm::radians(static_cast<float>(u));
+        const float c = std::cos(a), s = std::sin(a);
         varray.emplace_back(glm::vec4{c-1.0f, s-1.0f, 0.0f, 1.0f});
     }
     varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
@@ -166,7 +166,7 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
-    const GLsizei N = (GLsizei)varray.size() - 2;
+    const GLsizei N = static_cast<GLsizei>(varray.size()) - 2;
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
