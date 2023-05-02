@@ -67,18 +67,6 @@ static void print_info()
     fmt::print("GL_VERSION: {}\n", glGetString(GL_VERSION));
     fmt::print("GL_SHADING_LANGUAGE_VERSION: {}\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    GLint max_vertex_attribs{};
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vertex_attribs);
-    fmt::print("GL_MAX_VERTEX_ATTRIBS: {}\n", max_vertex_attribs);
-
-    GLint max_vertex_attrib_bindings{};
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIB_BINDINGS, &max_vertex_attrib_bindings);
-    fmt::print("GL_MAX_VERTEX_ATTRIB_BINDINGS: {}\n", max_vertex_attrib_bindings);
-
-    GLint max_uniform_locations{};
-    glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &max_uniform_locations);
-    fmt::print("GL_MAX_UNIFORM_LOCATIONS: {}\n", max_uniform_locations);
-
     GLint max_uniform_block_size{};
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &max_uniform_block_size);
     fmt::print("GL_MAX_UNIFORM_BLOCK_SIZE: {}\n", max_uniform_block_size);
@@ -94,6 +82,34 @@ static void print_info()
     GLint max_shader_storage_buffer_bindings{};
     glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &max_shader_storage_buffer_bindings);
     fmt::print("GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: {}\n", max_shader_storage_buffer_bindings);
+
+    GLint max_vertex_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &max_vertex_shader_storage_blocks);
+    fmt::print("GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS: {}\n", max_vertex_shader_storage_blocks);
+
+    GLint max_fragment_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &max_fragment_shader_storage_blocks);
+    fmt::print("GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS: {}\n", max_fragment_shader_storage_blocks);
+
+    GLint max_geometry_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS, &max_geometry_shader_storage_blocks);
+    fmt::print("GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS: {}\n", max_geometry_shader_storage_blocks);
+
+    GLint max_tess_control_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS, &max_tess_control_shader_storage_blocks);
+    fmt::print("GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS: {}\n", max_tess_control_shader_storage_blocks);
+
+    GLint max_tess_evaluation_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS, &max_tess_evaluation_shader_storage_blocks);
+    fmt::print("GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS: {}\n", max_tess_evaluation_shader_storage_blocks);
+
+    GLint max_compute_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &max_compute_shader_storage_blocks);
+    fmt::print("GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: {}\n", max_compute_shader_storage_blocks);
+
+    GLint max_combined_shader_storage_blocks{};
+    glGetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &max_combined_shader_storage_blocks);
+    fmt::print("GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS: {}\n", max_combined_shader_storage_blocks);
 }
 
 static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
