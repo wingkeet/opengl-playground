@@ -22,7 +22,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/16-rounded-polygon \
         $(BINDIR)/17-triangle-test \
         $(BINDIR)/18-line \
-        $(BINDIR)/19-dashed-line
+        $(BINDIR)/19-dashed-line \
+        $(BINDIR)/20-dashed-polygon
 
 all: $(TARGETS)
 
@@ -65,6 +66,8 @@ $(BINDIR)/18-line: $(OBJDIR)/18-line.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OB
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/19-dashed-line: $(OBJDIR)/19-dashed-line.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/20-dashed-polygon: $(OBJDIR)/20-dashed-polygon.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -104,6 +107,8 @@ $(OBJDIR)/17-triangle-test.o: $(SRCDIR)/17-triangle-test/triangle-test.cpp
 $(OBJDIR)/18-line.o: $(SRCDIR)/18-line/line.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/19-dashed-line.o: $(SRCDIR)/19-dashed-line/dashed-line.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/20-dashed-polygon.o: $(SRCDIR)/20-dashed-polygon/dashed-polygon.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
