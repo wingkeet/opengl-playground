@@ -155,7 +155,7 @@ int main()
             const glm::vec4 clip = mvp_matrix * glm::vec4{varray[i], 1.0f};
             const glm::vec4 ndc  = clip / clip.w;
             const glm::vec4 vpC  = wndmat * ndc;
-            const float len = i==0 ? 0.0f :  glm::length(vpPt - glm::vec2{vpC});
+            const float len = i==0 ? 0.0f : glm::length(vpPt - glm::vec2{vpC});
             vpPt = glm::vec2(vpC);
             dist += len;
         }
