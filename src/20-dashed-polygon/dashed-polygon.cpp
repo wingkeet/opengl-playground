@@ -143,6 +143,7 @@ int main()
         mv_matrix = glm::rotate(mv_matrix, glm::radians(angle), glm::vec3{1.0f, 0.0f, 0.0f});
         mv_matrix = glm::rotate(mv_matrix, glm::radians(angle*0.5f), glm::vec3{0.0f, 1.0f, 0.0f});
         angle += 0.5f;
+
         const glm::mat4 mvp_matrix = proj_matrix * mv_matrix;
         glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
 
