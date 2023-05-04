@@ -135,8 +135,7 @@ int main()
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     set_viewport(window);
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         static float angle{1.0f};
         glm::mat4 mv_matrix{1.0f};
         mv_matrix = glm::translate(mv_matrix, glm::vec3{0.0f, 0.0f, -3.0f});
