@@ -28,10 +28,8 @@ static void set_viewport(GLFWwindow* window)
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    const float fovy = glm::radians(90.0f);
     const float w = width, h = height;
-    const float aspect = w / h;
-    proj_matrix = glm::perspective(fovy, aspect, 0.1f, 10.0f);
+    proj_matrix = glm::perspective(glm::radians(90.0f), w/h, 0.1f, 10.0f);
     const GLint loc_res = glGetUniformLocation(program, "u_resolution");
     glUniform2f(loc_res, w, h);
 }
