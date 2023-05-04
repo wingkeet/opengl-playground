@@ -126,14 +126,14 @@ int main()
     glGenBuffers(2, bo);
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    glEnableVertexAttribArray(0); 
-    glEnableVertexAttribArray(1); 
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, bo[0]);
     glBufferData(GL_ARRAY_BUFFER, varray.size()*sizeof(*varray.data()), varray.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindBuffer(GL_ARRAY_BUFFER, bo[1] );
     glBufferData(GL_ARRAY_BUFFER, darray.size()*sizeof(*darray.data()), darray.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0); 
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
