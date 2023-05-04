@@ -111,11 +111,11 @@ int main()
     glUniform1f(loc_dash, 10.0f);
     glUniform1f(loc_gap, 10.0f);
 
-    std::vector<float> varray{
+    const std::vector<GLfloat> varray{
         -1, -1, -1,   1, -1, -1,   1, 1, -1,   -1, 1, -1,
         -1, -1,  1,   1, -1,  1,   1, 1,  1,   -1, 1,  1
     };
-    std::vector<unsigned int> iarray{
+    const std::vector<GLuint> iarray{
         0, 1, 1, 2, 2, 3, 3, 0,
         4, 5, 5, 6, 6, 7, 7, 4,
         0, 4, 1, 5, 2, 6, 3, 7
@@ -126,7 +126,7 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, bo[0] );
+    glBindBuffer(GL_ARRAY_BUFFER, bo[0]);
     glBufferData(GL_ARRAY_BUFFER, varray.size()*sizeof(*varray.data()), varray.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bo[1]);
