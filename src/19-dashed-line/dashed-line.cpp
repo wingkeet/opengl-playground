@@ -121,7 +121,7 @@ int main()
         0, 4, 1, 5, 2, 6, 3, 7
     };
 
-    GLuint bo[2], vao;
+    GLuint bo[2]{}, vao{};
     glGenBuffers(2, bo);
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
