@@ -119,6 +119,8 @@ static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
     GLuint ssbo{};
     glCreateBuffers(1, &ssbo);
     glNamedBufferStorage(ssbo, varray.size()*sizeof(*varray.data()), varray.data(), 0);
+    const GLuint binding_point_index{0}; // [0..GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS)
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding_point_index, ssbo);
     return ssbo;
 }
 
@@ -183,7 +185,6 @@ int main()
     GLuint vao{};
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
     const GLsizei N = static_cast<GLsizei>(varray.size()) - 2;
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
