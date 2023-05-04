@@ -17,8 +17,8 @@ static GLuint compile_shaders()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "line.vert").c_str(),
-        fs::canonical(dirname() / ".." / "shader" / "line.frag").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "dashed-line.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "dashed-line.frag").c_str(),
     });
 }
 
@@ -28,9 +28,10 @@ static void set_viewport(GLFWwindow* window)
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
+    const float fovy = glm::radians(90.0f);
     const float w = width, h = height;
     const float aspect = w / h;
-    proj_matrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
+    proj_matrix = glm::perspective(fovy, aspect, 0.1f, 10.0f);
     const GLint loc_res = glGetUniformLocation(program, "u_resolution");
     glUniform2f(loc_res, w, h);
 }
@@ -66,62 +67,6 @@ static void print_info()
     fmt::print("GL_RENDERER: {}\n", glGetString(GL_RENDERER));
     fmt::print("GL_VERSION: {}\n", glGetString(GL_VERSION));
     fmt::print("GL_SHADING_LANGUAGE_VERSION: {}\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-    GLint max_uniform_block_size{};
-    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &max_uniform_block_size);
-    fmt::print("GL_MAX_UNIFORM_BLOCK_SIZE: {}\n", max_uniform_block_size);
-
-    GLint max_uniform_buffer_bindings{};
-    glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &max_uniform_buffer_bindings);
-    fmt::print("GL_MAX_UNIFORM_BUFFER_BINDINGS: {}\n", max_uniform_buffer_bindings);
-
-    // https://www.geeks3d.com/20140704/tutorial-introduction-to-opengl-4-3-shader-storage-buffers-objects-ssbo-demo/
-
-    GLint max_shader_storage_block_size{};
-    glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_shader_storage_block_size);
-    fmt::print("GL_MAX_SHADER_STORAGE_BLOCK_SIZE: {}\n", max_shader_storage_block_size);
-
-    GLint max_shader_storage_buffer_bindings{};
-    glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &max_shader_storage_buffer_bindings);
-    fmt::print("GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: {}\n", max_shader_storage_buffer_bindings);
-
-    GLint max_vertex_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &max_vertex_shader_storage_blocks);
-    fmt::print("GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS: {}\n", max_vertex_shader_storage_blocks);
-
-    GLint max_fragment_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &max_fragment_shader_storage_blocks);
-    fmt::print("GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS: {}\n", max_fragment_shader_storage_blocks);
-
-    GLint max_geometry_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS, &max_geometry_shader_storage_blocks);
-    fmt::print("GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS: {}\n", max_geometry_shader_storage_blocks);
-
-    GLint max_tess_control_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS, &max_tess_control_shader_storage_blocks);
-    fmt::print("GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS: {}\n", max_tess_control_shader_storage_blocks);
-
-    GLint max_tess_evaluation_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS, &max_tess_evaluation_shader_storage_blocks);
-    fmt::print("GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS: {}\n", max_tess_evaluation_shader_storage_blocks);
-
-    GLint max_compute_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &max_compute_shader_storage_blocks);
-    fmt::print("GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS: {}\n", max_compute_shader_storage_blocks);
-
-    GLint max_combined_shader_storage_blocks{};
-    glGetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &max_combined_shader_storage_blocks);
-    fmt::print("GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS: {}\n", max_combined_shader_storage_blocks);
-}
-
-static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
-{
-    GLuint ssbo{};
-    glCreateBuffers(1, &ssbo);
-    glNamedBufferStorage(ssbo, varray.size()*sizeof(*varray.data()), varray.data(), 0);
-    const GLuint binding_point_index{0}; // [0..GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS)
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding_point_index, ssbo);
-    return ssbo;
 }
 
 int main()
@@ -159,63 +104,51 @@ int main()
 
     // https://stackoverflow.com/questions/52928678/dashed-line-in-opengl3
 
-    const GLint loc_mvp = glGetUniformLocation(program, "u_mvp");
-    const GLint loc_thi = glGetUniformLocation(program, "u_thickness");
+    const GLint loc_mvp  = glGetUniformLocation(program, "u_mvp");
+    const GLint loc_dash = glGetUniformLocation(program, "u_dashSize");
+    const GLint loc_gap  = glGetUniformLocation(program, "u_gapSize");
 
-    glUniform1f(loc_thi, 20.0f);
+    glUniform1f(loc_dash, 10.0f);
+    glUniform1f(loc_gap, 10.0f);
 
-    std::vector<glm::vec4> varray;
-    varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
-    for (int u{}; u <= 90; u += 10) {
-        const float a = glm::radians(static_cast<float>(u));
-        const float c = std::cos(a), s = std::sin(a);
-        varray.emplace_back(glm::vec4{c, s, 0.0f, 1.0f});
-    }
-    varray.emplace_back(glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f));
-    for (int u{90}; u >= 0; u -= 10) {
-        const float a = glm::radians(static_cast<float>(u));
-        const float c = std::cos(a), s = std::sin(a);
-        varray.emplace_back(glm::vec4{c-1.0f, s-1.0f, 0.0f, 1.0f});
-    }
-    varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
-    const GLuint ssbo = create_ssbo(varray);
+    std::vector<float> varray{
+        -1, -1, -1,   1, -1, -1,   1, 1, -1,   -1, 1, -1,
+        -1, -1,  1,   1, -1,  1,   1, 1,  1,   -1, 1,  1
+    };
+    std::vector<unsigned int> iarray{
+        0, 1, 1, 2, 2, 3, 3, 0,
+        4, 5, 5, 6, 6, 7, 7, 4,
+        0, 4, 1, 5, 2, 6, 3, 7
+    };
 
-    GLuint vao{};
+    GLuint bo[2], vao;
+    glGenBuffers(2, bo);
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    const GLsizei N = static_cast<GLsizei>(varray.size()) - 2;
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, bo[0] );
+    glBufferData(GL_ARRAY_BUFFER, varray.size()*sizeof(*varray.data()), varray.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bo[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, iarray.size()*sizeof(*iarray.data()), iarray.data(), GL_STATIC_DRAW);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     set_viewport(window);
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window))
+    {
+        static float angle{1.0f};
+        glm::mat4 mv_matrix{1.0f};
+        mv_matrix = glm::translate(mv_matrix, glm::vec3{0.0f, 0.0f, -3.0f});
+        mv_matrix = glm::rotate(mv_matrix, glm::radians(angle), glm::vec3{1.0f, 0.0f, 0.0f});
+        mv_matrix = glm::rotate(mv_matrix, glm::radians(angle*0.5f), glm::vec3{0.0f, 1.0f, 0.0f});
+        angle += 0.5f;
+
+        const glm::mat4 mvp_matrix = proj_matrix * mv_matrix;
+        glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
+
         glClear(GL_COLOR_BUFFER_BIT);
-
-        // Draw filled polygons
-        {
-            glm::mat4 mv_matrix{1.0f};
-            mv_matrix = glm::translate(mv_matrix, glm::vec3{-0.6f, 0.0f, 0.0f});
-            mv_matrix = glm::scale(mv_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
-            const glm::mat4 mvp_matrix = proj_matrix * mv_matrix;
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
-            glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
-        }
-
-        // Draw outlined polygons
-        {
-            glm::mat4 mv_matrix{1.0f};
-            mv_matrix = glm::translate(mv_matrix, glm::vec3{0.6f, 0.0f, 0.0f});
-            mv_matrix = glm::scale(mv_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
-            const glm::mat4 mvp_matrix = proj_matrix * mv_matrix;
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
-            glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
-        }
+        glDrawElements(GL_LINES, (GLsizei)iarray.size(), GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
