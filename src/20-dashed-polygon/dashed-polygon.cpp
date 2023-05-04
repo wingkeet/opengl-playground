@@ -29,14 +29,12 @@ static void set_viewport(GLFWwindow* window)
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    const float fovy = glm::radians(90.0f);
     const float w = width, h = height;
-    const float aspect = w / h;
-    proj_matrix = glm::perspective(fovy, aspect, 0.1f, 10.0f);
+    proj_matrix = glm::perspective(glm::radians(90.0f), w/h, 0.1f, 10.0f);
     const GLint loc_res = glGetUniformLocation(program, "u_resolution");
     glUniform2f(loc_res, w, h);
-    wndmat = glm::scale(glm::mat4(1.0f), glm::vec3(w/2, h/2, 1.0f));
-    wndmat = glm::translate(wndmat, glm::vec3(1.0f, 1.0f, 0.0f));
+    wndmat = glm::scale(glm::mat4{1.0f}, glm::vec3{w/2, h/2, 1.0f});
+    wndmat = glm::translate(wndmat, glm::vec3{1.0f, 1.0f, 0.0f});
 }
 
 static void set_callbacks(GLFWwindow* window)
@@ -150,7 +148,7 @@ int main()
 
         glm::vec2 vpPt{0.0f, 0.0f};
         float dist{0.0f};
-        for (size_t i=0; i < varray.size(); ++i) {
+        for (size_t i{}; i < varray.size(); ++i) {
             darray[i] = dist;
             const glm::vec4 clip = mvp_matrix * glm::vec4{varray[i], 1.0f};
             const glm::vec4 ndc  = clip / clip.w;
