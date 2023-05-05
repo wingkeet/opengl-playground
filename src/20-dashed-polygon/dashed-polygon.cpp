@@ -12,7 +12,7 @@
 // Global variables
 static GLuint program{};
 static glm::mat4 proj_matrix{};
-static glm::mat4 wndmat{};
+static glm::mat4 window_matrix{};
 
 static GLuint create_program()
 {
@@ -51,8 +51,8 @@ static void set_viewport(GLFWwindow* window)
     proj_matrix = glm::perspective(glm::radians(90.0f), w/h, 0.1f, 10.0f);
     const GLint loc_res = glGetUniformLocation(program, "u_resolution");
     glUniform2f(loc_res, w, h);
-    wndmat = glm::scale(glm::mat4{1.0f}, glm::vec3{w/2, h/2, 1.0f});
-    wndmat = glm::translate(wndmat, glm::vec3{1.0f, 1.0f, 0.0f});
+    window_matrix = glm::scale(glm::mat4{1.0f}, glm::vec3{w/2, h/2, 1.0f});
+    window_matrix = glm::translate(window_matrix, glm::vec3{1.0f, 1.0f, 0.0f});
 }
 
 static void set_callbacks(GLFWwindow* window)
@@ -168,7 +168,7 @@ int main()
             darray[i] = dist;
             const glm::vec4 clip = mvp_matrix * glm::vec4{varray[i], 1.0f};
             const glm::vec4 ndc  = clip / clip.w;
-            const glm::vec4 vpC  = wndmat * ndc;
+            const glm::vec4 vpC  = window_matrix * ndc;
             const float len = i==0 ? 0.0f : glm::length(vpPt - glm::vec2{vpC});
             vpPt = glm::vec2(vpC);
             dist += len;
