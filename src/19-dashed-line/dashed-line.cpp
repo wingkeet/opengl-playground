@@ -13,7 +13,7 @@
 static GLuint program{};
 static glm::mat4 proj_matrix{};
 
-static GLuint compile_shaders()
+static GLuint create_program()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
@@ -37,7 +37,7 @@ static void set_viewport(GLFWwindow* window)
 static void reload_program(GLFWwindow* window)
 {
     glDeleteProgram(program);
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     int width{}, height{};
@@ -112,7 +112,7 @@ int main()
     print_info();
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     // https://stackoverflow.com/questions/52928678/dashed-line-in-opengl3
