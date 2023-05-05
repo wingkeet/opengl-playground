@@ -75,3 +75,4 @@ direct rendering: Yes
 - https://tutors.com/lesson/how-to-find-orthocenter-of-a-triangle
 - https://en.wikipedia.org/wiki/Equilateral_triangle
 - https://en.wikipedia.org/wiki/Regular_polygon
+- https://thebookofshaders.com/
