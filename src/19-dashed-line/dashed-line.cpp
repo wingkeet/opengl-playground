@@ -34,6 +34,24 @@ static void set_viewport(GLFWwindow* window)
     glUniform2f(loc_res, w, h);
 }
 
+static void reload_shaders(GLFWwindow* window)
+{
+    glDeleteProgram(program);
+    program = compile_shaders();
+    glUseProgram(program);
+
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+
+    const GLint loc_dash = glGetUniformLocation(program, "u_dashSize");
+    const GLint loc_gap  = glGetUniformLocation(program, "u_gapSize");
+    const GLint loc_res  = glGetUniformLocation(program, "u_resolution");
+
+    glUniform1f(loc_dash, 10.0f);
+    glUniform1f(loc_gap, 10.0f);
+    glUniform2f(loc_res, width, height);
+}
+
 static void set_callbacks(GLFWwindow* window)
 {
     glfwSetFramebufferSizeCallback(
@@ -49,21 +67,7 @@ static void set_callbacks(GLFWwindow* window)
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
             }
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
-                // Press F5 to reload shaders
-                glDeleteProgram(program);
-                program = compile_shaders();
-                glUseProgram(program);
-
-                int width{}, height{};
-                glfwGetFramebufferSize(window, &width, &height);
-
-                const GLint loc_dash = glGetUniformLocation(program, "u_dashSize");
-                const GLint loc_gap  = glGetUniformLocation(program, "u_gapSize");
-                const GLint loc_res  = glGetUniformLocation(program, "u_resolution");
-
-                glUniform1f(loc_dash, 10.0f);
-                glUniform1f(loc_gap, 10.0f);
-                glUniform2f(loc_res, width, height);
+                reload_shaders(window);
             }
         }
     );
