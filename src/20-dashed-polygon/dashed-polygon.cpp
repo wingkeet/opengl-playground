@@ -14,13 +14,31 @@ static GLuint program{};
 static glm::mat4 proj_matrix{};
 static glm::mat4 wndmat{};
 
-static GLuint compile_shaders()
+static GLuint create_program()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
         fs::canonical(dirname() / ".." / "shader" / "dashed-polygon.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "dashed-polygon.frag").c_str(),
     });
+}
+
+static void reload_program(GLFWwindow* window)
+{
+    glDeleteProgram(program);
+    program = create_program();
+    glUseProgram(program);
+
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+
+    const GLint loc_dash = glGetUniformLocation(program, "u_dashSize");
+    const GLint loc_gap  = glGetUniformLocation(program, "u_gapSize");
+    const GLint loc_res  = glGetUniformLocation(program, "u_resolution");
+
+    glUniform1f(loc_dash, 10.0f);
+    glUniform1f(loc_gap, 10.0f);
+    glUniform2f(loc_res, width, height);
 }
 
 static void set_viewport(GLFWwindow* window)
@@ -52,10 +70,7 @@ static void set_callbacks(GLFWwindow* window)
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
             }
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
-                // Press F5 to reload shaders
-                glDeleteProgram(program);
-                program = compile_shaders();
-                glUseProgram(program);
+                reload_program(window);
             }
         }
     );
@@ -100,7 +115,7 @@ int main()
     print_info();
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     // https://stackoverflow.com/questions/52928678/dashed-line-in-opengl3
