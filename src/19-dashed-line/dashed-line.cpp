@@ -34,7 +34,7 @@ static void set_viewport(GLFWwindow* window)
     glUniform2f(loc_res, w, h);
 }
 
-static void reload_shaders(GLFWwindow* window)
+static void reload_program(GLFWwindow* window)
 {
     glDeleteProgram(program);
     program = compile_shaders();
@@ -67,7 +67,7 @@ static void set_callbacks(GLFWwindow* window)
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
             }
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
-                reload_shaders(window);
+                reload_program(window);
             }
         }
     );
