@@ -22,18 +22,6 @@ static GLuint create_program()
     });
 }
 
-static void set_viewport(GLFWwindow* window)
-{
-    int width{}, height{};
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-
-    const float w = width, h = height;
-    proj_matrix = glm::perspective(glm::radians(90.0f), w/h, 0.1f, 10.0f);
-    const GLint loc_res = glGetUniformLocation(program, "u_resolution");
-    glUniform2f(loc_res, w, h);
-}
-
 static void reload_program(GLFWwindow* window)
 {
     glDeleteProgram(program);
@@ -50,6 +38,18 @@ static void reload_program(GLFWwindow* window)
     glUniform1f(loc_dash, 10.0f);
     glUniform1f(loc_gap, 10.0f);
     glUniform2f(loc_res, width, height);
+}
+
+static void set_viewport(GLFWwindow* window)
+{
+    int width{}, height{};
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+
+    const float w = width, h = height;
+    proj_matrix = glm::perspective(glm::radians(90.0f), w/h, 0.1f, 10.0f);
+    const GLint loc_res = glGetUniformLocation(program, "u_resolution");
+    glUniform2f(loc_res, w, h);
 }
 
 static void set_callbacks(GLFWwindow* window)
