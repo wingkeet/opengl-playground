@@ -114,6 +114,7 @@ static void print_info()
     fmt::print("GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS: {}\n", max_combined_shader_storage_blocks);
 }
 
+// https://stackoverflow.com/questions/27810542/what-is-the-difference-between-glbufferstorage-and-glbufferdata
 static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
 {
     GLuint ssbo{};
