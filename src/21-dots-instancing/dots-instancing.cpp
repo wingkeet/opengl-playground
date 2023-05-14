@@ -12,13 +12,12 @@
 
 // Global variables
 static GLuint program{};
-static bool wireframe{};
 
-static GLuint compile_shaders()
+static GLuint create_program()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
-        fs::canonical(dirname() / ".." / "shader" / "mvp-color.vert").c_str(),
+        fs::canonical(dirname() / ".." / "shader" / "dots-instancing.vert").c_str(),
         fs::canonical(dirname() / ".." / "shader" / "basic.frag").c_str(),
     });
 }
@@ -40,32 +39,9 @@ static void set_callbacks(GLFWwindow* window)
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
                 // Press F5 to reload shaders
                 glDeleteProgram(program);
-                program = compile_shaders();
+                program = create_program();
                 glUseProgram(program);
             }
-            else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-                wireframe = !wireframe;
-                glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-            }
-        }
-    );
-    glfwSetMouseButtonCallback(
-        window,
-        [](GLFWwindow* window, int button, int action, int mods) {
-            double xpos{}, ypos{};
-            glfwGetCursorPos(window, &xpos, &ypos);
-            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                fmt::print("mouse down {}, {}\n", xpos, ypos);
-            }
-            else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-                fmt::print("mouse up {}, {}\n", xpos, ypos);
-            }
-        }
-    );
-    glfwSetWindowFocusCallback(
-        window,
-        [](GLFWwindow* window, int focused) {
-            //fmt::print("focused {}\n", focused);
         }
     );
 }
@@ -89,65 +65,38 @@ static void print_info()
     GLint max_uniform_locations{};
     glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &max_uniform_locations);
     fmt::print("GL_MAX_UNIFORM_LOCATIONS: {}\n", max_uniform_locations);
-
-    if (glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
-        fmt::print("Gamepad: {}\n", glfwGetGamepadName(GLFW_JOYSTICK_1));
-    }
-    else {
-        fmt::print("Gamepad: none\n");
-    }
-
-    fmt::print("Press spacebar to toggle filled and wireframe mode.\n");
-}
-
-static void process_gamepad(GLFWwindow* window)
-{
-    GLFWgamepadstate state{};
-
-    if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
-        if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, GLFW_TRUE);
-        }
-    }
 }
 
 static void render(GLFWwindow* window, double current_time, int num_vertices)
 {
-    const float tf = static_cast<float>(current_time);
-    const glm::mat4 identity_matrix{1.0f};
-
-    // Build model matrix
-    const glm::mat4 model_matrix = glm::scale(identity_matrix, glm::vec3{0.5f, 0.5f, 1.0f});
-
     // Build view matrix
     const glm::vec3 camera{0.0f, 0.0f, 5.0f};
     const glm::vec3 center{0.0f, 0.0f, 0.0f};
     const glm::vec3 up{0.0f, 1.0f, 0.0f};
     const glm::mat4 view_matrix = glm::lookAt(camera, center, up);
 
-    // Build model-view matrix
-    const glm::mat4 mv_matrix = view_matrix * model_matrix;
-
     // Build orthographic projection matrix
     int width{}, height{};
     glfwGetFramebufferSize(window, &width, &height);
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    const glm::mat4 proj_matrix = glm::ortho(
-        -1.0f, 1.0f, -1.0f / aspect, 1.0f / aspect, -1000.0f, 1000.0f);
+    const glm::mat4 proj_matrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
 
-    // Copy model-view and projection matrices to uniform variables
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
-    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(proj_matrix));
+    // Get uniform locations
+    const GLint loc_view_matrix  = glGetUniformLocation(program, "u_view_matrix");
+    const GLint loc_proj_matrix  = glGetUniformLocation(program, "u_proj_matrix");
+    const GLint loc_vertex_color  = glGetUniformLocation(program, "u_vertex_color");
 
-    // Set the background color
-    const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
-    glClearBufferfv(GL_COLOR, 0, background);
+    // Copy to uniform variables
+    glUniformMatrix4fv(loc_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
+    glUniformMatrix4fv(loc_proj_matrix, 1, GL_FALSE, glm::value_ptr(proj_matrix));
+    glUniform3f(loc_vertex_color, 0.0f, 0.8f, 0.0f);
 
-    // Set the color of our circle
-    glUniform3f(2, 1.0f, 0.0f, 0.65f);
-
-    // Draw circle
-    glDrawArrays(GL_TRIANGLE_FAN, 0, num_vertices);
+    // Draw 6 dots with instancing
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, num_vertices, 60); // 6 rows by 10 columns
 }
 
 // https://stackoverflow.com/questions/59468388/how-to-use-gl-triangle-fan-to-draw-a-circle-in-opengl
@@ -184,7 +133,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "21-dots-instancing", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "21-dots-instancing", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -197,7 +146,7 @@ int main()
     print_info();
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     // Generate the vertices of our circle
@@ -231,11 +180,7 @@ int main()
     // calling the above functions.
     glBindVertexArray(vao);
 
-    // Draw filled or wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-
     while (!glfwWindowShouldClose(window)) {
-        process_gamepad(window);
         render(window, glfwGetTime(), vertices.size());
         glfwSwapBuffers(window);
         glfwPollEvents();
