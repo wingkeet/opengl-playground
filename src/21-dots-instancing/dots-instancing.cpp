@@ -91,7 +91,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniformMatrix4fv(loc_proj_matrix, 1, GL_FALSE, glm::value_ptr(proj_matrix));
     glUniform3f(loc_vertex_color, 0.0f, 0.8f, 0.0f);
 
-    // Draw 6 dots with instancing
+    // Draw 60 dots with instancing
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
