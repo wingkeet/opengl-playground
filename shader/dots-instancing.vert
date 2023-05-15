@@ -5,6 +5,7 @@ layout (location = 0) in vec2 vertex_position;
 layout (location = 0) uniform mat4 u_view_matrix;
 layout (location = 1) uniform mat4 u_proj_matrix;
 layout (location = 2) uniform vec3 u_vertex_color;
+layout (location = 3) uniform float u_tf;
 
 out vec3 varying_color; // interpolated by rasterizer
 
@@ -37,7 +38,8 @@ void main()
     float tz = 0.0;
     mat4 tmat = translate(tx, ty, tz);
 
-    mat4 smat = scale(0.1, 0.1, 1.0);
+    float tf = sin(u_tf) * 0.1;
+    mat4 smat = scale(tf, tf, 1.0);
 
     mat4 model_matrix = tmat * smat;
     mat4 mv_matrix = u_view_matrix * model_matrix;
