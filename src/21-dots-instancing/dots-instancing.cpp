@@ -84,14 +84,30 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     // Get uniform locations
     const GLint loc_view_matrix = glGetUniformLocation(program, "u_view_matrix");
     const GLint loc_proj_matrix = glGetUniformLocation(program, "u_proj_matrix");
-    const GLint loc_vertex_color = glGetUniformLocation(program, "u_vertex_color");
     const GLint loc_tf = glGetUniformLocation(program, "u_tf");
 
     // Copy to uniform variables
     glUniformMatrix4fv(loc_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
     glUniformMatrix4fv(loc_proj_matrix, 1, GL_FALSE, glm::value_ptr(proj_matrix));
-    glUniform3f(loc_vertex_color, 0.0f, 0.8f, 0.0f);
     glUniform1f(loc_tf, static_cast<float>(current_time));
+
+    static const glm::vec3 colors[10]{
+        {1.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {1.0f, 1.0f, 0.0f},
+        {1.0f, 0.0f, 1.0f},
+        {0.0f, 1.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+    };
+    for (int i = 0; i < 10; i++) {
+        const std::string str = fmt::format("u_colors[{}]", i);
+        const GLint loc = glGetUniformLocation(program, str.c_str());
+        glUniform3fv(loc, 1, glm::value_ptr(colors[i]));
+    }
 
     // Draw 60 dots with instancing
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
