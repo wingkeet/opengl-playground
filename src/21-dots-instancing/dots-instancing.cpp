@@ -82,10 +82,10 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const glm::mat4 proj_matrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
 
     // Get uniform locations
-    const GLint loc_view_matrix  = glGetUniformLocation(program, "u_view_matrix");
-    const GLint loc_proj_matrix  = glGetUniformLocation(program, "u_proj_matrix");
-    const GLint loc_vertex_color  = glGetUniformLocation(program, "u_vertex_color");
-    const GLint loc_tf  = glGetUniformLocation(program, "u_tf");
+    const GLint loc_view_matrix = glGetUniformLocation(program, "u_view_matrix");
+    const GLint loc_proj_matrix = glGetUniformLocation(program, "u_proj_matrix");
+    const GLint loc_vertex_color = glGetUniformLocation(program, "u_vertex_color");
+    const GLint loc_tf = glGetUniformLocation(program, "u_tf");
 
     // Copy to uniform variables
     glUniformMatrix4fv(loc_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
