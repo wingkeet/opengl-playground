@@ -38,7 +38,7 @@ void main()
     float tz = 0.0;
     mat4 tmat = translate(tx, ty, tz);
 
-    float tf = sin(u_tf) * 0.1;
+    float tf = 0.1 * sin(u_tf);
     mat4 smat = scale(tf, tf, 1.0);
 
     mat4 model_matrix = tmat * smat;
