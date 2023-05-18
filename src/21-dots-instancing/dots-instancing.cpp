@@ -97,8 +97,8 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 
     // Build scale matrix
     const float tf = static_cast<float>(current_time);
-    const float sf = 0.09 * std::abs(std::sin(tf * 1.0f)) + 0.01; // [0.01..0.1]
-    const glm::mat4 scale_matrix = glm::scale(glm::mat4{1.0f}, glm::vec3{sf, sf, 1.0});
+    const float sf = 0.09f * std::abs(std::sin(tf * 1.5f)) + 0.01f; // [0.01..0.1]
+    const glm::mat4 scale_matrix = glm::scale(glm::mat4{1.0f}, glm::vec3{sf, sf, 1.0f});
 
     // Get uniform locations
     const GLint loc_view_matrix = glGetUniformLocation(program, "u_view_matrix");
