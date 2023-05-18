@@ -12,7 +12,7 @@
 
 // Global variables
 static GLuint program{};
-static int first_color_index{0};
+static int first_color_index{};
 
 static GLuint create_program()
 {
@@ -53,8 +53,6 @@ static void set_callbacks(GLFWwindow* window)
             }
             else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
                 first_color_index = (first_color_index + 9) % 10;
-            }
-            else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
             }
         }
     );
