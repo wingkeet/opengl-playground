@@ -38,14 +38,27 @@ void main()
     float tz = 0.0;
     mat4 tmat = translate(tx, ty, tz);
 
-    mat4 smat = scale(0.1, 0.1, 1.0);
-    // float tf = 0.08 * abs(sin(u_tf)) + 0.02; // [0.02..0.1]
-    // mat4 smat = scale(tf, tf, 1.0);
+    float tf = 0.09 * abs(sin(u_tf * 1.0)) + 0.01; // [0.01..1.0]
+    mat4 smat = scale(tf, tf, 1.0);
 
     mat4 model_matrix = tmat * smat;
     mat4 mv_matrix = u_view_matrix * model_matrix;
 
     gl_Position = u_proj_matrix * mv_matrix * vec4(vertex_position, 0.0, 1.0);
-    // varying_color = u_colors[gl_InstanceID / 6];
-    varying_color = u_colors[(gl_InstanceID / 6 + int(u_tf * 2)) % 10];
+
+    // Rotate colors left or right or none
+    const int rotate_dir = 1; // negative or positive or zero
+    const int column = gl_InstanceID / 6; // [0..9]
+    const int tfi = int(u_tf * 1.0) % 10; // [0..9]
+    int color_index; // [0..9]
+    if (rotate_dir < 0) {
+        color_index = (column + tfi) % 10;
+    }
+    else if (rotate_dir > 0) {
+        color_index = (10 + column - tfi) % 10;
+    }
+    else {
+        color_index = column;
+    }
+    varying_color = u_colors[color_index];
 }
