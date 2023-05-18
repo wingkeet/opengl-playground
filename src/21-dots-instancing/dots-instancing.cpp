@@ -95,33 +95,38 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
     const glm::mat4 proj_matrix = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -10.0f, 10.0f);
 
+    // Build scale matrix
+    const float tf = static_cast<float>(current_time);
+    const float sf = 0.09 * std::abs(std::sin(tf * 1.0f)) + 0.01; // [0.01..0.1]
+    const glm::mat4 scale_matrix = glm::scale(glm::mat4{1.0f}, glm::vec3{sf, sf, 1.0});
+
     // Get uniform locations
     const GLint loc_view_matrix = glGetUniformLocation(program, "u_view_matrix");
     const GLint loc_proj_matrix = glGetUniformLocation(program, "u_proj_matrix");
-    const GLint loc_tf = glGetUniformLocation(program, "u_tf");
+    const GLint loc_scale_matrix = glGetUniformLocation(program, "u_scale_matrix");
 
     // Copy to uniform variables
     glUniformMatrix4fv(loc_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
     glUniformMatrix4fv(loc_proj_matrix, 1, GL_FALSE, glm::value_ptr(proj_matrix));
-    glUniform1f(loc_tf, static_cast<float>(current_time));
+    glUniformMatrix4fv(loc_scale_matrix, 1, GL_FALSE, glm::value_ptr(scale_matrix));
 
     // Selected CSS colors - https://www.w3schools.com/cssref/css_colors.php
     static const glm::vec3 colors[10]{
-        {1.0f, 0.0f, 0.0f},                   // red
-        {0.0f, 1.0f, 0.0f},                   // green
-        {0.0f, 0.0f, 1.0f},                   // blue
-        {1.0f, 215.0f/255, 0.0f},             // gold
-        {0.5f, 0.5f, 0.5f},                   // medium gray
-        {128.0f/255, 128.0f/255, 0.0f/255},   // olive
-        {184.0f/255, 134.0f/255, 11.0f/255},  // dark golden rod
-        {1.0f, 105.0f/255, 180.0f/255},       // hot pink
-        {138.0f/255, 43.0f/255, 226.0f/255},  // blue violet
-        {1.0f, 1.0f, 1.0f},                   // white
+        {1.0f, 0.0f, 0.0f},                  // red
+        {0.0f, 1.0f, 0.0f},                  // green
+        {0.0f, 0.0f, 1.0f},                  // blue
+        {1.0f, 215.0f/255, 0.0f},            // gold
+        {0.5f, 0.5f, 0.5f},                  // medium gray
+        {128.0f/255, 128.0f/255, 0.0f/255},  // olive
+        {184.0f/255, 134.0f/255, 11.0f/255}, // dark golden rod
+        {1.0f, 105.0f/255, 180.0f/255},      // hot pink
+        {138.0f/255, 43.0f/255, 226.0f/255}, // blue violet
+        {1.0f, 1.0f, 1.0f},                  // white
     };
-    for (int i = 0; i < 10; i++) {
+    for (int i{0}; i < 10; i++) {
         const std::string str = fmt::format("u_colors[{}]", i);
         const GLint loc = glGetUniformLocation(program, str.c_str());
-        glUniform3fv(loc, 1, glm::value_ptr(colors[(i + first_color_index) % 10]));
+        glUniform3fv(loc, 1, glm::value_ptr(colors[(first_color_index + i) % 10]));
     }
 
     // Draw 60 dots with instancing
