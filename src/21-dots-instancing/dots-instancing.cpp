@@ -12,6 +12,7 @@
 
 // Global variables
 static GLuint program{};
+static int first_color_index{0};
 
 static GLuint create_program()
 {
@@ -44,6 +45,19 @@ static void set_callbacks(GLFWwindow* window)
             }
         }
     );
+    glfwSetMouseButtonCallback(
+        window,
+        [](GLFWwindow* window, int button, int action, int mods) {
+            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+                first_color_index = (first_color_index + 1) % 10;
+            }
+            else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+                first_color_index = (first_color_index + 9) % 10;
+            }
+            else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
+            }
+        }
+    );
 }
 
 static void print_info()
@@ -65,6 +79,8 @@ static void print_info()
     GLint max_uniform_locations{};
     glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &max_uniform_locations);
     fmt::print("GL_MAX_UNIFORM_LOCATIONS: {}\n", max_uniform_locations);
+
+    fmt::print("Press left and right mouse buttons to rotate colors.\n");
 }
 
 static void render(GLFWwindow* window, double current_time, int num_vertices)
@@ -91,22 +107,23 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
     glUniformMatrix4fv(loc_proj_matrix, 1, GL_FALSE, glm::value_ptr(proj_matrix));
     glUniform1f(loc_tf, static_cast<float>(current_time));
 
+    // Selected CSS colors - https://www.w3schools.com/cssref/css_colors.php
     static const glm::vec3 colors[10]{
-        {1.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f},
-        {218.0f/255, 165.0f/255, 32.0f/255},
-        {0.5f, 0.5f, 0.5f},
-        {173.0f/255, 1.0f, 47.0f/255},
-        {106.0f/255, 90.0f/255, 205.0f/255},
-        {1.0f, 99.0f/255, 71.0f/255},
-        {70.0f/255, 130.0f/255, 180.0f/255},
-        {1.0f, 1.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f},                   // red
+        {0.0f, 1.0f, 0.0f},                   // green
+        {0.0f, 0.0f, 1.0f},                   // blue
+        {1.0f, 215.0f/255, 0.0f},             // gold
+        {0.5f, 0.5f, 0.5f},                   // medium gray
+        {128.0f/255, 128.0f/255, 0.0f/255},   // olive
+        {184.0f/255, 134.0f/255, 11.0f/255},  // dark golden rod
+        {1.0f, 105.0f/255, 180.0f/255},       // hot pink
+        {138.0f/255, 43.0f/255, 226.0f/255},  // blue violet
+        {1.0f, 1.0f, 1.0f},                   // white
     };
     for (int i = 0; i < 10; i++) {
         const std::string str = fmt::format("u_colors[{}]", i);
         const GLint loc = glGetUniformLocation(program, str.c_str());
-        glUniform3fv(loc, 1, glm::value_ptr(colors[i]));
+        glUniform3fv(loc, 1, glm::value_ptr(colors[(i + first_color_index) % 10]));
     }
 
     // Draw 60 dots with instancing
