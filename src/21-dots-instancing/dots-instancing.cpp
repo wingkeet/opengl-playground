@@ -97,7 +97,7 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 
     // Build scale matrix
     const float tf = static_cast<float>(current_time);
-    const float sf = 0.09f * std::abs(std::sin(tf * 1.5f)) + 0.01f; // [0.01..0.1]
+    const float sf = 0.045f * std::sin(tf * 2) + 0.055f; // [0.01..0.1]
     const glm::mat4 scale_matrix = glm::scale(glm::mat4{1.0f}, glm::vec3{sf, sf, 1.0f});
 
     // Get uniform locations
@@ -118,12 +118,12 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
         {1.0f, 215.0f/255, 0.0f},            // gold
         {0.5f, 0.5f, 0.5f},                  // medium gray
         {128.0f/255, 128.0f/255, 0.0f/255},  // olive
-        {184.0f/255, 134.0f/255, 11.0f/255}, // dark golden rod
+        {100.0f/255, 149.0f/255, 237.0f/255}, // cornflower blue
         {1.0f, 105.0f/255, 180.0f/255},      // hot pink
         {138.0f/255, 43.0f/255, 226.0f/255}, // blue violet
         {1.0f, 1.0f, 1.0f},                  // white
     };
-    for (int i{0}; i < 10; i++) {
+    for (int i{}; i < 10; i++) {
         const std::string str = fmt::format("u_colors[{}]", i);
         const GLint loc = glGetUniformLocation(program, str.c_str());
         glUniform3fv(loc, 1, glm::value_ptr(colors[(first_color_index + i) % 10]));
