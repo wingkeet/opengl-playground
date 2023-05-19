@@ -112,16 +112,16 @@ static void render(GLFWwindow* window, double current_time, int num_vertices)
 
     // Selected CSS colors - https://www.w3schools.com/cssref/css_colors.php
     static const glm::vec3 colors[10]{
-        {1.0f, 0.0f, 0.0f},                  // red
-        {0.0f, 1.0f, 0.0f},                  // green
-        {0.0f, 0.0f, 1.0f},                  // blue
-        {1.0f, 215.0f/255, 0.0f},            // gold
-        {0.5f, 0.5f, 0.5f},                  // medium gray
-        {128.0f/255, 128.0f/255, 0.0f/255},  // olive
+        {1.0f, 0.0f, 0.0f},                   // red
+        {0.0f, 1.0f, 0.0f},                   // green
+        {0.0f, 0.0f, 1.0f},                   // blue
+        {1.0f, 215.0f/255, 0.0f},             // gold
+        {0.5f, 0.5f, 0.5f},                   // medium gray
+        {128.0f/255, 128.0f/255, 0.0f},       // olive
         {100.0f/255, 149.0f/255, 237.0f/255}, // cornflower blue
-        {1.0f, 105.0f/255, 180.0f/255},      // hot pink
-        {138.0f/255, 43.0f/255, 226.0f/255}, // blue violet
-        {1.0f, 1.0f, 1.0f},                  // white
+        {1.0f, 105.0f/255, 180.0f/255},       // hot pink
+        {138.0f/255, 43.0f/255, 226.0f/255},  // blue violet
+        {1.0f, 1.0f, 1.0f},                   // white
     };
     for (int i{}; i < 10; i++) {
         const std::string str = fmt::format("u_colors[{}]", i);
