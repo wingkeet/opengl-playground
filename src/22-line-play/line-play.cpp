@@ -165,23 +165,19 @@ int main()
 
     glUniform1f(loc_thi, 20.0f);
 
+    // Minimum 4 vertices
     std::vector<glm::vec4> varray;
     varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
     varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
-    for (int u{}; u <= 90; u += 10) {
-        const float a = glm::radians(static_cast<float>(u));
-        const float c = std::cos(a), s = std::sin(a);
-        varray.emplace_back(glm::vec4{c, s, 0.0f, 1.0f});
-    }
-    varray.emplace_back(glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f));
-    for (int u{90}; u >= 0; u -= 10) {
-        const float a = glm::radians(static_cast<float>(u));
-        const float c = std::cos(a), s = std::sin(a);
-        varray.emplace_back(glm::vec4{c-1.0f, s-1.0f, 0.0f, 1.0f});
-    }
-    varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
+    varray.emplace_back(glm::vec4{1.0f,  0.0f, 0.0f, 1.0f});
+    varray.emplace_back(glm::vec4{-1.0f, 0.0f, 0.0f, 1.0f});
+    varray.emplace_back(glm::vec4{-2.0f, 0.0f, 0.0f, 1.0f});
     const GLuint ssbo = create_ssbo(varray);
+
+    for (const auto& v : varray) {
+        fmt::print("{:+10.5f}{:+10.5f}\n", v.x, v.y);
+    }
+    fmt::print("varray size: {}\n", varray.size());
 
     GLuint vao{};
     glGenVertexArrays(1, &vao);
