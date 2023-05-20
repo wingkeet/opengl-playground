@@ -13,7 +13,7 @@
 static GLuint program{};
 static glm::mat4 proj_matrix{};
 
-static GLuint compile_shaders()
+static GLuint create_program()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
@@ -52,7 +52,7 @@ static void set_callbacks(GLFWwindow* window)
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
                 // Press F5 to reload shaders
                 glDeleteProgram(program);
-                program = compile_shaders();
+                program = create_program();
                 glUseProgram(program);
             }
         }
@@ -155,7 +155,7 @@ int main()
     print_info();
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     // https://stackoverflow.com/questions/60440682/drawing-a-line-in-modern-opengl
@@ -166,18 +166,13 @@ int main()
     glUniform1f(loc_thi, 20.0f);
 
     // Minimum 4 vertices
-    std::vector<glm::vec4> varray;
-    varray.emplace_back(glm::vec4{0.0f, -1.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{1.0f, -1.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{1.0f,  0.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{-1.0f, 0.0f, 0.0f, 1.0f});
-    varray.emplace_back(glm::vec4{-2.0f, 0.0f, 0.0f, 1.0f});
+    std::vector<glm::vec4> varray{
+        {-0.5f, 0.0f, 0.0f, 1.0f},
+        {-0.5f, 0.0f, 0.0f, 1.0f},
+        {+0.5f, 0.0f, 0.0f, 1.0f},
+        {+1.0f, 0.0f, 0.0f, 1.0f},
+    };
     const GLuint ssbo = create_ssbo(varray);
-
-    for (const auto& v : varray) {
-        fmt::print("{:+10.5f}{:+10.5f}\n", v.x, v.y);
-    }
-    fmt::print("varray size: {}\n", varray.size());
 
     GLuint vao{};
     glGenVertexArrays(1, &vao);
