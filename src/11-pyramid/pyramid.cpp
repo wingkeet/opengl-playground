@@ -18,7 +18,7 @@ static std::string window_title()
     return fmt::format("11-pyramid (camera={:2.1f})", camera_y);
 }
 
-static GLuint compile_shaders()
+static GLuint create_program()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
@@ -44,7 +44,7 @@ static void set_callbacks(GLFWwindow* window)
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
                 // Press F5 to reload shaders
                 glDeleteProgram(program);
-                program = compile_shaders();
+                program = create_program();
                 glUseProgram(program);
             }
         }
@@ -185,7 +185,7 @@ int main()
     print_info();
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     // Define the vertices of our pyramid

@@ -14,7 +14,7 @@
 static GLuint program{};
 static bool wireframe{};
 
-static GLuint compile_shaders()
+static GLuint create_program()
 {
     namespace fs = std::filesystem;
     return compile_shaders({
@@ -40,7 +40,7 @@ static void set_callbacks(GLFWwindow* window)
             else if (key == GLFW_KEY_F5 && action == GLFW_PRESS) {
                 // Press F5 to reload shaders
                 glDeleteProgram(program);
-                program = compile_shaders();
+                program = create_program();
                 glUseProgram(program);
             }
             else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
@@ -197,7 +197,7 @@ int main()
     print_info();
     set_callbacks(window);
 
-    program = compile_shaders();
+    program = create_program();
     glUseProgram(program);
 
     // Generate the vertices of our circle
