@@ -2,7 +2,7 @@
 
 layout(std430, binding = 0) buffer TVertex
 {
-   vec4 vertex[];
+    vec4 vertex[];
 };
 
 uniform mat4  u_mvp;
