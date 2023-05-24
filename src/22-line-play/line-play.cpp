@@ -177,7 +177,8 @@ int main()
     GLuint vao{};
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    const GLsizei N = static_cast<GLsizei>(varray.size()) - 2;
+    const GLsizei lines = static_cast<GLsizei>(varray.size()) - 2 - 1;
+    const GLsizei vertices = 6 * lines;
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
@@ -194,7 +195,7 @@ int main()
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
-            glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
+            glDrawArrays(GL_TRIANGLES, 0, vertices);
         }
 
         // Draw outlined polygons
@@ -206,7 +207,7 @@ int main()
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
-            glDrawArrays(GL_TRIANGLES, 0, 6*(N-1));
+            glDrawArrays(GL_TRIANGLES, 0, vertices);
         }
 
         glfwSwapBuffers(window);
