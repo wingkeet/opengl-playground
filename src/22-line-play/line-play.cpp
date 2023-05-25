@@ -135,7 +135,7 @@ void glsl_main(
 
     for (int gl_VertexID{}; gl_VertexID < count; gl_VertexID++)
     {
-        fmt::print("gl_VertexID = {}\n", gl_VertexID);
+        fmt::print("\ngl_VertexID = {}\n", gl_VertexID);
 
         int line_i = gl_VertexID / 6;
         int tri_i  = gl_VertexID % 6;
@@ -144,12 +144,16 @@ void glsl_main(
         for (int i=0; i<4; ++i)
         {
             va[i] = u_mvp * vertex[line_i+i];
-            va[i].xyz() /= va[i].w;
-            va[i].xy() = (va[i].xy() + 1.0f) * 0.5f * u_resolution;
+            va[i] = vec4{va[i].xyz() / va[i].w, va[i].w};
+            va[i] = vec4{(va[i].xy() + 1.0f) * 0.5f * u_resolution, va[i].z, va[i].w};
+            fmt::print("va[{}] = {} {} {} {}\n", i, va[i].x, va[i].y, va[i].z, va[i].w);
         }
 
         vec2 v_line  = glm::normalize(va[2].xy() - va[1].xy());
         vec2 nv_line = vec2(-v_line.y, v_line.x);
+
+        fmt::print("v_line = {} {}\n", v_line.x, v_line.y);
+        fmt::print("nv_line = {} {}\n", nv_line.x, nv_line.y);
 
         vec4 pos;
         if (tri_i == 0 || tri_i == 1 || tri_i == 3)
@@ -157,20 +161,26 @@ void glsl_main(
             vec2 v_pred  = glm::normalize(va[1].xy() - va[0].xy());
             vec2 v_miter = glm::normalize(nv_line + vec2(-v_pred.y, v_pred.x));
 
+            fmt::print("v_pred = {} {}\n", v_pred.x, v_pred.y);
+            fmt::print("v_miter = {} {}\n", v_miter.x, v_miter.y);
+
             pos = va[1];
-            pos.xy() += v_miter * u_thickness * (tri_i == 1 ? -0.5f : 0.5f) / dot(v_miter, nv_line);
+            pos = vec4{pos.xy() + v_miter * u_thickness * (tri_i == 1 ? -0.5f : 0.5f) / dot(v_miter, nv_line), pos.z, pos.w};
         }
         else
         {
             vec2 v_succ  = glm::normalize(va[3].xy() - va[2].xy());
             vec2 v_miter = glm::normalize(nv_line + vec2(-v_succ.y, v_succ.x));
 
+            fmt::print("v_succ = {} {}\n", v_succ.x, v_succ.y);
+            fmt::print("v_miter = {} {}\n", v_miter.x, v_miter.y);
+
             pos = va[2];
-            pos.xy() += v_miter * u_thickness * (tri_i == 5 ? 0.5f : -0.5f) / dot(v_miter, nv_line);
+            pos = vec4{pos.xy() + v_miter * u_thickness * (tri_i == 5 ? 0.5f : -0.5f) / dot(v_miter, nv_line), pos.z, pos.w};
         }
 
-        pos.xy() = pos.xy() / u_resolution * 2.0f - 1.0f;
-        pos.xyz() *= pos.w;
+        pos = vec4{pos.xy() / u_resolution * 2.0f - 1.0f, pos.z, pos.w};
+        pos = vec4{pos.xyz() * pos.w, pos.w};
 
         const vec4 gl_Position = pos;
         fmt::print("gl_Position = {} {} {} {}\n", gl_Position.x, gl_Position.y, gl_Position.z, gl_Position.w);
