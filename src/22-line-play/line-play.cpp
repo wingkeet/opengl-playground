@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <GLFW/glfw3.h>
+#define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -125,6 +126,57 @@ static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
     return ssbo;
 }
 
+void glsl_main(
+    glm::vec4 vertex[], GLsizei count,
+    glm::mat4 u_mvp, glm::vec2 u_resolution, float u_thickness)
+{
+    using glm::vec4;
+    using glm::vec2;
+
+    for (int gl_VertexID{}; gl_VertexID < count; gl_VertexID++)
+    {
+        fmt::print("gl_VertexID = {}\n", gl_VertexID);
+
+        int line_i = gl_VertexID / 6;
+        int tri_i  = gl_VertexID % 6;
+
+        vec4 va[4];
+        for (int i=0; i<4; ++i)
+        {
+            va[i] = u_mvp * vertex[line_i+i];
+            va[i].xyz() /= va[i].w;
+            va[i].xy() = (va[i].xy() + 1.0f) * 0.5f * u_resolution;
+        }
+
+        vec2 v_line  = glm::normalize(va[2].xy() - va[1].xy());
+        vec2 nv_line = vec2(-v_line.y, v_line.x);
+
+        vec4 pos;
+        if (tri_i == 0 || tri_i == 1 || tri_i == 3)
+        {
+            vec2 v_pred  = glm::normalize(va[1].xy() - va[0].xy());
+            vec2 v_miter = glm::normalize(nv_line + vec2(-v_pred.y, v_pred.x));
+
+            pos = va[1];
+            pos.xy() += v_miter * u_thickness * (tri_i == 1 ? -0.5f : 0.5f) / dot(v_miter, nv_line);
+        }
+        else
+        {
+            vec2 v_succ  = glm::normalize(va[3].xy() - va[2].xy());
+            vec2 v_miter = glm::normalize(nv_line + vec2(-v_succ.y, v_succ.x));
+
+            pos = va[2];
+            pos.xy() += v_miter * u_thickness * (tri_i == 5 ? 0.5f : -0.5f) / dot(v_miter, nv_line);
+        }
+
+        pos.xy() = pos.xy() / u_resolution * 2.0f - 1.0f;
+        pos.xyz() *= pos.w;
+
+        const vec4 gl_Position = pos;
+        fmt::print("gl_Position = {} {} {} {}\n", gl_Position.x, gl_Position.y, gl_Position.z, gl_Position.w);
+    }
+}
+
 int main()
 {
     glfwSetErrorCallback(
@@ -196,6 +248,14 @@ int main()
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glUniformMatrix4fv(loc_mvp, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
             glDrawArrays(GL_TRIANGLES, 0, vertices);
+
+            static bool print_debug{true};
+            if (print_debug) {
+                int width{}, height{};
+                glfwGetFramebufferSize(window, &width, &height);
+                glsl_main(varray.data(), vertices, mvp_matrix, glm::vec2{width, height}, 20.0f);
+                print_debug = false;
+            }
         }
 
         // Draw outlined polygons
