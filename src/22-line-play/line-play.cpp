@@ -126,9 +126,9 @@ static GLuint create_ssbo(const std::vector<glm::vec4>& varray)
     return ssbo;
 }
 
-void glsl_main(
-    glm::vec4 vertex[], GLsizei count,
-    glm::mat4 u_mvp, glm::vec2 u_resolution, float u_thickness)
+void vertex_shader_main(
+    const std::vector<glm::vec4>& vertex, GLsizei count,
+    const glm::mat4& u_mvp, const glm::vec2& u_resolution, float u_thickness)
 {
     using glm::vec4;
     using glm::vec2;
@@ -150,7 +150,7 @@ void glsl_main(
         }
 
         vec2 v_line  = glm::normalize(va[2].xy() - va[1].xy());
-        vec2 nv_line = vec2(-v_line.y, v_line.x);
+        vec2 nv_line = vec2{-v_line.y, v_line.x};
 
         fmt::print("v_line = {} {}\n", v_line.x, v_line.y);
         fmt::print("nv_line = {} {}\n", nv_line.x, nv_line.y);
@@ -159,24 +159,26 @@ void glsl_main(
         if (tri_i == 0 || tri_i == 1 || tri_i == 3)
         {
             vec2 v_pred  = glm::normalize(va[1].xy() - va[0].xy());
-            vec2 v_miter = glm::normalize(nv_line + vec2(-v_pred.y, v_pred.x));
+            vec2 v_miter = glm::normalize(nv_line + vec2{-v_pred.y, v_pred.x});
 
             fmt::print("v_pred = {} {}\n", v_pred.x, v_pred.y);
             fmt::print("v_miter = {} {}\n", v_miter.x, v_miter.y);
 
             pos = va[1];
-            pos = vec4{pos.xy() + v_miter * u_thickness * (tri_i == 1 ? -0.5f : 0.5f) / dot(v_miter, nv_line), pos.z, pos.w};
+            pos = vec4{pos.xy() + v_miter * u_thickness * (tri_i == 1 ? -0.5f : 0.5f) /
+                glm::dot(v_miter, nv_line), pos.z, pos.w};
         }
         else
         {
             vec2 v_succ  = glm::normalize(va[3].xy() - va[2].xy());
-            vec2 v_miter = glm::normalize(nv_line + vec2(-v_succ.y, v_succ.x));
+            vec2 v_miter = glm::normalize(nv_line + vec2{-v_succ.y, v_succ.x});
 
             fmt::print("v_succ = {} {}\n", v_succ.x, v_succ.y);
             fmt::print("v_miter = {} {}\n", v_miter.x, v_miter.y);
 
             pos = va[2];
-            pos = vec4{pos.xy() + v_miter * u_thickness * (tri_i == 5 ? 0.5f : -0.5f) / dot(v_miter, nv_line), pos.z, pos.w};
+            pos = vec4{pos.xy() + v_miter * u_thickness * (tri_i == 5 ? 0.5f : -0.5f) /
+                glm::dot(v_miter, nv_line), pos.z, pos.w};
         }
 
         pos = vec4{pos.xy() / u_resolution * 2.0f - 1.0f, pos.z, pos.w};
@@ -263,7 +265,7 @@ int main()
             if (print_debug) {
                 int width{}, height{};
                 glfwGetFramebufferSize(window, &width, &height);
-                glsl_main(varray.data(), vertices, mvp_matrix, glm::vec2{width, height}, 20.0f);
+                vertex_shader_main(varray, vertices, mvp_matrix, glm::vec2{width, height}, 20.0f);
                 print_debug = false;
             }
         }
