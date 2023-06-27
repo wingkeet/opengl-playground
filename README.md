@@ -60,7 +60,7 @@ direct rendering: Yes
 ![01-triangle](images/01-triangle.png)
 ![06-cube](images/06-cube.png)
 ![10-pentagon-web](images/10-pentagon-web.png)
-![16-rounded-polygon](images/16-rounded-polygon.png)
+![23-rounded-polygons](images/23-rounded-polygons.png)
 
 ## Resources
 - https://github.com/fmtlib/fmt
