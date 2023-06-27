@@ -25,7 +25,8 @@ TARGETS=$(BINDIR)/01-triangle \
         $(BINDIR)/19-dashed-line \
         $(BINDIR)/20-dashed-polygon \
         $(BINDIR)/21-dots-instancing \
-        $(BINDIR)/22-line-play
+        $(BINDIR)/22-line-play \
+        $(BINDIR)/23-rounded-polygons
 
 all: $(TARGETS)
 
@@ -74,6 +75,8 @@ $(BINDIR)/21-dots-instancing: $(OBJDIR)/21-dots-instancing.o $(OBJDIR)/shader.o 
 	g++ $^ -o $@ $(LDFLAGS)
 $(BINDIR)/22-line-play: $(OBJDIR)/22-line-play.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
 	g++ $^ -o $@ $(LDFLAGS)
+$(BINDIR)/23-rounded-polygons: $(OBJDIR)/23-rounded-polygons.o $(OBJDIR)/shader.o $(OBJDIR)/utils.o $(OBJDIR)/glad.o
+	g++ $^ -o $@ $(LDFLAGS)
 
 # Compile main files
 $(OBJDIR)/01-triangle.o: $(SRCDIR)/01-triangle/triangle.cpp
@@ -119,6 +122,8 @@ $(OBJDIR)/20-dashed-polygon.o: $(SRCDIR)/20-dashed-polygon/dashed-polygon.cpp
 $(OBJDIR)/21-dots-instancing.o: $(SRCDIR)/21-dots-instancing/dots-instancing.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 $(OBJDIR)/22-line-play.o: $(SRCDIR)/22-line-play/line-play.cpp
+	g++ -c $< -o $@ $(CXXFLAGS)
+$(OBJDIR)/23-rounded-polygons.o: $(SRCDIR)/23-rounded-polygons/rounded-polygons.cpp
 	g++ -c $< -o $@ $(CXXFLAGS)
 
 # Compile common files
