@@ -111,13 +111,10 @@ static void render(GLFWwindow* window, double current_time)
 
     for (int n{}; n < 12; n++) {
         // Build model matrix
-        const float tf = static_cast<float>(current_time);
         glm::mat4 model_matrix{1.0f};
         const float tx = n % 4 * 0.6f - 0.9f;
         const float ty = -n / 4 * 0.6f + 0.6f;
         model_matrix = glm::translate(model_matrix, glm::vec3{tx, ty, 0.0f});
-        model_matrix = glm::rotate(model_matrix, tf, glm::vec3{0.0, 0.0f, 1.0f});
-        // model_matrix = glm::rotate(model_matrix, std::sin(tf) * 1.6f, glm::vec3{0.0, 0.0f, 1.0f});
         model_matrix = glm::scale(model_matrix, glm::vec3{0.25f, 0.25f, 1.0f});
 
         // Build model-view matrix
