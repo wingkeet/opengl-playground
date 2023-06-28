@@ -1,5 +1,4 @@
 #include "glad.h"
-#include <array>
 #include <cmath>
 #include <filesystem>
 #include <fmt/core.h>
@@ -75,13 +74,6 @@ static void print_info()
     glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &max_uniform_locations);
     fmt::print("GL_MAX_UNIFORM_LOCATIONS: {}\n", max_uniform_locations);
 
-    if (glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
-        fmt::print("Gamepad: {}\n", glfwGetGamepadName(GLFW_JOYSTICK_1));
-    }
-    else {
-        fmt::print("Gamepad: none\n");
-    }
-
     fmt::print("Press spacebar to toggle filled and wireframe mode.\n");
 }
 
@@ -109,20 +101,17 @@ static void render(GLFWwindow* window, double current_time)
     // Set the color of our polygon to gold
     glUniform3f(2, 0.82f, 0.65f, 0.17f);
 
+    // Draw polygons
     for (int n{}; n < 12; n++) {
-        // Build model matrix
-        glm::mat4 model_matrix{1.0f};
         const float tx = n % 4 * 0.6f - 0.9f;
         const float ty = -n / 4 * 0.6f + 0.6f;
+        glm::mat4 model_matrix{1.0f};
         model_matrix = glm::translate(model_matrix, glm::vec3{tx, ty, 0.0f});
         model_matrix = glm::scale(model_matrix, glm::vec3{0.25f, 0.25f, 1.0f});
 
-        // Build model-view matrix
         const glm::mat4 mv_matrix = view_matrix * model_matrix;
-
         glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(mv_matrix));
 
-        // Draw rounded polygon
         glDrawArrays(GL_TRIANGLES, first[n], count[n]);
     }
 }
@@ -293,7 +282,7 @@ int main()
     program = create_program();
     glUseProgram(program);
 
-    // Generate the vertices of our rounded polygon
+    // Generate the vertices of our rounded polygons
     gen_polygons();
 
     // Create and populate interleaved vertex buffer using
