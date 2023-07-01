@@ -107,6 +107,10 @@ static void render(GLFWwindow* window, double current_time)
         const float ty = -n / 4 * 0.6f + 0.6f;
         glm::mat4 model_matrix{1.0f};
         model_matrix = glm::translate(model_matrix, glm::vec3{tx, ty, 0.0f});
+        if (n % 2) {
+            const float rotation = glm::pi<float>() / (n+3);
+            model_matrix = glm::rotate(model_matrix, rotation, glm::vec3{0.0f, 0.0f, 1.0f});
+        }
         model_matrix = glm::scale(model_matrix, glm::vec3{0.25f, 0.25f, 1.0f});
 
         const glm::mat4 mv_matrix = view_matrix * model_matrix;
