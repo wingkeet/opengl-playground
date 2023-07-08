@@ -204,7 +204,7 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
     vertices.reserve(3*n + 6*n + 8*3*n);
 
     // Regular polygon
-    for (int i = 0; i < n; i++) {
+    for (int i{}; i < n; i++) {
         vertices.emplace_back(glm::vec2{}); // origin
 
         float x{}, y{};
@@ -219,13 +219,13 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
     }
 
     // Rectangles
-    for (int i = 0; i < n; i++) {
+    for (int i{}; i < n; i++) {
         const auto v = gen_rect(n, ri, rc, i * angle);
         vertices.insert(vertices.end(), v.begin(), v.end());
     }
 
     // Pies (rounded corners)
-    for (int i = 0; i < n; i++) {
+    for (int i{}; i < n; i++) {
         const float a = i * angle + first;
         const float x = ri * std::cos(a);
         const float y = ri * std::sin(a);
@@ -239,6 +239,7 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
 static void gen_polygons()
 {
     int sum{};
+
     for (int n{3}; n <= 14; n++) {
         const auto v = gen_polygon(n, 0.8f, 0.2f);
         all.insert(all.end(), v.begin(), v.end());
