@@ -98,7 +98,7 @@ static void render(GLFWwindow* window, double current_time)
     const GLfloat background[]{0.2f, 0.2f, 0.2f, 1.0f};
     glClearBufferfv(GL_COLOR, 0, background);
 
-    // Set the color of our polygon to gold
+    // Set the color of our polygons to gold
     glUniform3f(2, 0.82f, 0.65f, 0.17f);
 
     // Draw polygons
@@ -238,17 +238,14 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
 
 static void gen_polygons()
 {
-    for (int n{3}; n <= 14; n++) {
-        const std::vector<glm::vec2> v = gen_polygon(n, 0.8f, 0.2f);
-        all.insert(all.end(), v.begin(), v.end());
-    }
-
     int sum{};
     for (int n{3}; n <= 14; n++) {
-        const int size = 3*n + 6*n + 8*3*n;
-        count.emplace_back(size);
+        const auto v = gen_polygon(n, 0.8f, 0.2f);
+        all.insert(all.end(), v.begin(), v.end());
+
+        count.emplace_back(v.size());
         first.emplace_back(sum);
-        sum += size;
+        sum += v.size();
     }
 }
 
