@@ -14,8 +14,8 @@
 static GLuint program{};
 static bool wireframe{};
 static std::vector<glm::vec2> all;
-static std::vector<int> count;
-static std::vector<int> first;
+static std::vector<GLint> count;
+static std::vector<GLint> first;
 
 static GLuint create_program()
 {
@@ -238,7 +238,7 @@ static std::vector<glm::vec2> gen_polygon(int n, float ri, float rc)
 
 static void gen_polygons()
 {
-    int sum{};
+    GLint sum{};
 
     for (int n{3}; n <= 14; n++) {
         const auto v = gen_polygon(n, 0.8f, 0.2f);
