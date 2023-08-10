@@ -41,7 +41,6 @@ This produces a static GLFW library at `glfw/build/src/libglfw3.a`.
 
 ## Check hardware acceleration
 
-[Mesa 3D Graphics Library FAQ](https://docs.mesa3d.org/faq.html)
 ```
 $ sudo apt-get install mesa-utils
 $ glxinfo -B
