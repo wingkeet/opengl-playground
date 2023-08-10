@@ -44,15 +44,36 @@ This produces a static GLFW library at `glfw/build/src/libglfw3.a`.
 [Mesa 3D Graphics Library FAQ](https://docs.mesa3d.org/faq.html)
 ```
 $ sudo apt-get install mesa-utils
-
-$ glxinfo | grep "OpenGL vendor"
-OpenGL vendor string: Intel
-
-$ glxinfo | grep "OpenGL renderer"
-OpenGL renderer string: Mesa Intel(R) Iris(R) Plus Graphics 655 (CFL GT3)
-
-$ glxinfo | grep "direct rendering"
+$ glxinfo -B
+name of display: :0
+display: :0  screen: 0
 direct rendering: Yes
+Extended renderer info (GLX_MESA_query_renderer):
+    Vendor: Intel (0x8086)
+    Device: Mesa Intel(R) Iris(R) Plus Graphics 655 (CFL GT3) (0x3ea5)
+    Version: 23.0.4
+    Accelerated: yes
+    Video memory: 7799MB
+    Unified memory: yes
+    Preferred profile: core (0x1)
+    Max core profile version: 4.6
+    Max compat profile version: 4.6
+    Max GLES1 profile version: 1.1
+    Max GLES[23] profile version: 3.2
+OpenGL vendor string: Intel
+OpenGL renderer string: Mesa Intel(R) Iris(R) Plus Graphics 655 (CFL GT3)
+OpenGL core profile version string: 4.6 (Core Profile) Mesa 23.0.4-0ubuntu1~22.04.1
+OpenGL core profile shading language version string: 4.60
+OpenGL core profile context flags: (none)
+OpenGL core profile profile mask: core profile
+
+OpenGL version string: 4.6 (Compatibility Profile) Mesa 23.0.4-0ubuntu1~22.04.1
+OpenGL shading language version string: 4.60
+OpenGL context flags: (none)
+OpenGL profile mask: compatibility profile
+
+OpenGL ES profile version string: OpenGL ES 3.2 Mesa 23.0.4-0ubuntu1~22.04.1
+OpenGL ES profile shading language version string: OpenGL ES GLSL ES 3.2
 ```
 
 ## Gallery
